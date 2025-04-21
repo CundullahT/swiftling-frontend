@@ -85,7 +85,7 @@ export default function Settings() {
               <div className="sm:col-span-6">
                 <div className="flex justify-between">
                   <Label htmlFor="current-password">Current password</Label>
-                  <Link href="/forgot-password">
+                  <Link href="/auth/forgot-password">
                     <Button variant="link" className="h-auto p-0" title="Future feature: Will auto-fill email for logged-in users">
                       Forgot password?
                     </Button>
