@@ -40,12 +40,39 @@ export default function AddPhrase() {
   const [targetLanguageInput, setTargetLanguageInput] = useState("");
   const [filteredSourceLanguages, setFilteredSourceLanguages] = useState<typeof LANGUAGES>([]);
   const [filteredTargetLanguages, setFilteredTargetLanguages] = useState<typeof LANGUAGES>([]);
+  
+  // Form validation states
+  const [formErrors, setFormErrors] = useState({
+    phrase: false,
+    translation: false,
+    sourceLanguage: false,
+    targetLanguage: false
+  });
+  
+  // Handle form validation
+  const validateForm = () => {
+    const phraseInput = document.getElementById('phrase') as HTMLInputElement;
+    const translationInput = document.getElementById('translation') as HTMLInputElement;
+    
+    const errors = {
+      phrase: !phraseInput.value.trim(),
+      translation: !translationInput.value.trim(),
+      sourceLanguage: !sourceLanguage,
+      targetLanguage: !targetLanguage
+    };
+    
+    setFormErrors(errors);
+    return !Object.values(errors).some(error => error);
+  };
 
   // Handle form submission - would connect to API in real implementation
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Save phrase logic would go here
-    setLocation("/my-list");
+    
+    if (validateForm()) {
+      // Save phrase logic would go here
+      setLocation("/my-list");
+    }
   };
 
   // Language management functions
