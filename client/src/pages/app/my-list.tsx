@@ -54,8 +54,8 @@ export default function MyList() {
   
   // State for search, filter, and sort
   const [searchTerm, setSearchTerm] = useState("");
-  const [tagFilter, setTagFilter] = useState("all");
-  const [sortOption, setSortOption] = useState("recent");
+  const [tagFilter, setTagFilter] = useState<string>("all");
+  const [sortOption, setSortOption] = useState<string>("recent");
 
   // Form state for edit dialog
   const [editedPhrase, setEditedPhrase] = useState("");
@@ -379,22 +379,39 @@ export default function MyList() {
       {/* Phrases List */}
       <Card className="mb-6">
         <div className="divide-y divide-gray-200">
-          {phrases.map((phrase) => (
-            <PhraseCard
-              key={phrase.id}
-              phrase={phrase.phrase}
-              translation={phrase.translation}
-              tags={phrase.tags}
-              proficiency={phrase.proficiency}
-              notes={phrase.notes}
-              sourceLanguage={phrase.sourceLanguage}
-              targetLanguage={phrase.targetLanguage}
-              onEdit={() => handleEdit(phrase)}
-              onDelete={() => {}}
-              onSpeak={() => {}}
-              onViewNotes={() => handleViewNotes(phrase)}
-            />
-          ))}
+          {getFilteredAndSortedPhrases().length > 0 ? (
+            getFilteredAndSortedPhrases().map((phrase) => (
+              <PhraseCard
+                key={phrase.id}
+                phrase={phrase.phrase}
+                translation={phrase.translation}
+                tags={phrase.tags}
+                proficiency={phrase.proficiency}
+                notes={phrase.notes}
+                sourceLanguage={phrase.sourceLanguage}
+                targetLanguage={phrase.targetLanguage}
+                onEdit={() => handleEdit(phrase)}
+                onDelete={() => {}}
+                onSpeak={() => {}}
+                onViewNotes={() => handleViewNotes(phrase)}
+              />
+            ))
+          ) : (
+            <div className="px-4 py-8 text-center">
+              <p className="text-gray-500">No phrases match your filters.</p>
+              <Button 
+                variant="link" 
+                onClick={() => {
+                  setSearchTerm("");
+                  setTagFilter("all");
+                  setSortOption("recent");
+                }}
+                className="mt-2"
+              >
+                Clear filters
+              </Button>
+            </div>
+          )}
         </div>
       </Card>
 
