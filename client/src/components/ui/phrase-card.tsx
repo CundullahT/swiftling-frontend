@@ -40,11 +40,11 @@ export function PhraseCard({
   };
 
   return (
-    <div className="px-4 py-4 sm:px-6 border-b border-gray-200">
+    <div className="px-4 py-4 sm:px-6 border-b border-primary/10">
       <div className="flex items-start justify-between flex-wrap gap-2">
         <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 max-w-full sm:max-w-[65%]">
           <p className="text-lg font-medium text-primary line-clamp-2 overflow-hidden break-words">{phrase}</p>
-          <p className="text-md text-gray-500 line-clamp-2 overflow-hidden break-words">{translation}</p>
+          <p className="text-md text-secondary/70 line-clamp-2 overflow-hidden break-words">{translation}</p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           {/* Tags section for desktop - fixed width column */}
@@ -138,16 +138,16 @@ export function PhraseCard({
         </div>
       </div>
       <div className="mt-2 sm:flex sm:justify-between">
-        <div className="mt-2 flex items-center text-sm text-gray-500 sm:mt-0">
+        <div className="mt-2 flex items-center text-sm text-secondary/80 sm:mt-0">
           <div className="flex items-center">
-            <p className="mr-2">Proficiency:</p>
-            <div className="w-24 bg-gray-200 rounded-full h-2.5">
+            <p className="mr-2 font-medium">Proficiency:</p>
+            <div className="w-24 bg-slate-200 dark:bg-slate-700 rounded-full h-2.5">
               <div 
                 className={cn("h-2.5 rounded-full", getProficiencyColor())} 
                 style={{ width: `${proficiency}%` }}
               ></div>
             </div>
-            <span className="ml-2">{proficiency}%</span>
+            <span className="ml-2 font-medium text-secondary">{proficiency}%</span>
           </div>
         </div>
       </div>
