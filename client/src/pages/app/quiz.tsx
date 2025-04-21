@@ -98,12 +98,12 @@ export default function Quiz() {
           <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
             <div className="sm:col-span-3">
               <Label htmlFor="quiz-category">Category</Label>
-              <Select defaultValue="">
+              <Select defaultValue="all">
                 <SelectTrigger id="quiz-category">
                   <SelectValue placeholder="All Categories" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Categories</SelectItem>
+                  <SelectItem value="all">All Categories</SelectItem>
                   {CATEGORIES.map((category) => (
                     <SelectItem key={category} value={category.toLowerCase()}>
                       {category}

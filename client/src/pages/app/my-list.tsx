@@ -41,9 +41,11 @@ export default function MyList() {
     <div className="py-6 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto pb-20 md:pb-6">
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-semibold text-gray-900">My Phrases</h1>
-        <Button onClick={() => window.location.href = "/add-phrase"}>
-          Add Phrase
-        </Button>
+        <Link href="/add-phrase">
+          <Button>
+            Add Phrase
+          </Button>
+        </Link>
       </div>
 
       {/* Filter Bar */}
@@ -61,12 +63,12 @@ export default function MyList() {
             </div>
           </div>
           <div className="sm:w-1/4">
-            <Select defaultValue="">
+            <Select defaultValue="all">
               <SelectTrigger id="category">
                 <SelectValue placeholder="All Categories" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Categories</SelectItem>
+                <SelectItem value="all">All Categories</SelectItem>
                 {CATEGORIES.map((category) => (
                   <SelectItem key={category} value={category.toLowerCase()}>
                     {category}
