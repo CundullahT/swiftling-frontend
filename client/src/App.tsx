@@ -12,6 +12,9 @@ import AddPhrase from "@/pages/app/add-phrase";
 import Quiz from "@/pages/app/quiz";
 import Settings from "@/pages/app/settings";
 
+// Auth Pages
+import ForgotPassword from "@/pages/auth/forgot-password";
+
 // Layout Components
 import Header from "@/components/layout/header";
 import MobileNav from "@/components/layout/mobile-nav";
@@ -38,6 +41,9 @@ function App() {
               <Route path="/add-phrase" component={AddPhrase} />
               <Route path="/quiz" component={Quiz} />
               <Route path="/settings" component={Settings} />
+              
+              {/* Auth Routes */}
+              <Route path="/auth/forgot-password" component={ForgotPassword} />
               
               {/* Fallback to 404 */}
               <Route component={NotFound} />
