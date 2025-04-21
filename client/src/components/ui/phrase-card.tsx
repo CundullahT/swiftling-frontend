@@ -34,9 +34,9 @@ export function PhraseCard({
 }: PhraseCardProps) {
   // Determine the color based on proficiency
   const getProficiencyColor = () => {
-    if (proficiency > 80) return 'bg-green-500';
-    if (proficiency > 50) return 'bg-amber-500';
-    return 'bg-red-500';
+    if (proficiency > 80) return 'bg-primary';
+    if (proficiency > 50) return 'bg-accent';
+    return 'bg-destructive';
   };
 
   return (
@@ -55,7 +55,7 @@ export function PhraseCard({
                   <div key={index} className="flex">
                     <Badge 
                       variant="outline" 
-                      className="bg-slate-100 hover:bg-slate-200 text-xs text-center px-2 py-0.5 mx-auto"
+                      className="bg-accent/10 hover:bg-accent/20 text-xs text-center px-2 py-0.5 mx-auto text-accent-foreground border-accent/20"
                     >
                       {tag}
                     </Badge>
@@ -66,7 +66,7 @@ export function PhraseCard({
               <div className="flex">
                 <Badge 
                   variant="outline" 
-                  className="bg-slate-100 hover:bg-slate-200 text-xs text-center px-2 py-0.5 mx-auto"
+                  className="bg-accent/10 hover:bg-accent/20 text-xs text-center px-2 py-0.5 mx-auto text-accent-foreground border-accent/20"
                 >
                   {category}
                 </Badge>
@@ -81,7 +81,7 @@ export function PhraseCard({
                 <Badge 
                   key={index} 
                   variant="outline" 
-                  className="bg-slate-100 hover:bg-slate-200 text-xs text-center px-2 py-0.5"
+                  className="bg-accent/10 hover:bg-accent/20 text-xs text-center px-2 py-0.5 text-accent-foreground border-accent/20"
                 >
                   {tag}
                 </Badge>
@@ -89,7 +89,7 @@ export function PhraseCard({
             ) : category ? (
               <Badge 
                 variant="outline" 
-                className="bg-slate-100 hover:bg-slate-200 text-xs text-center px-2 py-0.5"
+                className="bg-accent/10 hover:bg-accent/20 text-xs text-center px-2 py-0.5 text-accent-foreground border-accent/20"
               >
                 {category}
               </Badge>
@@ -100,7 +100,7 @@ export function PhraseCard({
               variant="ghost"
               size="icon"
               onClick={onSpeak}
-              className="mr-2 text-blue-500 hover:text-blue-600 hover:bg-blue-50"
+              className="mr-2 text-primary hover:text-primary/80 hover:bg-primary/10"
               title="Speak"
             >
               <Volume2 className="h-5 w-5" />
@@ -110,7 +110,7 @@ export function PhraseCard({
                 variant="ghost"
                 size="icon"
                 onClick={onViewNotes}
-                className="mr-2 text-indigo-500 hover:text-indigo-600 hover:bg-indigo-50"
+                className="mr-2 text-secondary hover:text-secondary/80 hover:bg-secondary/10"
                 title="View Notes"
               >
                 <Info className="h-5 w-5" />
@@ -120,7 +120,7 @@ export function PhraseCard({
               variant="ghost"
               size="icon"
               onClick={onEdit}
-              className="mr-2 text-amber-500 hover:text-amber-600 hover:bg-amber-50"
+              className="mr-2 text-accent hover:text-accent/80 hover:bg-accent/10"
               title="Edit"
             >
               <Edit className="h-5 w-5" />
@@ -129,7 +129,7 @@ export function PhraseCard({
               variant="ghost"
               size="icon"
               onClick={onDelete}
-              className="text-red-500 hover:text-red-600 hover:bg-red-50"
+              className="text-destructive hover:text-destructive/80 hover:bg-destructive/10"
               title="Delete"
             >
               <Trash2 className="h-5 w-5" />
