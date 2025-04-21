@@ -24,14 +24,7 @@ import { PhraseCard } from "@/components/ui/phrase-card";
 import { SAMPLE_TAGS, LANGUAGES } from "@/lib/constants";
 import { useState } from "react";
 import { Link } from "wouter";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
+
 
 export default function MyList() {
   // Placeholder for auth check - would be tied to a real auth system in future
@@ -1277,27 +1270,6 @@ export default function MyList() {
           </form>
         </DialogContent>
       </Dialog>
-
-      {/* Pagination */}
-      <Pagination>
-        <PaginationContent>
-          <PaginationItem>
-            <PaginationPrevious href="#" />
-          </PaginationItem>
-          <PaginationItem>
-            <PaginationLink href="#" isActive>1</PaginationLink>
-          </PaginationItem>
-          <PaginationItem>
-            <PaginationLink href="#">2</PaginationLink>
-          </PaginationItem>
-          <PaginationItem>
-            <PaginationLink href="#">3</PaginationLink>
-          </PaginationItem>
-          <PaginationItem>
-            <PaginationNext href="#" />
-          </PaginationItem>
-        </PaginationContent>
-      </Pagination>
     </div>
   );
 }
