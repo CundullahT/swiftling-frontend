@@ -27,10 +27,10 @@ export default function Settings() {
 
   return (
     <div className="py-6 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto pb-20 md:pb-6">
-      <h1 className="text-2xl font-semibold text-secondary bg-gradient-to-r from-primary/90 to-secondary bg-clip-text text-transparent mb-6">Settings</h1>
+      <h1 className="text-2xl font-semibold text-secondary bg-gradient-to-r from-primary/90 to-secondary bg-clip-text text-transparent">Settings</h1>
       
       {/* Account Settings */}
-      <form onSubmit={handleAccountSubmit} className="mb-8">
+      <form onSubmit={handleAccountSubmit} className="mb-6">
         <Card>
           <CardContent className="pt-6">
             <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">Account Settings</h3>

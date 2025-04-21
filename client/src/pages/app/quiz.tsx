@@ -62,10 +62,10 @@ export default function Quiz() {
 
   return (
     <div className="py-6 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto pb-20 md:pb-6">
-      <h1 className="text-2xl font-semibold text-secondary bg-gradient-to-r from-primary/90 to-secondary bg-clip-text text-transparent mb-6">Quiz</h1>
+      <h1 className="text-2xl font-semibold text-secondary bg-gradient-to-r from-primary/90 to-secondary bg-clip-text text-transparent">Quiz</h1>
       
       {/* Quiz Type Selection */}
-      <Card className="mb-8">
+      <Card className="mb-6">
         <CardContent className="pt-6">
           <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">Choose Quiz Type</h3>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -92,7 +92,7 @@ export default function Quiz() {
       </Card>
 
       {/* Quiz Settings */}
-      <Card className="mb-8">
+      <Card className="mb-6">
         <CardContent className="pt-6">
           <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">Quiz Settings</h3>
           <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
