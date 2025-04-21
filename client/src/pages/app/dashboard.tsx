@@ -167,19 +167,19 @@ export default function Dashboard() {
               <div className="flex flex-col items-center">
                 <PieChart 
                   data={[
-                    { value: progressStats.daily.learned, color: '#2AC769' }, // Bright green for learned
-                    { value: progressStats.daily.total - progressStats.daily.learned, color: '#FEA011' } // Orange-gold for not yet learned
+                    { value: progressStats.daily.learned, color: 'hsl(var(--primary))' }, // Primary teal for learned
+                    { value: progressStats.daily.total - progressStats.daily.learned, color: 'hsl(var(--muted))' } // Muted for not learned
                   ]}
                   size={100}
                 />
                 <div className="mt-3 flex gap-4 text-center">
                   <div>
                     <p className="text-xs text-secondary/70">Added</p>
-                    <p className="text-lg font-semibold" style={{ color: '#FEA011' }}>{progressStats.daily.total}</p>
+                    <p className="text-lg font-semibold text-secondary">{progressStats.daily.total}</p>
                   </div>
                   <div>
                     <p className="text-xs text-secondary/70">Learned</p>
-                    <p className="text-lg font-semibold" style={{ color: '#2AC769' }}>{progressStats.daily.learned}</p>
+                    <p className="text-lg font-semibold text-primary">{progressStats.daily.learned}</p>
                   </div>
                 </div>
               </div>
@@ -215,19 +215,19 @@ export default function Dashboard() {
               <div className="flex flex-col items-center">
                 <PieChart 
                   data={[
-                    { value: progressStats.monthly.learned, color: '#2AC769' }, // Bright green for learned
-                    { value: progressStats.monthly.total - progressStats.monthly.learned, color: '#FEA011' } // Orange-gold for not yet learned
+                    { value: progressStats.monthly.learned, color: 'hsl(var(--accent))' }, // Accent/gold for learned
+                    { value: progressStats.monthly.total - progressStats.monthly.learned, color: 'hsl(var(--muted))' } // Muted for not learned
                   ]}
                   size={100}
                 />
                 <div className="mt-3 flex gap-4 text-center">
                   <div>
                     <p className="text-xs text-secondary/70">Added</p>
-                    <p className="text-lg font-semibold" style={{ color: '#FEA011' }}>{progressStats.monthly.total}</p>
+                    <p className="text-lg font-semibold text-secondary">{progressStats.monthly.total}</p>
                   </div>
                   <div>
                     <p className="text-xs text-secondary/70">Learned</p>
-                    <p className="text-lg font-semibold" style={{ color: '#2AC769' }}>{progressStats.monthly.learned}</p>
+                    <p className="text-lg font-semibold text-accent">{progressStats.monthly.learned}</p>
                   </div>
                 </div>
               </div>
@@ -239,19 +239,19 @@ export default function Dashboard() {
               <div className="flex flex-col items-center">
                 <PieChart 
                   data={[
-                    { value: progressStats.total.learned, color: '#2AC769' }, // Bright green for learned
-                    { value: progressStats.total.total - progressStats.total.learned, color: '#FEA011' } // Orange-gold for not yet learned
+                    { value: progressStats.total.learned, color: 'hsl(var(--chart-5))' }, // Mint green for learned
+                    { value: progressStats.total.total - progressStats.total.learned, color: 'hsl(var(--muted))' } // Muted for not learned
                   ]}
                   size={100}
                 />
                 <div className="mt-3 flex gap-4 text-center">
                   <div>
                     <p className="text-xs text-secondary/70">Added</p>
-                    <p className="text-lg font-semibold" style={{ color: '#FEA011' }}>{progressStats.total.total}</p>
+                    <p className="text-lg font-semibold text-secondary">{progressStats.total.total}</p>
                   </div>
                   <div>
                     <p className="text-xs text-secondary/70">Learned</p>
-                    <p className="text-lg font-semibold" style={{ color: '#2AC769' }}>{progressStats.total.learned}</p>
+                    <p className="text-lg font-semibold text-chart-5">{progressStats.total.learned}</p>
                   </div>
                 </div>
               </div>
