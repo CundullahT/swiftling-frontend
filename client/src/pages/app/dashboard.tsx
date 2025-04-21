@@ -142,106 +142,106 @@ export default function Dashboard() {
     total: { total: 120, learned: 85 }
   };
 
-  // Recent phrases data from My List, converted to use learned flag instead of proficiency
+  // Last 10 phrases data from My List (id 41-50), converted to use learned flag instead of proficiency
   const recentPhrases = [
     { 
-      id: 1, 
-      phrase: 'Buenos días', 
-      translation: 'Good morning', 
-      learned: true, // Converted from proficiency 85
-      tags: ['Greetings', 'Morning', 'Beginner'], 
-      notes: 'Used as a morning greeting until around noon. The informal version is just "Hola".',
-      sourceLanguage: 'spanish',
-      targetLanguage: 'english'
-    },
-    { 
-      id: 2, 
-      phrase: '¿Cómo estás?', 
-      translation: 'How are you?', 
-      learned: false, // Converted from proficiency 70
-      tags: ['Greetings', 'Questions'], 
-      notes: 'Informal way to ask how someone is doing. For formal situations use "¿Cómo está usted?"',
-      sourceLanguage: 'spanish',
-      targetLanguage: 'english'
-    },
-    { 
-      id: 3, 
-      phrase: 'Gracias', 
-      translation: 'Thank you', 
-      learned: true, // Converted from proficiency 95
-      tags: ['Common phrases', 'Beginner'], 
-      notes: 'The standard way to say thank you. You can add "muchas" before it for "thank you very much".',
-      sourceLanguage: 'spanish',
-      targetLanguage: 'english'
-    },
-    { 
-      id: 4, 
-      phrase: 'Por favor', 
-      translation: 'Please', 
-      learned: true, // Converted from proficiency 90
-      tags: ['Common phrases', 'Beginner'], 
-      notes: 'Used to make polite requests. Can be placed at the beginning or end of a sentence.',
-      sourceLanguage: 'spanish',
-      targetLanguage: 'english'
-    },
-    { 
-      id: 5, 
-      phrase: 'Lo siento', 
-      translation: 'I\'m sorry', 
+      id: 41, 
+      phrase: 'Здравствуйте (Zdravstvuyte)', 
+      translation: 'Hello', 
       learned: false, // Converted from proficiency 60
-      tags: ['Common phrases', 'Expressions', 'Beginner'], 
-      notes: 'Used to apologize. For more serious apologies, you can say "Lo siento mucho" (I\'m very sorry).',
-      sourceLanguage: 'spanish',
+      tags: ['Greetings', 'Beginner'], 
+      notes: 'Formal greeting. "Привет" (Privet) is the informal version.',
+      sourceLanguage: 'russian',
       targetLanguage: 'english'
     },
     { 
-      id: 6, 
-      phrase: 'Buenas noches', 
-      translation: 'Good evening/night', 
-      learned: true, // Converted from proficiency 80
-      tags: ['Greetings', 'Evening', 'Beginner'], 
-      notes: 'Used in the evening and at night as both a greeting and a farewell.',
-      sourceLanguage: 'spanish',
-      targetLanguage: 'english'
-    },
-    { 
-      id: 7, 
-      phrase: 'Adiós', 
-      translation: 'Goodbye', 
-      learned: true, // Converted from proficiency 95
-      tags: ['Farewells', 'Beginner'], 
-      notes: 'Formal way to say goodbye. "Hasta luego" (see you later) is often more common.',
-      sourceLanguage: 'spanish',
-      targetLanguage: 'english'
-    },
-    { 
-      id: 8, 
-      phrase: 'Hasta mañana', 
-      translation: 'See you tomorrow', 
-      learned: false, // Converted from proficiency 75
-      tags: ['Farewells', 'Intermediate'], 
-      notes: 'A common way to say goodbye when you expect to see the person the next day.',
-      sourceLanguage: 'spanish',
-      targetLanguage: 'english'
-    },
-    { 
-      id: 9, 
-      phrase: 'Mucho gusto', 
-      translation: 'Nice to meet you', 
+      id: 42, 
+      phrase: 'Как дела? (Kak dela?)', 
+      translation: 'How are you?', 
       learned: false, // Converted from proficiency 65
-      tags: ['Greetings', 'Introductions', 'Beginner'], 
-      notes: 'Used when meeting someone for the first time.',
-      sourceLanguage: 'spanish',
+      tags: ['Greetings', 'Questions', 'Beginner'], 
+      notes: 'The common way to ask how someone is doing.',
+      sourceLanguage: 'russian',
       targetLanguage: 'english'
     },
     { 
-      id: 10, 
-      phrase: 'No entiendo', 
-      translation: 'I don\'t understand', 
+      id: 43, 
+      phrase: 'Спасибо (Spasibo)', 
+      translation: 'Thank you', 
+      learned: true, // Converted from proficiency 80
+      tags: ['Common phrases', 'Beginner'], 
+      notes: 'Basic way to express thanks in Russian.',
+      sourceLanguage: 'russian',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 44, 
+      phrase: 'Пожалуйста (Pozhaluysta)', 
+      translation: 'Please/You\'re welcome', 
+      learned: false, // Converted from proficiency 70
+      tags: ['Common phrases', 'Beginner'], 
+      notes: 'Like German "bitte", this can mean both "please" and "you\'re welcome".',
+      sourceLanguage: 'russian',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 45, 
+      phrase: 'Извините (Izvinite)', 
+      translation: 'I\'m sorry/Excuse me', 
+      learned: false, // Converted from proficiency 55
+      tags: ['Common phrases', 'Expressions', 'Beginner'], 
+      notes: 'Formal way to apologize or get someone\'s attention.',
+      sourceLanguage: 'russian',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 46, 
+      phrase: '안녕하세요 (Annyeong haseyo) - 만나서 반갑습니다. 저는 한국어를 공부하고 있습니다. 천천히 말해 주세요.', 
+      translation: 'Hello - Nice to meet you. I am studying Korean. Please speak slowly.', 
+      learned: false, // Converted from proficiency 75
+      tags: ['Greetings', 'Beginner'], 
+      notes: 'Standard greeting in Korean. "안녕" (Annyeong) is casual. Extended with useful phrases for language learners when meeting native speakers.',
+      sourceLanguage: 'korean',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 47, 
+      phrase: '어떻게 지내세요? (Eotteoke jinaeseyo?)', 
+      translation: 'How are you?', 
+      learned: false, // Converted from proficiency 50
+      tags: ['Greetings', 'Questions', 'Intermediate'], 
+      notes: 'Formal way to ask how someone has been doing.',
+      sourceLanguage: 'korean',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 48, 
+      phrase: '감사합니다 (Gamsahamnida)', 
+      translation: 'Thank you', 
       learned: true, // Converted from proficiency 85
-      tags: ['Common phrases', 'Learning', 'Beginner'], 
-      notes: 'Very useful phrase when learning a language. You can follow it with "¿Puedes repetir?" (Can you repeat?)',
-      sourceLanguage: 'spanish',
+      tags: ['Common phrases', 'Beginner'], 
+      notes: 'Formal way to say thank you. "고마워" (Gomawo) is casual.',
+      sourceLanguage: 'korean',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 49, 
+      phrase: '주세요 (Juseyo)', 
+      translation: 'Please give me', 
+      learned: false, // Converted from proficiency 70
+      tags: ['Common phrases', 'Beginner'], 
+      notes: 'Used when asking for something. Add the item before "주세요".',
+      sourceLanguage: 'korean',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 50, 
+      phrase: '죄송합니다 (Joesonghamnida)', 
+      translation: 'I\'m sorry', 
+      learned: false, // Converted from proficiency 65
+      tags: ['Common phrases', 'Expressions', 'Beginner'], 
+      notes: 'Formal apology. "미안해" (Mianhae) is the casual version.',
+      sourceLanguage: 'korean',
       targetLanguage: 'english'
     }
   ];
