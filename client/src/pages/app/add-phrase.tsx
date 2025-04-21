@@ -110,7 +110,20 @@ export default function AddPhrase() {
               </div>
 
               <div className="sm:col-span-6">
-                <Label htmlFor="tags">Tags (max 3)</Label>
+                <Label htmlFor="notes">Notes (optional)</Label>
+                <Textarea 
+                  id="notes"
+                  name="notes"
+                  placeholder="Add any notes or context about this phrase"
+                  rows={3}
+                />
+                <p className="mt-2 text-sm text-gray-500">
+                  Add explanations, context, or example sentences using this phrase.
+                </p>
+              </div>
+
+              <div className="sm:col-span-6">
+                <Label htmlFor="tags">Tags (optional, max 3)</Label>
                 <div className="flex flex-wrap gap-2 mb-2">
                   {selectedTags.map(tag => (
                     <Badge key={tag} className="px-2 py-1 bg-primary-500/10 text-primary-700 hover:bg-primary-500/20">
@@ -168,45 +181,6 @@ export default function AddPhrase() {
                 <p className="mt-2 text-sm text-gray-500">
                   Add up to 3 tags to organize your phrases. Press Enter or click + to add.
                 </p>
-              </div>
-
-              <div className="sm:col-span-4">
-                <Label htmlFor="notes">Notes (optional)</Label>
-                <Input 
-                  id="notes"
-                  name="notes"
-                  placeholder="Add any notes about this phrase"
-                />
-              </div>
-
-              <div className="sm:col-span-6">
-                <Label htmlFor="context">Context (optional)</Label>
-                <Textarea 
-                  id="context"
-                  name="context"
-                  placeholder="Brief context or example sentence using this phrase"
-                  rows={3}
-                />
-                <p className="mt-2 text-sm text-gray-500">
-                  Brief context or example sentence using this phrase.
-                </p>
-              </div>
-
-              <div className="sm:col-span-6">
-                <div className="flex items-center space-x-2">
-                  <Checkbox id="add-to-practice" />
-                  <div>
-                    <Label 
-                      htmlFor="add-to-practice" 
-                      className="font-medium text-gray-700"
-                    >
-                      Add to practice list
-                    </Label>
-                    <p className="text-gray-500 text-sm">
-                      This phrase will be added to your practice queue.
-                    </p>
-                  </div>
-                </div>
               </div>
             </div>
 
