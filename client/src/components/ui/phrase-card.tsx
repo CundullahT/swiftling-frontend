@@ -6,7 +6,8 @@ import { cn } from "@/lib/utils";
 interface PhraseCardProps {
   phrase: string;
   translation: string;
-  category: string;
+  category?: string; // Keep for backward compatibility
+  tags?: string[];
   proficiency: number;
   notes?: string;
   onEdit?: () => void;
@@ -19,6 +20,7 @@ export function PhraseCard({
   phrase,
   translation,
   category,
+  tags,
   proficiency,
   notes,
   onEdit,
@@ -40,11 +42,19 @@ export function PhraseCard({
           <p className="text-lg font-medium text-primary">{phrase}</p>
           <p className="text-md text-gray-500">{translation}</p>
         </div>
-        <div className="flex items-center">
-          <Badge variant="outline" className="bg-slate-100">
-            {category}
-          </Badge>
-          <div className="ml-4 flex-shrink-0 flex">
+        <div className="flex flex-wrap items-center gap-2">
+          {tags && tags.length > 0 ? (
+            tags.map((tag, index) => (
+              <Badge key={index} variant="outline" className="bg-slate-100">
+                {tag}
+              </Badge>
+            ))
+          ) : category ? (
+            <Badge variant="outline" className="bg-slate-100">
+              {category}
+            </Badge>
+          ) : null}
+          <div className="flex-shrink-0 flex">
             <Button
               variant="ghost"
               size="icon"

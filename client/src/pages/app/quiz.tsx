@@ -20,7 +20,7 @@ import {
 import { LanguageButton } from "@/components/ui/language-button";
 import { Globe, BookOpen, HelpCircle, Volume2 } from "lucide-react";
 import { 
-  CATEGORIES, 
+  SAMPLE_TAGS, 
   QUIZ_TYPES, 
   QUIZ_DIFFICULTIES, 
   QUIZ_LENGTHS, 
@@ -97,16 +97,16 @@ export default function Quiz() {
           <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">Quiz Settings</h3>
           <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
             <div className="sm:col-span-3">
-              <Label htmlFor="quiz-category">Category</Label>
+              <Label htmlFor="quiz-tag">Filter by Tag</Label>
               <Select defaultValue="all">
-                <SelectTrigger id="quiz-category">
-                  <SelectValue placeholder="All Categories" />
+                <SelectTrigger id="quiz-tag">
+                  <SelectValue placeholder="All Tags" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Categories</SelectItem>
-                  {CATEGORIES.map((category) => (
-                    <SelectItem key={category} value={category.toLowerCase()}>
-                      {category}
+                  <SelectItem value="all">All Tags</SelectItem>
+                  {SAMPLE_TAGS.map((tag) => (
+                    <SelectItem key={tag} value={tag.toLowerCase()}>
+                      {tag}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -179,7 +179,7 @@ export default function Quiz() {
                 <TableRow>
                   <TableHead>Date</TableHead>
                   <TableHead>Quiz Type</TableHead>
-                  <TableHead>Category</TableHead>
+                  <TableHead>Tags</TableHead>
                   <TableHead>Score</TableHead>
                   <TableHead>Time</TableHead>
                 </TableRow>

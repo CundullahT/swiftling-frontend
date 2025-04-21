@@ -6,15 +6,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
-} from "@/components/ui/select";
+  Badge,
+  badgeVariants
+} from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
-import { CATEGORIES } from "@/lib/constants";
+import { SAMPLE_TAGS } from "@/lib/constants";
+import { X, Plus } from "lucide-react";
 
 export default function AddPhrase() {
   // Placeholder for auth check - would be tied to a real auth system in future
@@ -23,6 +21,11 @@ export default function AddPhrase() {
   
   const [, setLocation] = useLocation();
   const [multiplePhrasesValue, setMultiplePhrasesValue] = useState("");
+  
+  // Tags state
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [tagInput, setTagInput] = useState("");
+  const [filteredSuggestions, setFilteredSuggestions] = useState<string[]>([]);
 
   // Handle form submission - would connect to API in real implementation
   const handleSubmit = (e: React.FormEvent) => {
@@ -31,6 +34,49 @@ export default function AddPhrase() {
     setLocation("/my-list");
   };
 
+  // Tag management functions
+  const handleTagInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setTagInput(value);
+    
+    if (value.trim()) {
+      // Filter suggestions based on input
+      const filtered = SAMPLE_TAGS.filter(tag => 
+        tag.toLowerCase().includes(value.toLowerCase()) && 
+        !selectedTags.includes(tag)
+      );
+      setFilteredSuggestions(filtered);
+    } else {
+      setFilteredSuggestions([]);
+    }
+  };
+  
+  const addTag = (tag: string) => {
+    if (!tag.trim()) return;
+    
+    // Check if we've reached the maximum tags limit
+    if (selectedTags.length >= 3) return;
+    
+    // If tag doesn't exist in selected tags, add it
+    if (!selectedTags.includes(tag)) {
+      setSelectedTags([...selectedTags, tag]);
+    }
+    
+    setTagInput('');
+    setFilteredSuggestions([]);
+  };
+  
+  const removeTag = (tagToRemove: string) => {
+    setSelectedTags(selectedTags.filter(tag => tag !== tagToRemove));
+  };
+  
+  const handleTagKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && tagInput) {
+      e.preventDefault(); // Prevent form submission
+      addTag(tagInput);
+    }
+  };
+  
   // Handle multiple phrases submission
   const handleMultipleSubmit = () => {
     // Process and save multiple phrases logic would go here
@@ -63,20 +109,65 @@ export default function AddPhrase() {
                 />
               </div>
 
-              <div className="sm:col-span-2">
-                <Label htmlFor="category">Category</Label>
-                <Select defaultValue={CATEGORIES[0].toLowerCase()}>
-                  <SelectTrigger id="category">
-                    <SelectValue placeholder="Select category" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {CATEGORIES.map((category) => (
-                      <SelectItem key={category} value={category.toLowerCase()}>
-                        {category}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+              <div className="sm:col-span-6">
+                <Label htmlFor="tags">Tags (max 3)</Label>
+                <div className="flex flex-wrap gap-2 mb-2">
+                  {selectedTags.map(tag => (
+                    <Badge key={tag} className="px-2 py-1 bg-primary-500/10 text-primary-700 hover:bg-primary-500/20">
+                      {tag}
+                      <button
+                        type="button"
+                        onClick={() => removeTag(tag)}
+                        className="ml-1 rounded-full outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </Badge>
+                  ))}
+                </div>
+                
+                <div className="relative">
+                  <Input
+                    id="tags"
+                    placeholder={selectedTags.length >= 3 ? "Maximum tags reached" : "Type to add a tag..."}
+                    value={tagInput}
+                    onChange={handleTagInputChange}
+                    onKeyDown={handleTagKeyDown}
+                    disabled={selectedTags.length >= 3}
+                    className="pr-8"
+                  />
+                  {tagInput && (
+                    <button
+                      type="button"
+                      className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+                      onClick={() => addTag(tagInput)}
+                      disabled={selectedTags.length >= 3}
+                    >
+                      <Plus className="h-4 w-4" />
+                    </button>
+                  )}
+                  
+                  {/* Tag suggestions */}
+                  {filteredSuggestions.length > 0 && (
+                    <div className="absolute z-10 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base overflow-auto focus:outline-none sm:text-sm">
+                      <ul className="divide-y divide-gray-200">
+                        {filteredSuggestions.map((suggestion, index) => (
+                          <li
+                            key={index}
+                            className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                            onClick={() => addTag(suggestion)}
+                          >
+                            {suggestion}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+                
+                <p className="mt-2 text-sm text-gray-500">
+                  Add up to 3 tags to organize your phrases. Press Enter or click + to add.
+                </p>
               </div>
 
               <div className="sm:col-span-4">
@@ -140,12 +231,12 @@ export default function AddPhrase() {
             <div className="mb-4">
               <p className="text-sm text-gray-500">
                 Enter one phrase per line in the format: 
-                <span className="font-medium"> phrase | translation | category (optional)</span>
+                <span className="font-medium"> phrase | translation | tags (optional, comma separated)</span>
               </p>
             </div>
             <Textarea 
               rows={5} 
-              placeholder="Buenos días | Good morning | Greetings"
+              placeholder="Buenos días | Good morning | Greetings,Morning,Spanish"
               value={multiplePhrasesValue}
               onChange={(e) => setMultiplePhrasesValue(e.target.value)}
             />

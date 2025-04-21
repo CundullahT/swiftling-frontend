@@ -16,7 +16,8 @@ export const PROFICIENCY_LEVELS = [
   { id: 'fluent', name: 'Fluent' },
 ];
 
-export const CATEGORIES = [
+// Sample tags - these would normally be fetched from user data
+export const SAMPLE_TAGS = [
   'Greetings',
   'Common phrases',
   'Food',
@@ -26,7 +27,15 @@ export const CATEGORIES = [
   'Numbers',
   'Time',
   'Weather',
-  'Shopping'
+  'Shopping',
+  'Verbs',
+  'Nouns',
+  'Adjectives',
+  'Vocabulary',
+  'Slang',
+  'Idioms',
+  'Beginner',
+  'Advanced'
 ];
 
 export const QUIZ_TYPES = [

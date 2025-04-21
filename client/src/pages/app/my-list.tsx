@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/select";
 import { Search } from "lucide-react";
 import { PhraseCard } from "@/components/ui/phrase-card";
-import { CATEGORIES } from "@/lib/constants";
+import { SAMPLE_TAGS } from "@/lib/constants";
 import { useState } from "react";
 import { Link } from "wouter";
 import {
@@ -50,7 +50,7 @@ export default function MyList() {
       id: 1, 
       phrase: 'Buenos días', 
       translation: 'Good morning', 
-      category: 'Greetings', 
+      tags: ['Greetings', 'Morning', 'Beginner'], 
       proficiency: 85,
       notes: 'Used as a morning greeting until around noon. The informal version is just "Hola".'
     },
@@ -58,7 +58,7 @@ export default function MyList() {
       id: 2, 
       phrase: '¿Cómo estás?', 
       translation: 'How are you?', 
-      category: 'Greetings', 
+      tags: ['Greetings', 'Questions'], 
       proficiency: 70,
       notes: 'Informal way to ask how someone is doing. For formal situations use "¿Cómo está usted?"'
     },
@@ -66,7 +66,7 @@ export default function MyList() {
       id: 3, 
       phrase: 'Gracias', 
       translation: 'Thank you', 
-      category: 'Common phrases', 
+      tags: ['Common phrases', 'Beginner'], 
       proficiency: 95,
       notes: 'The standard way to say thank you. You can add "muchas" before it for "thank you very much".'
     },
@@ -74,7 +74,7 @@ export default function MyList() {
       id: 4, 
       phrase: 'Por favor', 
       translation: 'Please', 
-      category: 'Common phrases', 
+      tags: ['Common phrases', 'Beginner'], 
       proficiency: 90,
       notes: 'Used to make polite requests. Can be placed at the beginning or end of a sentence.'
     },
@@ -82,7 +82,7 @@ export default function MyList() {
       id: 5, 
       phrase: 'Lo siento', 
       translation: 'I\'m sorry', 
-      category: 'Common phrases', 
+      tags: ['Common phrases', 'Expressions', 'Beginner'], 
       proficiency: 60,
       notes: 'Used to apologize. For more serious apologies, you can say "Lo siento mucho" (I\'m very sorry).'
     }
@@ -121,14 +121,14 @@ export default function MyList() {
           </div>
           <div className="sm:w-1/4">
             <Select defaultValue="all">
-              <SelectTrigger id="category">
-                <SelectValue placeholder="All Categories" />
+              <SelectTrigger id="tag">
+                <SelectValue placeholder="Filter by Tag" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Categories</SelectItem>
-                {CATEGORIES.map((category) => (
-                  <SelectItem key={category} value={category.toLowerCase()}>
-                    {category}
+                <SelectItem value="all">All Tags</SelectItem>
+                {SAMPLE_TAGS.map((tag) => (
+                  <SelectItem key={tag} value={tag.toLowerCase()}>
+                    {tag}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -158,7 +158,7 @@ export default function MyList() {
               key={phrase.id}
               phrase={phrase.phrase}
               translation={phrase.translation}
-              category={phrase.category}
+              tags={phrase.tags}
               proficiency={phrase.proficiency}
               notes={phrase.notes}
               onEdit={() => {}}
