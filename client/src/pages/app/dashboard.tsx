@@ -2,6 +2,99 @@ import { useAuthRedirect } from "@/hooks/use-auth-redirect";
 import { Card, CardContent } from "@/components/ui/card";
 import { BookOpen, Star } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { useState } from "react";
+
+// PieChart component
+interface PieChartProps {
+  data: { value: number; color: string }[];
+  size?: number;
+  className?: string;
+  showLabels?: boolean;
+}
+
+function PieChart({ data, size = 120, className = "", showLabels = false }: PieChartProps) {
+  const total = data.reduce((sum, item) => sum + item.value, 0);
+  
+  // Calculate each slice's percentage of the whole
+  const slices = data.map(item => ({
+    ...item,
+    percentage: (item.value / total) * 100
+  }));
+  
+  // Calculate the SVG arc parameters
+  let cumulativePercentage = 0;
+  const slicesWithPaths = slices.map(slice => {
+    // Convert percentages to coordinates on the circle
+    const startAngle = (cumulativePercentage / 100) * 2 * Math.PI;
+    cumulativePercentage += slice.percentage;
+    const endAngle = (cumulativePercentage / 100) * 2 * Math.PI;
+    
+    // Calculate the SVG path
+    const radius = size / 2;
+    const startX = radius + radius * Math.sin(startAngle);
+    const startY = radius - radius * Math.cos(startAngle);
+    const endX = radius + radius * Math.sin(endAngle);
+    const endY = radius - radius * Math.cos(endAngle);
+    
+    // Use the arc flag to draw the proper path depending on the angle
+    const largeArcFlag = slice.percentage > 50 ? 1 : 0;
+    
+    // Create the SVG path
+    const path = `
+      M ${radius},${radius}
+      L ${startX},${startY}
+      A ${radius},${radius} 0 ${largeArcFlag},1 ${endX},${endY}
+      Z
+    `;
+    
+    return {
+      ...slice,
+      path
+    };
+  });
+  
+  return (
+    <div className={`relative ${className}`} style={{ width: size, height: size }}>
+      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+        {slicesWithPaths.map((slice, i) => (
+          <path 
+            key={i} 
+            d={slice.path} 
+            fill={slice.color} 
+            stroke="white" 
+            strokeWidth="1"
+          />
+        ))}
+      </svg>
+      
+      {/* Center circle (optional) */}
+      <div 
+        className="absolute bg-white rounded-full flex items-center justify-center"
+        style={{ 
+          top: '25%', 
+          left: '25%', 
+          width: '50%', 
+          height: '50%',
+          boxShadow: '0 0 0 3px white'
+        }}
+      >
+        <span className="text-sm font-semibold">{total}</span>
+      </div>
+      
+      {/* Labels */}
+      {showLabels && (
+        <div className="mt-2 flex flex-col gap-1">
+          {slices.map((slice, i) => (
+            <div key={i} className="flex items-center text-xs">
+              <div className="w-3 h-3 mr-1" style={{ backgroundColor: slice.color }}></div>
+              <span>{slice.value} ({Math.round(slice.percentage)}%)</span>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function Dashboard() {
   // Placeholder for auth check - would be tied to a real auth system in future
@@ -58,56 +151,100 @@ export default function Dashboard() {
       <Card className="mb-6">
         <CardContent className="pt-6">
           <h2 className="text-lg font-semibold text-gray-900 mb-4">Progress Statistics</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
             {/* Daily Progress */}
             <div className="bg-blue-50 rounded-lg p-4">
-              <h3 className="text-sm font-medium text-gray-500">Daily Progress</h3>
-              <div className="mt-1 flex justify-between items-baseline">
-                <p className="text-2xl font-semibold text-primary">{progressStats.daily.total}</p>
-                <p className="text-sm text-gray-600">Phrases Added</p>
-              </div>
-              <div className="mt-1 flex justify-between items-baseline">
-                <p className="text-xl font-medium text-green-600">{progressStats.daily.learned}</p>
-                <p className="text-sm text-gray-600">Learned</p>
+              <h3 className="text-sm font-medium text-gray-500 mb-2">Daily Progress</h3>
+              <div className="flex flex-col items-center">
+                <PieChart 
+                  data={[
+                    { value: progressStats.daily.learned, color: 'rgb(34, 197, 94)' }, // Green for learned
+                    { value: progressStats.daily.total - progressStats.daily.learned, color: 'rgb(209, 213, 219)' } // Gray for not learned
+                  ]}
+                  size={100}
+                />
+                <div className="mt-3 flex gap-4 text-center">
+                  <div>
+                    <p className="text-xs text-gray-500">Added</p>
+                    <p className="text-lg font-semibold text-primary">{progressStats.daily.total}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-500">Learned</p>
+                    <p className="text-lg font-semibold text-green-600">{progressStats.daily.learned}</p>
+                  </div>
+                </div>
               </div>
             </div>
             
             {/* Weekly Progress */}
             <div className="bg-purple-50 rounded-lg p-4">
-              <h3 className="text-sm font-medium text-gray-500">Weekly Progress</h3>
-              <div className="mt-1 flex justify-between items-baseline">
-                <p className="text-2xl font-semibold text-primary">{progressStats.weekly.total}</p>
-                <p className="text-sm text-gray-600">Phrases Added</p>
-              </div>
-              <div className="mt-1 flex justify-between items-baseline">
-                <p className="text-xl font-medium text-green-600">{progressStats.weekly.learned}</p>
-                <p className="text-sm text-gray-600">Learned</p>
+              <h3 className="text-sm font-medium text-gray-500 mb-2">Weekly Progress</h3>
+              <div className="flex flex-col items-center">
+                <PieChart 
+                  data={[
+                    { value: progressStats.weekly.learned, color: 'rgb(168, 85, 247)' }, // Purple for learned
+                    { value: progressStats.weekly.total - progressStats.weekly.learned, color: 'rgb(209, 213, 219)' } // Gray for not learned
+                  ]}
+                  size={100}
+                />
+                <div className="mt-3 flex gap-4 text-center">
+                  <div>
+                    <p className="text-xs text-gray-500">Added</p>
+                    <p className="text-lg font-semibold text-primary">{progressStats.weekly.total}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-500">Learned</p>
+                    <p className="text-lg font-semibold text-purple-600">{progressStats.weekly.learned}</p>
+                  </div>
+                </div>
               </div>
             </div>
             
             {/* Monthly Progress */}
             <div className="bg-amber-50 rounded-lg p-4">
-              <h3 className="text-sm font-medium text-gray-500">Monthly Progress</h3>
-              <div className="mt-1 flex justify-between items-baseline">
-                <p className="text-2xl font-semibold text-primary">{progressStats.monthly.total}</p>
-                <p className="text-sm text-gray-600">Phrases Added</p>
-              </div>
-              <div className="mt-1 flex justify-between items-baseline">
-                <p className="text-xl font-medium text-green-600">{progressStats.monthly.learned}</p>
-                <p className="text-sm text-gray-600">Learned</p>
+              <h3 className="text-sm font-medium text-gray-500 mb-2">Monthly Progress</h3>
+              <div className="flex flex-col items-center">
+                <PieChart 
+                  data={[
+                    { value: progressStats.monthly.learned, color: 'rgb(217, 119, 6)' }, // Amber for learned
+                    { value: progressStats.monthly.total - progressStats.monthly.learned, color: 'rgb(209, 213, 219)' } // Gray for not learned
+                  ]}
+                  size={100}
+                />
+                <div className="mt-3 flex gap-4 text-center">
+                  <div>
+                    <p className="text-xs text-gray-500">Added</p>
+                    <p className="text-lg font-semibold text-primary">{progressStats.monthly.total}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-500">Learned</p>
+                    <p className="text-lg font-semibold text-amber-600">{progressStats.monthly.learned}</p>
+                  </div>
+                </div>
               </div>
             </div>
             
             {/* Total Progress */}
             <div className="bg-emerald-50 rounded-lg p-4">
-              <h3 className="text-sm font-medium text-gray-500">Total Progress</h3>
-              <div className="mt-1 flex justify-between items-baseline">
-                <p className="text-2xl font-semibold text-primary">{progressStats.total.total}</p>
-                <p className="text-sm text-gray-600">Phrases Added</p>
-              </div>
-              <div className="mt-1 flex justify-between items-baseline">
-                <p className="text-xl font-medium text-green-600">{progressStats.total.learned}</p>
-                <p className="text-sm text-gray-600">Learned</p>
+              <h3 className="text-sm font-medium text-gray-500 mb-2">Total Progress</h3>
+              <div className="flex flex-col items-center">
+                <PieChart 
+                  data={[
+                    { value: progressStats.total.learned, color: 'rgb(5, 150, 105)' }, // Emerald for learned
+                    { value: progressStats.total.total - progressStats.total.learned, color: 'rgb(209, 213, 219)' } // Gray for not learned
+                  ]}
+                  size={100}
+                />
+                <div className="mt-3 flex gap-4 text-center">
+                  <div>
+                    <p className="text-xs text-gray-500">Added</p>
+                    <p className="text-lg font-semibold text-primary">{progressStats.total.total}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-500">Learned</p>
+                    <p className="text-lg font-semibold text-emerald-600">{progressStats.total.learned}</p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
