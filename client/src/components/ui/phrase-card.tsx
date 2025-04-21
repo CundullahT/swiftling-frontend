@@ -10,6 +10,8 @@ interface PhraseCardProps {
   tags?: string[];
   proficiency: number;
   notes?: string;
+  sourceLanguage?: string;
+  targetLanguage?: string;
   onEdit?: () => void;
   onDelete?: () => void;
   onSpeak?: () => void;
@@ -23,6 +25,8 @@ export function PhraseCard({
   tags,
   proficiency,
   notes,
+  sourceLanguage,
+  targetLanguage,
   onEdit,
   onDelete,
   onSpeak,
