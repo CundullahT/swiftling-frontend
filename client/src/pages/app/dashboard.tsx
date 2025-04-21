@@ -276,8 +276,12 @@ export default function Dashboard() {
               <TableBody>
                 {recentPhrases.map((phrase) => (
                   <TableRow key={phrase.id}>
-                    <TableCell className="font-medium">{phrase.phrase}</TableCell>
-                    <TableCell>{phrase.translation}</TableCell>
+                    <TableCell className="font-medium">
+                      <div className="line-clamp-2 overflow-hidden">{phrase.phrase}</div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="line-clamp-2 overflow-hidden">{phrase.translation}</div>
+                    </TableCell>
                     <TableCell className="text-right">
                       {phrase.learned ? (
                         <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 whitespace-nowrap">

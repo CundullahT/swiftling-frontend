@@ -42,9 +42,9 @@ export function PhraseCard({
   return (
     <div className="px-4 py-4 sm:px-6 border-b border-gray-200">
       <div className="flex items-center justify-between flex-wrap gap-2">
-        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
-          <p className="text-lg font-medium text-primary">{phrase}</p>
-          <p className="text-md text-gray-500">{translation}</p>
+        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 max-w-full sm:max-w-[70%]">
+          <p className="text-lg font-medium text-primary line-clamp-2 overflow-hidden break-words">{phrase}</p>
+          <p className="text-md text-gray-500 line-clamp-2 overflow-hidden break-words">{translation}</p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           {tags && tags.length > 0 ? (
