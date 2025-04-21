@@ -55,7 +55,10 @@ export default function Sidebar({ onClose }: SidebarProps) {
     <nav className="fixed top-0 left-0 bottom-0 w-80 bg-white shadow-xl transform transition ease-in-out duration-300 z-30 flex flex-col h-full">
       <div className="px-4 py-6 border-b border-slate-200">
         <div className="flex items-center justify-between">
-          <span className="text-primary font-bold text-xl">LinguaLearn</span>
+          <div className="flex items-center gap-2">
+            <img src="/assets/logo.png" alt="SwiftLing Logo" className="h-8 w-auto" />
+            <span className="text-primary font-bold text-xl">SwiftLing</span>
+          </div>
           <Button variant="ghost" size="icon" onClick={onClose}>
             <X className="h-6 w-6 text-slate-500" />
           </Button>

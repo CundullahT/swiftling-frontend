@@ -49,8 +49,9 @@ export default function Header() {
                 <Menu className="h-6 w-6 text-slate-700" />
               </Button>
 
-              <Link href="/dashboard" className="text-primary font-bold text-xl">
-                LinguaLearn
+              <Link href="/dashboard" className="text-primary font-bold text-xl flex items-center gap-2">
+                <img src="/assets/logo.png" alt="SwiftLing Logo" className="h-8 w-auto" />
+                <span>SwiftLing</span>
               </Link>
             </div>
             
