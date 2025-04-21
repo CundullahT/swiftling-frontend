@@ -264,34 +264,36 @@ export default function Dashboard() {
       <Card>
         <CardContent className="pt-6">
           <h2 className="text-lg font-semibold text-gray-900 mb-4">Last 10 Phrases Added</h2>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Phrase</TableHead>
-                <TableHead>Translation</TableHead>
-                <TableHead className="text-right">Status</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {recentPhrases.map((phrase) => (
-                <TableRow key={phrase.id}>
-                  <TableCell className="font-medium">{phrase.phrase}</TableCell>
-                  <TableCell>{phrase.translation}</TableCell>
-                  <TableCell className="text-right">
-                    {phrase.learned ? (
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                        Learned
-                      </span>
-                    ) : (
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                        In Progress
-                      </span>
-                    )}
-                  </TableCell>
+          <div className="overflow-x-auto -mx-4 sm:mx-0">
+            <Table className="min-w-full">
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-[30%]">Phrase</TableHead>
+                  <TableHead className="w-[40%]">Translation</TableHead>
+                  <TableHead className="w-[30%] text-right">Status</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {recentPhrases.map((phrase) => (
+                  <TableRow key={phrase.id}>
+                    <TableCell className="font-medium">{phrase.phrase}</TableCell>
+                    <TableCell>{phrase.translation}</TableCell>
+                    <TableCell className="text-right">
+                      {phrase.learned ? (
+                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 whitespace-nowrap">
+                          Learned
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 whitespace-nowrap">
+                          In&nbsp;Progress
+                        </span>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
         </CardContent>
       </Card>
     </div>
