@@ -137,7 +137,24 @@ export const SAMPLE_TAGS = [
   'Slang',
   'Idioms',
   'Beginner',
-  'Advanced'
+  'Intermediate',
+  'Advanced',
+  'Morning',
+  'Evening',
+  'Questions',
+  'Expressions',
+  'Farewells',
+  'Introductions',
+  'Learning',
+  'Directions',
+  'School',
+  'Office',
+  'Transportation',
+  'Emergency',
+  'Medical',
+  'Dining',
+  'Holidays',
+  'Culture'
 ];
 
 export const QUIZ_TYPES = [

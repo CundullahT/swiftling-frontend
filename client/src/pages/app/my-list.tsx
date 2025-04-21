@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
-import { X, Plus, Search } from "lucide-react";
+import { X, Plus, Search, ChevronLeft, ChevronRight } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -56,6 +56,10 @@ export default function MyList() {
   const [searchTerm, setSearchTerm] = useState("");
   const [tagFilter, setTagFilter] = useState<string>("all");
   const [sortOption, setSortOption] = useState<string>("recent");
+  
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   // Form state for edit dialog
   const [editedPhrase, setEditedPhrase] = useState("");
@@ -75,8 +79,9 @@ export default function MyList() {
   const [filteredSourceLanguages, setFilteredSourceLanguages] = useState<typeof LANGUAGES>([]);
   const [filteredTargetLanguages, setFilteredTargetLanguages] = useState<typeof LANGUAGES>([]);
 
-  // Example phrases data with notes
+  // Example phrases data with notes - 50 phrases total
   const [phrases] = useState([
+    // Spanish phrases
     { 
       id: 1, 
       phrase: 'Buenos días', 
@@ -125,6 +130,472 @@ export default function MyList() {
       proficiency: 60,
       notes: 'Used to apologize. For more serious apologies, you can say "Lo siento mucho" (I\'m very sorry).',
       sourceLanguage: 'spanish',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 6, 
+      phrase: 'Buenas noches', 
+      translation: 'Good evening/night', 
+      tags: ['Greetings', 'Evening', 'Beginner'], 
+      proficiency: 80,
+      notes: 'Used in the evening and at night as both a greeting and a farewell.',
+      sourceLanguage: 'spanish',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 7, 
+      phrase: 'Adiós', 
+      translation: 'Goodbye', 
+      tags: ['Farewells', 'Beginner'], 
+      proficiency: 95,
+      notes: 'Formal way to say goodbye. "Hasta luego" (see you later) is often more common.',
+      sourceLanguage: 'spanish',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 8, 
+      phrase: 'Hasta mañana', 
+      translation: 'See you tomorrow', 
+      tags: ['Farewells', 'Intermediate'], 
+      proficiency: 75,
+      notes: 'A common way to say goodbye when you expect to see the person the next day.',
+      sourceLanguage: 'spanish',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 9, 
+      phrase: 'Mucho gusto', 
+      translation: 'Nice to meet you', 
+      tags: ['Greetings', 'Introductions', 'Beginner'], 
+      proficiency: 65,
+      notes: 'Used when meeting someone for the first time.',
+      sourceLanguage: 'spanish',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 10, 
+      phrase: 'No entiendo', 
+      translation: 'I don\'t understand', 
+      tags: ['Common phrases', 'Learning', 'Beginner'], 
+      proficiency: 85,
+      notes: 'Very useful phrase when learning a language. You can follow it with "¿Puedes repetir?" (Can you repeat?)',
+      sourceLanguage: 'spanish',
+      targetLanguage: 'english'
+    },
+    
+    // French phrases
+    { 
+      id: 11, 
+      phrase: 'Bonjour', 
+      translation: 'Hello/Good day', 
+      tags: ['Greetings', 'Beginner'], 
+      proficiency: 90,
+      notes: 'The most common greeting in French, used during the day.',
+      sourceLanguage: 'french',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 12, 
+      phrase: 'Comment ça va?', 
+      translation: 'How are you?', 
+      tags: ['Greetings', 'Questions', 'Beginner'], 
+      proficiency: 75,
+      notes: 'Casual way to ask how someone is doing. "Comment allez-vous?" is more formal.',
+      sourceLanguage: 'french',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 13, 
+      phrase: 'Merci', 
+      translation: 'Thank you', 
+      tags: ['Common phrases', 'Beginner'], 
+      proficiency: 100,
+      notes: 'Basic way to say "thank you". "Merci beaucoup" means "thank you very much".',
+      sourceLanguage: 'french',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 14, 
+      phrase: 'S\'il vous plaît', 
+      translation: 'Please', 
+      tags: ['Common phrases', 'Beginner'], 
+      proficiency: 85,
+      notes: 'Formal way to say "please". "S\'il te plaît" is the informal version.',
+      sourceLanguage: 'french',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 15, 
+      phrase: 'Je suis désolé(e)', 
+      translation: 'I\'m sorry', 
+      tags: ['Common phrases', 'Expressions', 'Beginner'], 
+      proficiency: 70,
+      notes: 'Add "e" at the end if you are female (désolée).',
+      sourceLanguage: 'french',
+      targetLanguage: 'english'
+    },
+    
+    // German phrases
+    { 
+      id: 16, 
+      phrase: 'Guten Tag', 
+      translation: 'Good day', 
+      tags: ['Greetings', 'Beginner'], 
+      proficiency: 80,
+      notes: 'Formal greeting used during the day. "Hallo" is more casual.',
+      sourceLanguage: 'german',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 17, 
+      phrase: 'Wie geht es dir?', 
+      translation: 'How are you?', 
+      tags: ['Greetings', 'Questions', 'Beginner'], 
+      proficiency: 65,
+      notes: 'Informal way to ask how someone is doing. "Wie geht es Ihnen?" is formal.',
+      sourceLanguage: 'german',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 18, 
+      phrase: 'Danke', 
+      translation: 'Thank you', 
+      tags: ['Common phrases', 'Beginner'], 
+      proficiency: 95,
+      notes: 'The basic way to say "thank you". "Vielen Dank" means "many thanks".',
+      sourceLanguage: 'german',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 19, 
+      phrase: 'Bitte', 
+      translation: 'Please/You\'re welcome', 
+      tags: ['Common phrases', 'Beginner'], 
+      proficiency: 85,
+      notes: 'This word can mean both "please" and "you\'re welcome" depending on context.',
+      sourceLanguage: 'german',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 20, 
+      phrase: 'Es tut mir leid', 
+      translation: 'I\'m sorry', 
+      tags: ['Common phrases', 'Expressions', 'Beginner'], 
+      proficiency: 60,
+      notes: 'The standard way to apologize in German.',
+      sourceLanguage: 'german',
+      targetLanguage: 'english'
+    },
+    
+    // Italian phrases
+    { 
+      id: 21, 
+      phrase: 'Buongiorno', 
+      translation: 'Good morning/day', 
+      tags: ['Greetings', 'Beginner'], 
+      proficiency: 85,
+      notes: 'Used as a greeting until the afternoon, when "buonasera" (good evening) is used.',
+      sourceLanguage: 'italian',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 22, 
+      phrase: 'Come stai?', 
+      translation: 'How are you?', 
+      tags: ['Greetings', 'Questions', 'Beginner'], 
+      proficiency: 75,
+      notes: 'Informal way to ask how someone is doing. "Come sta?" is formal.',
+      sourceLanguage: 'italian',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 23, 
+      phrase: 'Grazie', 
+      translation: 'Thank you', 
+      tags: ['Common phrases', 'Beginner'], 
+      proficiency: 100,
+      notes: 'Basic way to say thanks. "Grazie mille" means "a thousand thanks".',
+      sourceLanguage: 'italian',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 24, 
+      phrase: 'Per favore', 
+      translation: 'Please', 
+      tags: ['Common phrases', 'Beginner'], 
+      proficiency: 90,
+      notes: 'Used to make a request polite. "Per piacere" is also commonly used.',
+      sourceLanguage: 'italian',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 25, 
+      phrase: 'Mi dispiace', 
+      translation: 'I\'m sorry', 
+      tags: ['Common phrases', 'Expressions', 'Beginner'], 
+      proficiency: 65,
+      notes: 'Used to apologize in Italian. "Scusi" is used for more minor apologies or to get attention.',
+      sourceLanguage: 'italian',
+      targetLanguage: 'english'
+    },
+    
+    // Japanese phrases
+    { 
+      id: 26, 
+      phrase: 'おはようございます (Ohayou gozaimasu)', 
+      translation: 'Good morning', 
+      tags: ['Greetings', 'Morning', 'Beginner'], 
+      proficiency: 70,
+      notes: 'Formal morning greeting. "おはよう" (Ohayou) is the casual version.',
+      sourceLanguage: 'japanese',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 27, 
+      phrase: 'お元気ですか？ (O-genki desu ka?)', 
+      translation: 'How are you?', 
+      tags: ['Greetings', 'Questions', 'Beginner'], 
+      proficiency: 55,
+      notes: 'Formal way to ask how someone is doing.',
+      sourceLanguage: 'japanese',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 28, 
+      phrase: 'ありがとうございます (Arigatou gozaimasu)', 
+      translation: 'Thank you', 
+      tags: ['Common phrases', 'Beginner'], 
+      proficiency: 80,
+      notes: 'Formal way to say thank you. "ありがとう" (Arigatou) is casual.',
+      sourceLanguage: 'japanese',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 29, 
+      phrase: 'お願いします (Onegai shimasu)', 
+      translation: 'Please', 
+      tags: ['Common phrases', 'Beginner'], 
+      proficiency: 75,
+      notes: 'Used when making a request or asking for something.',
+      sourceLanguage: 'japanese',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 30, 
+      phrase: 'すみません (Sumimasen)', 
+      translation: 'Excuse me/I\'m sorry', 
+      tags: ['Common phrases', 'Expressions', 'Beginner'], 
+      proficiency: 85,
+      notes: 'Versatile expression used to say "excuse me", "I\'m sorry", or "thank you" depending on context.',
+      sourceLanguage: 'japanese',
+      targetLanguage: 'english'
+    },
+    
+    // Mandarin Chinese phrases
+    { 
+      id: 31, 
+      phrase: '你好 (Nǐ hǎo)', 
+      translation: 'Hello', 
+      tags: ['Greetings', 'Beginner'], 
+      proficiency: 90,
+      notes: 'The most common greeting in Mandarin Chinese.',
+      sourceLanguage: 'mandarin',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 32, 
+      phrase: '你好吗？ (Nǐ hǎo ma?)', 
+      translation: 'How are you?', 
+      tags: ['Greetings', 'Questions', 'Beginner'], 
+      proficiency: 75,
+      notes: 'A common way to ask how someone is doing.',
+      sourceLanguage: 'mandarin',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 33, 
+      phrase: '谢谢 (Xièxiè)', 
+      translation: 'Thank you', 
+      tags: ['Common phrases', 'Beginner'], 
+      proficiency: 95,
+      notes: 'The standard way to say thank you in Mandarin.',
+      sourceLanguage: 'mandarin',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 34, 
+      phrase: '请 (Qǐng)', 
+      translation: 'Please', 
+      tags: ['Common phrases', 'Beginner'], 
+      proficiency: 80,
+      notes: 'Used when making a request or offering something.',
+      sourceLanguage: 'mandarin',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 35, 
+      phrase: '对不起 (Duìbùqǐ)', 
+      translation: 'I\'m sorry', 
+      tags: ['Common phrases', 'Expressions', 'Beginner'], 
+      proficiency: 70,
+      notes: 'Used to apologize for mistakes or inconveniences.',
+      sourceLanguage: 'mandarin',
+      targetLanguage: 'english'
+    },
+    
+    // Portuguese phrases
+    { 
+      id: 36, 
+      phrase: 'Bom dia', 
+      translation: 'Good morning', 
+      tags: ['Greetings', 'Morning', 'Beginner'], 
+      proficiency: 85,
+      notes: 'Used as a greeting in the morning until noon.',
+      sourceLanguage: 'portuguese',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 37, 
+      phrase: 'Como está?', 
+      translation: 'How are you?', 
+      tags: ['Greetings', 'Questions', 'Beginner'], 
+      proficiency: 70,
+      notes: 'Formal way to ask how someone is doing. "Como vai?" is more casual.',
+      sourceLanguage: 'portuguese',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 38, 
+      phrase: 'Obrigado/Obrigada', 
+      translation: 'Thank you', 
+      tags: ['Common phrases', 'Beginner'], 
+      proficiency: 90,
+      notes: 'Use "obrigado" if you\'re male and "obrigada" if you\'re female.',
+      sourceLanguage: 'portuguese',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 39, 
+      phrase: 'Por favor', 
+      translation: 'Please', 
+      tags: ['Common phrases', 'Beginner'], 
+      proficiency: 95,
+      notes: 'Used to make requests polite, similar to Spanish.',
+      sourceLanguage: 'portuguese',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 40, 
+      phrase: 'Desculpe', 
+      translation: 'Sorry', 
+      tags: ['Common phrases', 'Expressions', 'Beginner'], 
+      proficiency: 75,
+      notes: 'Used for minor apologies or to get attention. "Sinto muito" is for more serious apologies.',
+      sourceLanguage: 'portuguese',
+      targetLanguage: 'english'
+    },
+    
+    // Russian phrases
+    { 
+      id: 41, 
+      phrase: 'Здравствуйте (Zdravstvuyte)', 
+      translation: 'Hello', 
+      tags: ['Greetings', 'Beginner'], 
+      proficiency: 60,
+      notes: 'Formal greeting. "Привет" (Privet) is the informal version.',
+      sourceLanguage: 'russian',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 42, 
+      phrase: 'Как дела? (Kak dela?)', 
+      translation: 'How are you?', 
+      tags: ['Greetings', 'Questions', 'Beginner'], 
+      proficiency: 65,
+      notes: 'The common way to ask how someone is doing.',
+      sourceLanguage: 'russian',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 43, 
+      phrase: 'Спасибо (Spasibo)', 
+      translation: 'Thank you', 
+      tags: ['Common phrases', 'Beginner'], 
+      proficiency: 80,
+      notes: 'Basic way to express thanks in Russian.',
+      sourceLanguage: 'russian',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 44, 
+      phrase: 'Пожалуйста (Pozhaluysta)', 
+      translation: 'Please/You\'re welcome', 
+      tags: ['Common phrases', 'Beginner'], 
+      proficiency: 70,
+      notes: 'Like German "bitte", this can mean both "please" and "you\'re welcome".',
+      sourceLanguage: 'russian',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 45, 
+      phrase: 'Извините (Izvinite)', 
+      translation: 'I\'m sorry/Excuse me', 
+      tags: ['Common phrases', 'Expressions', 'Beginner'], 
+      proficiency: 55,
+      notes: 'Formal way to apologize or get someone\'s attention.',
+      sourceLanguage: 'russian',
+      targetLanguage: 'english'
+    },
+    
+    // Korean phrases
+    { 
+      id: 46, 
+      phrase: '안녕하세요 (Annyeong haseyo)', 
+      translation: 'Hello', 
+      tags: ['Greetings', 'Beginner'], 
+      proficiency: 75,
+      notes: 'Standard greeting in Korean. "안녕" (Annyeong) is casual.',
+      sourceLanguage: 'korean',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 47, 
+      phrase: '어떻게 지내세요? (Eotteoke jinaeseyo?)', 
+      translation: 'How are you?', 
+      tags: ['Greetings', 'Questions', 'Intermediate'], 
+      proficiency: 50,
+      notes: 'Formal way to ask how someone has been doing.',
+      sourceLanguage: 'korean',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 48, 
+      phrase: '감사합니다 (Gamsahamnida)', 
+      translation: 'Thank you', 
+      tags: ['Common phrases', 'Beginner'], 
+      proficiency: 85,
+      notes: 'Formal way to say thank you. "고마워" (Gomawo) is casual.',
+      sourceLanguage: 'korean',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 49, 
+      phrase: '주세요 (Juseyo)', 
+      translation: 'Please give me', 
+      tags: ['Common phrases', 'Beginner'], 
+      proficiency: 70,
+      notes: 'Used when asking for something. Add the item before "주세요".',
+      sourceLanguage: 'korean',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 50, 
+      phrase: '죄송합니다 (Joesonghamnida)', 
+      translation: 'I\'m sorry', 
+      tags: ['Common phrases', 'Expressions', 'Beginner'], 
+      proficiency: 65,
+      notes: 'Formal apology. "미안해" (Mianhae) is the casual version.',
+      sourceLanguage: 'korean',
       targetLanguage: 'english'
     }
   ]);
@@ -379,22 +850,70 @@ export default function MyList() {
       <Card className="mb-6">
         <div className="divide-y divide-gray-200">
           {getFilteredAndSortedPhrases().length > 0 ? (
-            getFilteredAndSortedPhrases().map((phrase) => (
-              <PhraseCard
-                key={phrase.id}
-                phrase={phrase.phrase}
-                translation={phrase.translation}
-                tags={phrase.tags}
-                proficiency={phrase.proficiency}
-                notes={phrase.notes}
-                sourceLanguage={phrase.sourceLanguage}
-                targetLanguage={phrase.targetLanguage}
-                onEdit={() => handleEdit(phrase)}
-                onDelete={() => {}}
-                onSpeak={() => {}}
-                onViewNotes={() => handleViewNotes(phrase)}
-              />
-            ))
+            <>
+              {getFilteredAndSortedPhrases()
+                .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+                .map((phrase) => (
+                  <PhraseCard
+                    key={phrase.id}
+                    phrase={phrase.phrase}
+                    translation={phrase.translation}
+                    tags={phrase.tags}
+                    proficiency={phrase.proficiency}
+                    notes={phrase.notes}
+                    sourceLanguage={phrase.sourceLanguage}
+                    targetLanguage={phrase.targetLanguage}
+                    onEdit={() => handleEdit(phrase)}
+                    onDelete={() => {}}
+                    onSpeak={() => {}}
+                    onViewNotes={() => handleViewNotes(phrase)}
+                  />
+                ))}
+              
+              {/* Pagination */}
+              {getFilteredAndSortedPhrases().length > itemsPerPage && (
+                <div className="p-4 flex justify-center">
+                  <div className="flex items-center space-x-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setCurrentPage(1)}
+                      disabled={currentPage === 1}
+                    >
+                      First
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setCurrentPage(currentPage - 1)}
+                      disabled={currentPage === 1}
+                    >
+                      <ChevronLeft className="h-4 w-4" />
+                    </Button>
+                    <span className="text-sm">
+                      Page {currentPage} of{" "}
+                      {Math.ceil(getFilteredAndSortedPhrases().length / itemsPerPage)}
+                    </span>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setCurrentPage(currentPage + 1)}
+                      disabled={currentPage === Math.ceil(getFilteredAndSortedPhrases().length / itemsPerPage)}
+                    >
+                      <ChevronRight className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setCurrentPage(Math.ceil(getFilteredAndSortedPhrases().length / itemsPerPage))}
+                      disabled={currentPage === Math.ceil(getFilteredAndSortedPhrases().length / itemsPerPage)}
+                    >
+                      Last
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </>
           ) : (
             <div className="px-4 py-8 text-center">
               <p className="text-gray-500">No phrases match your filters.</p>
@@ -404,6 +923,7 @@ export default function MyList() {
                   setSearchTerm("");
                   setTagFilter("all");
                   setSortOption("recent");
+                  setCurrentPage(1);
                 }}
                 className="mt-2"
               >
