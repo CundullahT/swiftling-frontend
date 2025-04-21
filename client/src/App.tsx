@@ -5,11 +5,6 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/not-found";
 
-// Auth Pages
-import Login from "@/pages/auth/login";
-import Signup from "@/pages/auth/signup";
-import ForgotPassword from "@/pages/auth/forgot-password";
-
 // App Pages
 import Dashboard from "@/pages/app/dashboard";
 import MyList from "@/pages/app/my-list";
@@ -24,13 +19,7 @@ import { useState, useEffect } from "react";
 
 function App() {
   const [location] = useLocation();
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-
-  // Check if current route is an authenticated route
-  useEffect(() => {
-    const authenticatedRoutes = ['/dashboard', '/my-list', '/add-phrase', '/quiz', '/settings'];
-    setIsAuthenticated(authenticatedRoutes.some(route => location.startsWith(route)));
-  }, [location]);
+  const [isAuthenticated] = useState(true); // Always authenticated for now
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -40,11 +29,8 @@ function App() {
           
           <main className="flex-1">
             <Switch>
-              {/* Auth Routes */}
-              <Route path="/" component={Login} />
-              <Route path="/login" component={Login} />
-              <Route path="/signup" component={Signup} />
-              <Route path="/forgot-password" component={ForgotPassword} />
+              {/* Main Routes - No authentication pages for now */}
+              <Route path="/" component={Dashboard} />
               
               {/* App Routes */}
               <Route path="/dashboard" component={Dashboard} />

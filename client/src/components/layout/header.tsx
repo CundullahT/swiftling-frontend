@@ -49,23 +49,23 @@ export default function Header() {
                 <Menu className="h-6 w-6 text-slate-700" />
               </Button>
 
-              <Link href="/dashboard">
-                <a className="text-primary font-bold text-xl">LinguaLearn</a>
+              <Link href="/dashboard" className="text-primary font-bold text-xl">
+                LinguaLearn
               </Link>
             </div>
             
             <div className="hidden md:flex items-center space-x-6">
               {navigationItems.map((item) => (
-                <Link key={item.name} href={item.href}>
-                  <a 
-                    className={`text-sm font-medium ${
-                      location === item.href 
-                        ? "text-primary" 
-                        : "text-slate-700 hover:text-primary"
-                    }`}
-                  >
-                    {item.name}
-                  </a>
+                <Link 
+                  key={item.name} 
+                  href={item.href} 
+                  className={`text-sm font-medium ${
+                    location === item.href 
+                      ? "text-primary" 
+                      : "text-slate-700 hover:text-primary"
+                  }`}
+                >
+                  {item.name}
                 </Link>
               ))}
             </div>
@@ -91,14 +91,14 @@ export default function Header() {
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
-                  <Link href="/settings">
-                    <a className="w-full cursor-pointer">Settings</a>
+                  <Link href="/settings" className="w-full cursor-pointer">
+                    Settings
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
-                  <Link href="/login">
-                    <a className="w-full cursor-pointer">Log out</a>
+                  <Link href="/dashboard" className="w-full cursor-pointer">
+                    Log out
                   </Link>
                 </DropdownMenuItem>
               </DropdownMenuContent>
