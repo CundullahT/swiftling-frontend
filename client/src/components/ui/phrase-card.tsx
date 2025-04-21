@@ -42,31 +42,30 @@ export function PhraseCard({
   return (
     <div className="px-4 py-4 sm:px-6 border-b border-primary/10">
       <div className="flex items-start justify-between flex-wrap gap-2">
-        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 max-w-full sm:max-w-[65%]">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 max-w-full sm:max-w-[60%]">
           <p className="text-lg font-medium text-primary line-clamp-2 overflow-hidden break-words">{phrase}</p>
           <p className="text-md text-secondary/70 line-clamp-2 overflow-hidden break-words">{translation}</p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           {/* Tags section for desktop - fixed width column */}
-          <div className="hidden sm:block w-32">
+          <div className="hidden sm:block w-[180px]">
             {tags && tags.length > 0 ? (
-              <div className="flex flex-col gap-1 mb-0.5">
+              <div className="flex flex-row flex-wrap gap-1 mb-0.5">
                 {tags.map((tag, index) => (
-                  <div key={index} className="flex">
-                    <Badge 
-                      variant="outline" 
-                      className="bg-accent/10 hover:bg-accent/20 text-xs text-center px-2 py-0.5 mx-auto text-accent-foreground border-accent/20"
-                    >
-                      {tag}
-                    </Badge>
-                  </div>
+                  <Badge 
+                    key={index}
+                    variant="outline" 
+                    className="bg-accent/10 hover:bg-accent/20 text-xs text-center px-2 py-0.5 text-accent-foreground border-accent/20"
+                  >
+                    {tag}
+                  </Badge>
                 ))}
               </div>
             ) : category ? (
               <div className="flex">
                 <Badge 
                   variant="outline" 
-                  className="bg-accent/10 hover:bg-accent/20 text-xs text-center px-2 py-0.5 mx-auto text-accent-foreground border-accent/20"
+                  className="bg-accent/10 hover:bg-accent/20 text-xs text-center px-2 py-0.5 text-accent-foreground border-accent/20"
                 >
                   {category}
                 </Badge>
