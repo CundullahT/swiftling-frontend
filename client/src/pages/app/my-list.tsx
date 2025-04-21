@@ -744,14 +744,32 @@ export default function MyList() {
   };
   
   const addTag = (tag: string) => {
-    if (!tag.trim()) return;
+    const trimmedTag = tag.trim();
+    if (!trimmedTag) return;
+    
+    // Check if tag length is within limits (3-16 characters)
+    if (trimmedTag.length < 3 || trimmedTag.length > 16) {
+      // Show error for tag length
+      setFormErrors({
+        ...formErrors,
+        tagLength: true
+      });
+      return;
+    }
     
     // Check if we've reached the maximum tags limit
     if (selectedTags.length >= 3) return;
     
     // If tag doesn't exist in selected tags, add it
-    if (!selectedTags.includes(tag)) {
-      setSelectedTags([...selectedTags, tag]);
+    if (!selectedTags.includes(trimmedTag)) {
+      setSelectedTags([...selectedTags, trimmedTag]);
+      // Clear any tag length error
+      if (formErrors.tagLength) {
+        setFormErrors({
+          ...formErrors,
+          tagLength: false
+        });
+      }
     }
     
     setTagInput('');
@@ -774,7 +792,8 @@ export default function MyList() {
     phrase: false,
     translation: false,
     sourceLanguage: false,
-    targetLanguage: false
+    targetLanguage: false,
+    tagLength: false
   });
   
   // Handle form validation
@@ -783,7 +802,8 @@ export default function MyList() {
       phrase: !editedPhrase.trim(),
       translation: !editedTranslation.trim(),
       sourceLanguage: !sourceLanguage,
-      targetLanguage: !targetLanguage
+      targetLanguage: !targetLanguage,
+      tagLength: false // This is handled directly in the addTag function
     };
     
     setFormErrors(errors);
@@ -1413,11 +1433,19 @@ export default function MyList() {
                     id="edit-tags"
                     placeholder={selectedTags.length >= 3 ? "Maximum 3 tags reached" : "Type to add a tag..."}
                     value={tagInput}
-                    onChange={handleTagInputChange}
+                    onChange={(e) => {
+                      handleTagInputChange(e);
+                      if (formErrors.tagLength) {
+                        setFormErrors({...formErrors, tagLength: false});
+                      }
+                    }}
                     onKeyDown={handleTagKeyDown}
-                    className="pr-8"
+                    className={`pr-8 ${formErrors.tagLength ? "border-red-500" : ""}`}
                     disabled={selectedTags.length >= 3}
                   />
+                  {formErrors.tagLength && (
+                    <p className="text-sm text-red-500">Tags must be between 3-16 characters</p>
+                  )}
                   {tagInput && selectedTags.length < 3 && (
                     <button
                       type="button"

@@ -41,23 +41,38 @@ export function PhraseCard({
 
   return (
     <div className="px-4 py-4 sm:px-6 border-b border-gray-200">
-      <div className="flex items-center justify-between flex-wrap gap-2">
-        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 max-w-full sm:max-w-[70%]">
+      <div className="flex items-start justify-between flex-wrap gap-2">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 max-w-full sm:max-w-[65%]">
           <p className="text-lg font-medium text-primary line-clamp-2 overflow-hidden break-words">{phrase}</p>
           <p className="text-md text-gray-500 line-clamp-2 overflow-hidden break-words">{translation}</p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          {tags && tags.length > 0 ? (
-            tags.map((tag, index) => (
-              <Badge key={index} variant="outline" className="bg-slate-100">
-                {tag}
+          <div className="hidden sm:flex sm:flex-col sm:gap-1">
+            {tags && tags.length > 0 ? (
+              tags.map((tag, index) => (
+                <Badge key={index} variant="outline" className="bg-slate-100 text-xs">
+                  {tag}
+                </Badge>
+              ))
+            ) : category ? (
+              <Badge variant="outline" className="bg-slate-100 text-xs">
+                {category}
               </Badge>
-            ))
-          ) : category ? (
-            <Badge variant="outline" className="bg-slate-100">
-              {category}
-            </Badge>
-          ) : null}
+            ) : null}
+          </div>
+          <div className="flex sm:hidden flex-wrap gap-1">
+            {tags && tags.length > 0 ? (
+              tags.map((tag, index) => (
+                <Badge key={index} variant="outline" className="bg-slate-100 text-xs">
+                  {tag}
+                </Badge>
+              ))
+            ) : category ? (
+              <Badge variant="outline" className="bg-slate-100 text-xs">
+                {category}
+              </Badge>
+            ) : null}
+          </div>
           <div className="flex-shrink-0 flex">
             <Button
               variant="ghost"
