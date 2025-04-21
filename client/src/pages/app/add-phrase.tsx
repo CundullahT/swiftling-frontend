@@ -206,7 +206,7 @@ export default function AddPhrase() {
                 </div>
                 {sourceLanguage && (
                   <div className="mt-2">
-                    <Badge className="px-2 py-1 bg-primary-500/10 text-primary-700">
+                    <Badge className="px-2 py-1 bg-primary-500/10 text-primary-700 hover:bg-primary-500/20 transition-colors duration-200">
                       {LANGUAGES.find(l => l.id === sourceLanguage)?.name || sourceLanguage}
                       <button
                         type="button"
@@ -268,7 +268,7 @@ export default function AddPhrase() {
                 </div>
                 {targetLanguage && (
                   <div className="mt-2">
-                    <Badge className="px-2 py-1 bg-primary-500/10 text-primary-700">
+                    <Badge className="px-2 py-1 bg-primary-500/10 text-primary-700 hover:bg-primary-500/20 transition-colors duration-200">
                       {LANGUAGES.find(l => l.id === targetLanguage)?.name || targetLanguage}
                       <button
                         type="button"
@@ -297,7 +297,7 @@ export default function AddPhrase() {
                 <Label htmlFor="tags">Tags (optional, max 3)</Label>
                 <div className="flex flex-wrap gap-2 mb-2">
                   {selectedTags.map(tag => (
-                    <Badge key={tag} className="px-2 py-1 bg-primary-500/10 text-primary-700 hover:bg-primary-500/20">
+                    <Badge key={tag} className="px-2 py-1 bg-primary-500/10 text-primary-700 hover:bg-primary-500/20 transition-colors duration-200">
                       {tag}
                       <button
                         type="button"
