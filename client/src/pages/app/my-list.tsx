@@ -34,6 +34,7 @@ export default function MyList() {
   // State for modals
   const [isNotesDialogOpen, setIsNotesDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isPronunciationDialogOpen, setIsPronunciationDialogOpen] = useState(false);
   const [selectedPhrase, setSelectedPhrase] = useState<{
     id: number;
     phrase: string;
@@ -44,6 +45,10 @@ export default function MyList() {
     sourceLanguage?: string;
     targetLanguage?: string;
   } | null>(null);
+  
+  // Audio states
+  const [isPlayingOriginal, setIsPlayingOriginal] = useState(false);
+  const [isPlayingTranslation, setIsPlayingTranslation] = useState(false);
   
   // State for search, filter, and sort
   const [searchTerm, setSearchTerm] = useState("");
@@ -616,6 +621,67 @@ export default function MyList() {
     setSelectedPhrase(phrase);
     setIsNotesDialogOpen(true);
   };
+  
+  // Handle pronunciation dialog
+  const handlePronunciation = (phrase: any) => {
+    setSelectedPhrase(phrase);
+    setIsPronunciationDialogOpen(true);
+  };
+  
+  // Play pronunciation
+  const playPronunciation = async (text: string, language: string, isOriginal: boolean) => {
+    try {
+      if (isOriginal) {
+        setIsPlayingOriginal(true);
+      } else {
+        setIsPlayingTranslation(true);
+      }
+      
+      // Create audio URL based on Google Translate API
+      const langCode = getLangCodeForTTS(language);
+      const encodedText = encodeURIComponent(text);
+      const url = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodedText}&tl=${langCode}&client=tw-ob`;
+      
+      const audio = new Audio(url);
+      
+      audio.onended = () => {
+        if (isOriginal) {
+          setIsPlayingOriginal(false);
+        } else {
+          setIsPlayingTranslation(false);
+        }
+      };
+      
+      await audio.play();
+    } catch (error) {
+      console.error("Error playing audio:", error);
+      if (isOriginal) {
+        setIsPlayingOriginal(false);
+      } else {
+        setIsPlayingTranslation(false);
+      }
+    }
+  };
+  
+  // Map language names to language codes for TTS
+  const getLangCodeForTTS = (language: string): string => {
+    const langMap: Record<string, string> = {
+      'english': 'en',
+      'spanish': 'es',
+      'french': 'fr',
+      'german': 'de',
+      'italian': 'it',
+      'japanese': 'ja',
+      'mandarin': 'zh-CN',
+      'portuguese': 'pt',
+      'russian': 'ru',
+      'korean': 'ko',
+      'arabic': 'ar',
+      'hindi': 'hi'
+    };
+    
+    return langMap[language.toLowerCase()] || 'en';
+  };
 
   // Handle editing a phrase
   const handleEdit = (phrase: any) => {
@@ -902,7 +968,7 @@ export default function MyList() {
                     targetLanguage={phrase.targetLanguage}
                     onEdit={() => handleEdit(phrase)}
                     onDelete={() => {}}
-                    onSpeak={() => {}}
+                    onSpeak={() => handlePronunciation(phrase)}
                     onViewNotes={() => handleViewNotes(phrase)}
                   />
                 ))}
@@ -1028,6 +1094,95 @@ export default function MyList() {
             </div>
             <h3 className="text-sm font-medium mb-2">Notes:</h3>
             <p className="text-gray-700">{selectedPhrase?.notes}</p>
+          </div>
+        </DialogContent>
+      </Dialog>
+      
+      {/* Pronunciation Dialog */}
+      <Dialog open={isPronunciationDialogOpen} onOpenChange={setIsPronunciationDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-semibold">
+              Pronunciation
+            </DialogTitle>
+            <DialogDescription>
+              Listen to the pronunciation of this phrase
+            </DialogDescription>
+          </DialogHeader>
+          <div className="border-t border-gray-200 pt-4">
+            <div className="space-y-6">
+              {/* Original phrase pronunciation */}
+              <div className="space-y-2">
+                <div className="flex justify-between items-center">
+                  <div>
+                    <h3 className="text-sm font-medium">Original Phrase</h3>
+                    <p className="text-lg mt-1 text-gray-800">
+                      {selectedPhrase?.phrase}
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      {selectedPhrase?.sourceLanguage && 
+                        selectedPhrase.sourceLanguage.charAt(0).toUpperCase() + 
+                        selectedPhrase.sourceLanguage.slice(1)}
+                    </p>
+                  </div>
+                  <Button 
+                    variant="outline" 
+                    size="icon"
+                    className="h-10 w-10"
+                    disabled={isPlayingOriginal}
+                    onClick={() => selectedPhrase && 
+                      playPronunciation(
+                        selectedPhrase.phrase, 
+                        selectedPhrase.sourceLanguage || 'en',
+                        true
+                      )
+                    }
+                  >
+                    {isPlayingOriginal ? (
+                      <div className="h-5 w-5 rounded-full border-2 border-primary border-t-transparent animate-spin" />
+                    ) : (
+                      <span className="text-lg">🔊</span>
+                    )}
+                  </Button>
+                </div>
+              </div>
+
+              {/* Translation pronunciation */}
+              <div className="space-y-2">
+                <div className="flex justify-between items-center">
+                  <div>
+                    <h3 className="text-sm font-medium">Translation</h3>
+                    <p className="text-lg mt-1 text-gray-800">
+                      {selectedPhrase?.translation}
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      {selectedPhrase?.targetLanguage && 
+                        selectedPhrase.targetLanguage.charAt(0).toUpperCase() + 
+                        selectedPhrase.targetLanguage.slice(1)}
+                    </p>
+                  </div>
+                  <Button 
+                    variant="outline" 
+                    size="icon"
+                    className="h-10 w-10"
+                    disabled={isPlayingTranslation}
+                    onClick={() => selectedPhrase && 
+                      playPronunciation(
+                        selectedPhrase.translation, 
+                        selectedPhrase.targetLanguage || 'en',
+                        false
+                      )
+                    }
+                  >
+                    {isPlayingTranslation ? (
+                      <div className="h-5 w-5 rounded-full border-2 border-primary border-t-transparent animate-spin" />
+                    ) : (
+                      <span className="text-lg">🔊</span>
+                    )}
+                  </Button>
+                </div>
+              </div>
+            </div>
           </div>
         </DialogContent>
       </Dialog>
