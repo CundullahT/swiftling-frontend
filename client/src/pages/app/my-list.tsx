@@ -866,9 +866,9 @@ export default function MyList() {
   return (
     <div className="py-6 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto pb-20 md:pb-6">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-semibold text-gray-900">My Phrases</h1>
+        <h1 className="text-2xl font-semibold text-secondary bg-gradient-to-r from-primary/90 to-secondary bg-clip-text text-transparent">My Phrases</h1>
         <Link href="/add-phrase">
-          <Button>
+          <Button className="bg-primary hover:bg-primary/90 text-white">
             Add Phrase
           </Button>
         </Link>
@@ -880,7 +880,7 @@ export default function MyList() {
           <div className="flex-1">
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Search className="h-5 w-5 text-gray-400" />
+                <Search className="h-5 w-5 text-primary/60" />
               </div>
               <Input 
                 placeholder="Search phrases or translations" 
@@ -972,7 +972,7 @@ export default function MyList() {
               
               {/* Pagination */}
               {getFilteredAndSortedPhrases().length > itemsPerPage && (
-                <div className="w-full p-4 flex justify-center items-center border-t border-gray-200 bg-gray-50">
+                <div className="w-full p-4 flex justify-center items-center border-t border-primary/10 bg-primary/5">
                   <div className="flex flex-wrap items-center justify-center gap-2">
                     {/* First/Previous row on small screens */}
                     <div className="flex items-center gap-2">

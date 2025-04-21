@@ -133,9 +133,9 @@ export default function Dashboard() {
   return (
     <div className="py-6 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto pb-20 md:pb-6">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-semibold text-gray-900">Dashboard</h1>
+        <h1 className="text-2xl font-semibold text-secondary bg-gradient-to-r from-primary/90 to-secondary bg-clip-text text-transparent">Dashboard</h1>
         <Link href="/add-phrase">
-          <Button>
+          <Button className="bg-primary hover:bg-primary/90 text-white">
             Add Phrase
           </Button>
         </Link>
@@ -145,12 +145,12 @@ export default function Dashboard() {
       <Card className="mb-6">
         <CardContent className="pt-6">
           <div className="flex items-center">
-            <div className="h-12 w-12 rounded-full bg-yellow-100 flex items-center justify-center">
-              <Star className="h-6 w-6 text-yellow-500" />
+            <div className="h-12 w-12 rounded-full bg-accent/20 flex items-center justify-center">
+              <Star className="h-6 w-6 text-accent" />
             </div>
             <div className="ml-4">
-              <h2 className="text-xl font-semibold text-gray-900">Daily Streak</h2>
-              <p className="text-3xl font-bold text-primary">{user.streakDays} days</p>
+              <h2 className="text-xl font-semibold text-secondary">Daily Streak</h2>
+              <p className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">{user.streakDays} days</p>
             </div>
           </div>
         </CardContent>
