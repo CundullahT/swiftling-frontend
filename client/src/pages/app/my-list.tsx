@@ -51,6 +51,11 @@ export default function MyList() {
     sourceLanguage?: string;
     targetLanguage?: string;
   } | null>(null);
+  
+  // State for search, filter, and sort
+  const [searchTerm, setSearchTerm] = useState("");
+  const [tagFilter, setTagFilter] = useState("all");
+  const [sortOption, setSortOption] = useState("recent");
 
   // Form state for edit dialog
   const [editedPhrase, setEditedPhrase] = useState("");
@@ -269,6 +274,41 @@ export default function MyList() {
       setIsEditDialogOpen(false);
     }
   };
+  
+  // Filter and sort the phrases
+  const getFilteredAndSortedPhrases = () => {
+    // First, filter the phrases
+    let filtered = phrases.filter(phrase => {
+      // Search term filter (case-insensitive)
+      const matchesSearch = searchTerm === "" || 
+        phrase.phrase.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        phrase.translation.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (phrase.notes && phrase.notes.toLowerCase().includes(searchTerm.toLowerCase()));
+        
+      // Tag filter (case-insensitive)
+      const matchesTag = tagFilter === "all" || 
+        (phrase.tags && phrase.tags.some(tag => tag.toLowerCase() === tagFilter.toLowerCase()));
+        
+      return matchesSearch && matchesTag;
+    });
+    
+    // Then, sort the filtered phrases
+    return filtered.sort((a, b) => {
+      switch (sortOption) {
+        case "alphabetical":
+          return a.phrase.localeCompare(b.phrase);
+        case "proficiency-high":
+          return b.proficiency - a.proficiency;
+        case "proficiency-low":
+          return a.proficiency - b.proficiency;
+        case "recent":
+        default:
+          // For demo purposes, we'll use the id as a proxy for "recent"
+          // In a real app, this would use a timestamp
+          return b.id - a.id;
+      }
+    });
+  };
 
   return (
     <div className="py-6 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto pb-20 md:pb-6">
@@ -292,11 +332,17 @@ export default function MyList() {
               <Input 
                 placeholder="Search phrases" 
                 className="pl-10" 
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
           </div>
           <div className="sm:w-1/4">
-            <Select defaultValue="all">
+            <Select 
+              defaultValue="all" 
+              value={tagFilter}
+              onValueChange={setTagFilter}
+            >
               <SelectTrigger id="tag">
                 <SelectValue placeholder="Filter by Tag" />
               </SelectTrigger>
@@ -311,7 +357,11 @@ export default function MyList() {
             </Select>
           </div>
           <div className="sm:w-1/4">
-            <Select defaultValue="recent">
+            <Select 
+              defaultValue="recent" 
+              value={sortOption}
+              onValueChange={setSortOption}
+            >
               <SelectTrigger id="sort">
                 <SelectValue placeholder="Sort by" />
               </SelectTrigger>
