@@ -872,10 +872,10 @@ export default function MyList() {
               
               {/* Pagination */}
               {getFilteredAndSortedPhrases().length > itemsPerPage && (
-                <div className="p-4 flex justify-center">
-                  <div className="flex items-center space-x-2">
+                <div className="w-full p-4 flex justify-center items-center border-t border-gray-200 bg-gray-50">
+                  <div className="flex items-center space-x-4">
                     <Button
-                      variant="outline"
+                      variant="ghost"
                       size="sm"
                       onClick={() => setCurrentPage(1)}
                       disabled={currentPage === 1}
@@ -887,23 +887,48 @@ export default function MyList() {
                       size="sm"
                       onClick={() => setCurrentPage(currentPage - 1)}
                       disabled={currentPage === 1}
+                      className="flex items-center"
                     >
-                      <ChevronLeft className="h-4 w-4" />
+                      <ChevronLeft className="h-4 w-4 mr-1" />
+                      Previous
                     </Button>
-                    <span className="text-sm">
-                      Page {currentPage} of{" "}
-                      {Math.ceil(getFilteredAndSortedPhrases().length / itemsPerPage)}
-                    </span>
+                    
+                    <div className="flex items-center space-x-1">
+                      {Array.from({length: Math.min(3, Math.ceil(getFilteredAndSortedPhrases().length / itemsPerPage))}, (_, i) => {
+                        const pageNum = currentPage === 1 ? i + 1 : 
+                                       currentPage === Math.ceil(getFilteredAndSortedPhrases().length / itemsPerPage) ? 
+                                       Math.max(1, Math.ceil(getFilteredAndSortedPhrases().length / itemsPerPage) - 2) + i :
+                                       currentPage - 1 + i;
+                        
+                        if (pageNum <= Math.ceil(getFilteredAndSortedPhrases().length / itemsPerPage)) {
+                          return (
+                            <Button
+                              key={i}
+                              variant={currentPage === pageNum ? "default" : "outline"}
+                              size="sm"
+                              onClick={() => setCurrentPage(pageNum)}
+                              className="w-9 h-9 p-0"
+                            >
+                              {pageNum}
+                            </Button>
+                          );
+                        }
+                        return null;
+                      })}
+                    </div>
+                    
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={() => setCurrentPage(currentPage + 1)}
                       disabled={currentPage === Math.ceil(getFilteredAndSortedPhrases().length / itemsPerPage)}
+                      className="flex items-center"
                     >
-                      <ChevronRight className="h-4 w-4" />
+                      Next
+                      <ChevronRight className="h-4 w-4 ml-1" />
                     </Button>
                     <Button
-                      variant="outline"
+                      variant="ghost"
                       size="sm"
                       onClick={() => setCurrentPage(Math.ceil(getFilteredAndSortedPhrases().length / itemsPerPage))}
                       disabled={currentPage === Math.ceil(getFilteredAndSortedPhrases().length / itemsPerPage)}
