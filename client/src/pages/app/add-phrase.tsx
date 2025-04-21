@@ -32,14 +32,73 @@ export default function AddPhrase() {
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState("");
   const [filteredSuggestions, setFilteredSuggestions] = useState<string[]>([]);
-  const [sourceLanguage, setSourceLanguage] = useState<string>("");
-  const [targetLanguage, setTargetLanguage] = useState<string>("");
+  
+  // Language state
+  const [sourceLanguage, setSourceLanguage] = useState("");
+  const [targetLanguage, setTargetLanguage] = useState("");
+  const [sourceLanguageInput, setSourceLanguageInput] = useState("");
+  const [targetLanguageInput, setTargetLanguageInput] = useState("");
+  const [filteredSourceLanguages, setFilteredSourceLanguages] = useState<typeof LANGUAGES>([]);
+  const [filteredTargetLanguages, setFilteredTargetLanguages] = useState<typeof LANGUAGES>([]);
 
   // Handle form submission - would connect to API in real implementation
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // Save phrase logic would go here
     setLocation("/my-list");
+  };
+
+  // Language management functions
+  const handleSourceLanguageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSourceLanguageInput(value);
+    
+    if (value.trim()) {
+      // Filter suggestions based on input
+      const filtered = LANGUAGES.filter(lang => 
+        lang.name.toLowerCase().includes(value.toLowerCase())
+      );
+      setFilteredSourceLanguages(filtered);
+    } else {
+      setFilteredSourceLanguages([]);
+    }
+  };
+  
+  const handleTargetLanguageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setTargetLanguageInput(value);
+    
+    if (value.trim()) {
+      // Filter suggestions based on input
+      const filtered = LANGUAGES.filter(lang => 
+        lang.name.toLowerCase().includes(value.toLowerCase())
+      );
+      setFilteredTargetLanguages(filtered);
+    } else {
+      setFilteredTargetLanguages([]);
+    }
+  };
+  
+  const setLanguage = (type: 'source' | 'target', value: string) => {
+    if (type === 'source') {
+      setSourceLanguage(value);
+      setSourceLanguageInput('');
+      setFilteredSourceLanguages([]);
+    } else {
+      setTargetLanguage(value);
+      setTargetLanguageInput('');
+      setFilteredTargetLanguages([]);
+    }
+  };
+  
+  const handleLanguageKeyDown = (type: 'source' | 'target', e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      e.preventDefault(); // Prevent form submission
+      const value = type === 'source' ? sourceLanguageInput : targetLanguageInput;
+      if (value) {
+        setLanguage(type, value);
+      }
+    }
   };
 
   // Tag management functions
@@ -98,66 +157,133 @@ export default function AddPhrase() {
       <Card className="mb-8">
         <CardContent className="pt-6">
           <form className="space-y-6" onSubmit={handleSubmit}>
-            <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
-              <div className="sm:col-span-3 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
-                <div className="sm:col-span-4">
-                  <Label htmlFor="phrase">Phrase</Label>
-                  <Input 
-                    id="phrase"
-                    name="phrase"
-                    placeholder="Enter phrase to learn"
-                  />
-                </div>
-                <div className="sm:col-span-2">
-                  <Label htmlFor="sourceLanguage">Language</Label>
-                  <Select 
-                    value={sourceLanguage} 
-                    onValueChange={setSourceLanguage}
-                  >
-                    <SelectTrigger id="sourceLanguage">
-                      <SelectValue placeholder="Select" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {LANGUAGES.map((language) => (
-                        <SelectItem key={language.id} value={language.id}>
-                          {language.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              <div className="sm:col-span-3 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
-                <div className="sm:col-span-4">
-                  <Label htmlFor="translation">Translation</Label>
-                  <Input 
-                    id="translation"
-                    name="translation"
-                    placeholder="Enter translation in your language"
-                  />
-                </div>
-                <div className="sm:col-span-2">
-                  <Label htmlFor="targetLanguage">Language</Label>
-                  <Select 
-                    value={targetLanguage} 
-                    onValueChange={setTargetLanguage}
-                  >
-                    <SelectTrigger id="targetLanguage">
-                      <SelectValue placeholder="Select" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {LANGUAGES.map((language) => (
-                        <SelectItem key={language.id} value={language.id}>
-                          {language.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
+            <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-4">
+              {/* Row 1: Phrase & Source Language */}
               <div className="sm:col-span-3">
+                <Label htmlFor="phrase">Phrase</Label>
+                <Input 
+                  id="phrase"
+                  name="phrase"
+                  placeholder="Enter phrase to learn"
+                />
+              </div>
+              <div className="sm:col-span-1">
+                <Label htmlFor="sourceLanguage">Language</Label>
+                <div className="relative">
+                  <Input 
+                    id="sourceLanguage"
+                    placeholder="Type or select language"
+                    value={sourceLanguageInput}
+                    onChange={handleSourceLanguageChange}
+                    onKeyDown={(e) => handleLanguageKeyDown('source', e)}
+                  />
+                  {sourceLanguageInput && (
+                    <button
+                      type="button"
+                      className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+                      onClick={() => setLanguage('source', sourceLanguageInput)}
+                    >
+                      <Plus className="h-4 w-4" />
+                    </button>
+                  )}
+
+                  {/* Source language suggestions */}
+                  {filteredSourceLanguages.length > 0 && (
+                    <div className="absolute z-20 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base overflow-auto focus:outline-none sm:text-sm">
+                      <ul className="divide-y divide-gray-200">
+                        {filteredSourceLanguages.map((language) => (
+                          <li
+                            key={language.id}
+                            className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                            onClick={() => setLanguage('source', language.id)}
+                          >
+                            {language.name}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+                {sourceLanguage && (
+                  <div className="mt-2">
+                    <Badge className="px-2 py-1 bg-primary-500/10 text-primary-700">
+                      {LANGUAGES.find(l => l.id === sourceLanguage)?.name || sourceLanguage}
+                      <button
+                        type="button"
+                        onClick={() => setSourceLanguage("")}
+                        className="ml-1 rounded-full outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </Badge>
+                  </div>
+                )}
+              </div>
+
+              {/* Row 2: Translation & Target Language */}
+              <div className="sm:col-span-3">
+                <Label htmlFor="translation">Translation</Label>
+                <Input 
+                  id="translation"
+                  name="translation"
+                  placeholder="Enter translation in your language"
+                />
+              </div>
+              <div className="sm:col-span-1">
+                <Label htmlFor="targetLanguage">Language</Label>
+                <div className="relative">
+                  <Input 
+                    id="targetLanguage"
+                    placeholder="Type or select language"
+                    value={targetLanguageInput}
+                    onChange={handleTargetLanguageChange}
+                    onKeyDown={(e) => handleLanguageKeyDown('target', e)}
+                  />
+                  {targetLanguageInput && (
+                    <button
+                      type="button"
+                      className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+                      onClick={() => setLanguage('target', targetLanguageInput)}
+                    >
+                      <Plus className="h-4 w-4" />
+                    </button>
+                  )}
+
+                  {/* Target language suggestions */}
+                  {filteredTargetLanguages.length > 0 && (
+                    <div className="absolute z-20 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base overflow-auto focus:outline-none sm:text-sm">
+                      <ul className="divide-y divide-gray-200">
+                        {filteredTargetLanguages.map((language) => (
+                          <li
+                            key={language.id}
+                            className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                            onClick={() => setLanguage('target', language.id)}
+                          >
+                            {language.name}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+                {targetLanguage && (
+                  <div className="mt-2">
+                    <Badge className="px-2 py-1 bg-primary-500/10 text-primary-700">
+                      {LANGUAGES.find(l => l.id === targetLanguage)?.name || targetLanguage}
+                      <button
+                        type="button"
+                        onClick={() => setTargetLanguage("")}
+                        className="ml-1 rounded-full outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </Badge>
+                  </div>
+                )}
+              </div>
+
+              {/* Row 3: Notes & Tags */}
+              <div className="sm:col-span-2">
                 <Label htmlFor="notes">Notes (optional)</Label>
                 <Textarea 
                   id="notes"
@@ -167,7 +293,7 @@ export default function AddPhrase() {
                 />
               </div>
 
-              <div className="sm:col-span-3">
+              <div className="sm:col-span-2">
                 <Label htmlFor="tags">Tags (optional, max 3)</Label>
                 <div className="flex flex-wrap gap-2 mb-2">
                   {selectedTags.map(tag => (
