@@ -63,7 +63,7 @@ export function PhraseCard({
               variant="ghost"
               size="icon"
               onClick={onSpeak}
-              className="mr-2 text-gray-400 hover:text-gray-500 hover:bg-gray-100"
+              className="mr-2 text-blue-500 hover:text-blue-600 hover:bg-blue-50"
               title="Speak"
             >
               <Volume2 className="h-5 w-5" />
@@ -73,7 +73,7 @@ export function PhraseCard({
                 variant="ghost"
                 size="icon"
                 onClick={onViewNotes}
-                className="mr-2 text-gray-400 hover:text-gray-500 hover:bg-gray-100"
+                className="mr-2 text-indigo-500 hover:text-indigo-600 hover:bg-indigo-50"
                 title="View Notes"
               >
                 <Info className="h-5 w-5" />
@@ -83,7 +83,7 @@ export function PhraseCard({
               variant="ghost"
               size="icon"
               onClick={onEdit}
-              className="mr-2 text-gray-400 hover:text-gray-500 hover:bg-gray-100"
+              className="mr-2 text-amber-500 hover:text-amber-600 hover:bg-amber-50"
               title="Edit"
             >
               <Edit className="h-5 w-5" />
@@ -92,7 +92,7 @@ export function PhraseCard({
               variant="ghost"
               size="icon"
               onClick={onDelete}
-              className="text-gray-400 hover:text-gray-500 hover:bg-gray-100"
+              className="text-red-500 hover:text-red-600 hover:bg-red-50"
               title="Delete"
             >
               <Trash2 className="h-5 w-5" />
