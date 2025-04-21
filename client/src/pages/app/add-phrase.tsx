@@ -109,7 +109,7 @@ export default function AddPhrase() {
                 />
               </div>
 
-              <div className="sm:col-span-6">
+              <div className="sm:col-span-3">
                 <Label htmlFor="notes">Notes (optional)</Label>
                 <Textarea 
                   id="notes"
@@ -118,11 +118,11 @@ export default function AddPhrase() {
                   rows={3}
                 />
                 <p className="mt-2 text-sm text-gray-500">
-                  Add explanations, context, or example sentences using this phrase.
+                  Add explanations, context, or example sentences.
                 </p>
               </div>
 
-              <div className="sm:col-span-6">
+              <div className="sm:col-span-3">
                 <Label htmlFor="tags">Tags (optional, max 3)</Label>
                 <div className="flex flex-wrap gap-2 mb-2">
                   {selectedTags.map(tag => (
@@ -179,7 +179,7 @@ export default function AddPhrase() {
                 </div>
                 
                 <p className="mt-2 text-sm text-gray-500">
-                  Add up to 3 tags to organize your phrases. Press Enter or click + to add.
+                  Add up to 3 tags to organize your phrases.
                 </p>
               </div>
             </div>
