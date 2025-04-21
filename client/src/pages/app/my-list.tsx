@@ -53,6 +53,24 @@ export default function MyList() {
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
+  
+  // Custom setter for search term that also resets pagination
+  const handleSearchTermChange = (value: string) => {
+    setSearchTerm(value);
+    setCurrentPage(1); // Reset to page 1 when search changes
+  };
+  
+  // Custom setter for tag filter that also resets pagination
+  const handleTagFilterChange = (value: string) => {
+    setTagFilter(value);
+    setCurrentPage(1); // Reset to page 1 when filter changes
+  };
+  
+  // Custom setter for sort option that also resets pagination
+  const handleSortOptionChange = (value: string) => {
+    setSortOption(value);
+    setCurrentPage(1); // Reset to page 1 when sort changes
+  };
 
   // Form state for edit dialog
   const [editedPhrase, setEditedPhrase] = useState("");
@@ -756,7 +774,7 @@ export default function MyList() {
     });
     
     // Then, sort the filtered phrases
-    return filtered.sort((a, b) => {
+    const sortedResults = filtered.sort((a, b) => {
       switch (sortOption) {
         case "alphabetical":
           return a.phrase.localeCompare(b.phrase);
@@ -771,6 +789,15 @@ export default function MyList() {
           return b.id - a.id;
       }
     });
+    
+    // Check if current page exceeds the maximum available pages after filtering
+    const maxPage = Math.ceil(sortedResults.length / itemsPerPage);
+    if (currentPage > maxPage && maxPage > 0) {
+      // If we're on a page that no longer exists after filtering, move to the last valid page
+      setTimeout(() => setCurrentPage(maxPage), 0);
+    }
+    
+    return sortedResults;
   };
 
   return (
@@ -796,7 +823,7 @@ export default function MyList() {
                 placeholder="Search phrases or translations" 
                 className="pl-10" 
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={(e) => handleSearchTermChange(e.target.value)}
               />
             </div>
           </div>
@@ -804,7 +831,7 @@ export default function MyList() {
             <Select 
               defaultValue="all" 
               value={tagFilter}
-              onValueChange={setTagFilter}
+              onValueChange={handleTagFilterChange}
             >
               <SelectTrigger id="tag">
                 <SelectValue placeholder="Filter by Tag" />
@@ -823,7 +850,7 @@ export default function MyList() {
             <Select 
               defaultValue="recent" 
               value={sortOption}
-              onValueChange={setSortOption}
+              onValueChange={handleSortOptionChange}
             >
               <SelectTrigger id="sort">
                 <SelectValue placeholder="Sort by" />
@@ -938,10 +965,9 @@ export default function MyList() {
               <Button 
                 variant="link" 
                 onClick={() => {
-                  setSearchTerm("");
-                  setTagFilter("all");
-                  setSortOption("recent");
-                  setCurrentPage(1);
+                  handleSearchTermChange("");
+                  handleTagFilterChange("all");
+                  handleSortOptionChange("recent");
                 }}
                 className="mt-2"
               >
