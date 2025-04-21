@@ -186,7 +186,7 @@ export default function Dashboard() {
             </div>
             
             {/* Weekly Progress */}
-            <div className="bg-gradient-to-br from-cyan-50 to-teal-50 dark:from-cyan-950/20 dark:to-teal-950/20 rounded-lg p-4 shadow-sm border border-primary/10">
+            <div className="bg-orange-50 dark:bg-orange-950/20 rounded-lg p-4 shadow-sm border border-primary/10">
               <h3 className="text-sm font-medium text-secondary mb-2">Weekly Progress</h3>
               <div className="flex flex-col items-center">
                 <PieChart 
