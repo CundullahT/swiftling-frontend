@@ -1,14 +1,15 @@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Edit, Info, Trash2, Volume2 } from "lucide-react";
-import { cn } from "@/lib/utils";
+// Simple component with no utilities needed
 
 interface PhraseCardProps {
   phrase: string;
   translation: string;
   category?: string; // Keep for backward compatibility
   tags?: string[];
-  proficiency: number;
+  proficiency?: number; // Keep for backward compatibility
+  learned?: boolean;
   notes?: string;
   sourceLanguage?: string;
   targetLanguage?: string;
@@ -24,6 +25,7 @@ export function PhraseCard({
   category,
   tags,
   proficiency,
+  learned,
   notes,
   sourceLanguage,
   targetLanguage,
@@ -32,12 +34,8 @@ export function PhraseCard({
   onSpeak,
   onViewNotes
 }: PhraseCardProps) {
-  // Determine the color based on proficiency
-  const getProficiencyColor = () => {
-    if (proficiency > 80) return 'bg-primary';
-    if (proficiency > 50) return 'bg-accent';
-    return 'bg-destructive';
-  };
+  // Determine status based on learned flag or proficiency (for backward compatibility)
+  const isLearned = learned !== undefined ? learned : (proficiency || 0) > 80;
 
   return (
     <div className="px-4 py-4 sm:px-6 border-b border-primary/10">
@@ -139,14 +137,16 @@ export function PhraseCard({
       <div className="mt-2 sm:flex sm:justify-between">
         <div className="mt-2 flex items-center text-sm text-secondary/80 sm:mt-0">
           <div className="flex items-center">
-            <p className="mr-2 font-medium">Proficiency:</p>
-            <div className="w-24 bg-slate-200 dark:bg-slate-700 rounded-full h-2.5">
-              <div 
-                className={cn("h-2.5 rounded-full", getProficiencyColor())} 
-                style={{ width: `${proficiency}%` }}
-              ></div>
-            </div>
-            <span className="ml-2 font-medium text-secondary">{proficiency}%</span>
+            <p className="mr-2 font-medium">Status:</p>
+            {isLearned ? (
+              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/20 text-primary-700 dark:text-primary-300 whitespace-nowrap">
+                Learned
+              </span>
+            ) : (
+              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-accent/20 text-amber-700 dark:text-amber-300 whitespace-nowrap">
+                In&nbsp;Progress
+              </span>
+            )}
           </div>
         </div>
       </div>

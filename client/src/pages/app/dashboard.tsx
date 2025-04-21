@@ -142,18 +142,108 @@ export default function Dashboard() {
     total: { total: 120, learned: 85 }
   };
 
-  // Dummy data for recent phrases
+  // Recent phrases data from My List, converted to use learned flag instead of proficiency
   const recentPhrases = [
-    { id: 1, phrase: 'Gracias', translation: 'Thank you', learned: true, sourceLanguage: 'spanish', targetLanguage: 'english', notes: 'Used to express gratitude' },
-    { id: 2, phrase: 'Buenos días', translation: 'Good morning', learned: true, sourceLanguage: 'spanish', targetLanguage: 'english' },
-    { id: 3, phrase: 'Por favor', translation: 'Please', learned: true, sourceLanguage: 'spanish', targetLanguage: 'english' },
-    { id: 4, phrase: '¿Cómo estás?', translation: 'How are you?', learned: false, sourceLanguage: 'spanish', targetLanguage: 'english', notes: 'Informal greeting used with friends and family' },
-    { id: 5, phrase: 'Lo siento mucho por el malentendido. No fue mi intención causar problemas. Espero que podamos resolver esto pronto.', translation: 'I\'m very sorry for the misunderstanding. It was not my intention to cause problems. I hope we can resolve this soon.', learned: false, sourceLanguage: 'spanish', targetLanguage: 'english', notes: 'Formal apology used in professional settings' },
-    { id: 6, phrase: 'Hasta luego', translation: 'See you later', learned: true, sourceLanguage: 'spanish', targetLanguage: 'english' },
-    { id: 7, phrase: '¿Dónde está el museo de arte moderno? Estoy buscando la exhibición especial que comenzó la semana pasada.', translation: 'Where is the modern art museum? I am looking for the special exhibition that started last week.', learned: false, sourceLanguage: 'spanish', targetLanguage: 'english', notes: 'Useful for asking directions when traveling' },
-    { id: 8, phrase: 'Me gusta', translation: 'I like it', learned: true, sourceLanguage: 'spanish', targetLanguage: 'english' },
-    { id: 9, phrase: 'No entiendo lo que estás tratando de explicar. ¿Podrías hablar más despacio y usar palabras más simples, por favor?', translation: 'I don\'t understand what you are trying to explain. Could you speak more slowly and use simpler words, please?', learned: false, sourceLanguage: 'spanish', targetLanguage: 'english', notes: 'Very useful phrase when struggling to understand native speakers' },
-    { id: 10, phrase: 'Mucho gusto', translation: 'Nice to meet you', learned: true, sourceLanguage: 'spanish', targetLanguage: 'english' },
+    { 
+      id: 1, 
+      phrase: 'Buenos días', 
+      translation: 'Good morning', 
+      learned: true, // Converted from proficiency 85
+      tags: ['Greetings', 'Morning', 'Beginner'], 
+      notes: 'Used as a morning greeting until around noon. The informal version is just "Hola".',
+      sourceLanguage: 'spanish',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 2, 
+      phrase: '¿Cómo estás?', 
+      translation: 'How are you?', 
+      learned: false, // Converted from proficiency 70
+      tags: ['Greetings', 'Questions'], 
+      notes: 'Informal way to ask how someone is doing. For formal situations use "¿Cómo está usted?"',
+      sourceLanguage: 'spanish',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 3, 
+      phrase: 'Gracias', 
+      translation: 'Thank you', 
+      learned: true, // Converted from proficiency 95
+      tags: ['Common phrases', 'Beginner'], 
+      notes: 'The standard way to say thank you. You can add "muchas" before it for "thank you very much".',
+      sourceLanguage: 'spanish',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 4, 
+      phrase: 'Por favor', 
+      translation: 'Please', 
+      learned: true, // Converted from proficiency 90
+      tags: ['Common phrases', 'Beginner'], 
+      notes: 'Used to make polite requests. Can be placed at the beginning or end of a sentence.',
+      sourceLanguage: 'spanish',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 5, 
+      phrase: 'Lo siento', 
+      translation: 'I\'m sorry', 
+      learned: false, // Converted from proficiency 60
+      tags: ['Common phrases', 'Expressions', 'Beginner'], 
+      notes: 'Used to apologize. For more serious apologies, you can say "Lo siento mucho" (I\'m very sorry).',
+      sourceLanguage: 'spanish',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 6, 
+      phrase: 'Buenas noches', 
+      translation: 'Good evening/night', 
+      learned: true, // Converted from proficiency 80
+      tags: ['Greetings', 'Evening', 'Beginner'], 
+      notes: 'Used in the evening and at night as both a greeting and a farewell.',
+      sourceLanguage: 'spanish',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 7, 
+      phrase: 'Adiós', 
+      translation: 'Goodbye', 
+      learned: true, // Converted from proficiency 95
+      tags: ['Farewells', 'Beginner'], 
+      notes: 'Formal way to say goodbye. "Hasta luego" (see you later) is often more common.',
+      sourceLanguage: 'spanish',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 8, 
+      phrase: 'Hasta mañana', 
+      translation: 'See you tomorrow', 
+      learned: false, // Converted from proficiency 75
+      tags: ['Farewells', 'Intermediate'], 
+      notes: 'A common way to say goodbye when you expect to see the person the next day.',
+      sourceLanguage: 'spanish',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 9, 
+      phrase: 'Mucho gusto', 
+      translation: 'Nice to meet you', 
+      learned: false, // Converted from proficiency 65
+      tags: ['Greetings', 'Introductions', 'Beginner'], 
+      notes: 'Used when meeting someone for the first time.',
+      sourceLanguage: 'spanish',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 10, 
+      phrase: 'No entiendo', 
+      translation: 'I don\'t understand', 
+      learned: true, // Converted from proficiency 85
+      tags: ['Common phrases', 'Learning', 'Beginner'], 
+      notes: 'Very useful phrase when learning a language. You can follow it with "¿Puedes repetir?" (Can you repeat?)',
+      sourceLanguage: 'spanish',
+      targetLanguage: 'english'
+    }
   ];
 
   return (

@@ -1100,6 +1100,20 @@ export default function MyList() {
                 </Badge>
               </div>
             </div>
+            <div className="mb-4">
+              <h3 className="text-sm font-medium mb-2">Status:</h3>
+              <div>
+                {(selectedPhrase?.proficiency || 0) > 80 ? (
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/20 text-primary-700 dark:text-primary-300 whitespace-nowrap">
+                    Learned
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-accent/20 text-amber-700 dark:text-amber-300 whitespace-nowrap">
+                    In&nbsp;Progress
+                  </span>
+                )}
+              </div>
+            </div>
             <h3 className="text-sm font-medium mb-2">Notes:</h3>
             <p className="text-gray-700">{selectedPhrase?.notes}</p>
           </div>
