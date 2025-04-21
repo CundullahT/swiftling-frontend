@@ -1,8 +1,10 @@
 import { useAuthRedirect } from "@/hooks/use-auth-redirect";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { BookOpen, Star } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useState } from "react";
+import { Link } from "wouter";
 
 // PieChart component
 interface PieChartProps {
@@ -130,7 +132,14 @@ export default function Dashboard() {
 
   return (
     <div className="py-6 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto pb-20 md:pb-6">
-      <h1 className="text-2xl font-semibold text-gray-900 mb-6">Dashboard</h1>
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-2xl font-semibold text-gray-900">Dashboard</h1>
+        <Link href="/add-phrase">
+          <Button>
+            Add Phrase
+          </Button>
+        </Link>
+      </div>
       
       {/* Daily Streak */}
       <Card className="mb-6">
