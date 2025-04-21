@@ -191,7 +191,7 @@ export default function Dashboard() {
               <div className="flex flex-col items-center">
                 <PieChart 
                   data={[
-                    { value: progressStats.weekly.learned, color: '#4D9E57' }, // Yellow-green color between orange and green
+                    { value: progressStats.weekly.learned, color: '#F8ED8C' }, // Pale yellow as requested
                     { value: progressStats.weekly.total - progressStats.weekly.learned, color: 'hsl(var(--muted))' } // Gray like other charts for non-learned
                   ]}
                   size={100}
@@ -203,7 +203,7 @@ export default function Dashboard() {
                   </div>
                   <div>
                     <p className="text-xs text-secondary/70">Learned</p>
-                    <p className="text-lg font-semibold" style={{ color: '#4D9E57' }}>{progressStats.weekly.learned}</p>
+                    <p className="text-lg font-semibold" style={{ color: '#F8ED8C' }}>{progressStats.weekly.learned}</p>
                   </div>
                 </div>
               </div>
