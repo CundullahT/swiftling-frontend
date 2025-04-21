@@ -847,21 +847,38 @@ export default function MyList() {
             </Select>
           </div>
           <div className="sm:w-1/4">
-            <Select 
-              defaultValue="recent" 
-              value={sortOption}
-              onValueChange={handleSortOptionChange}
-            >
-              <SelectTrigger id="sort">
-                <SelectValue placeholder="Sort by" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="recent">Recently Added</SelectItem>
-                <SelectItem value="alphabetical">Alphabetical</SelectItem>
-                <SelectItem value="proficiency-high">Proficiency (High to Low)</SelectItem>
-                <SelectItem value="proficiency-low">Proficiency (Low to High)</SelectItem>
-              </SelectContent>
-            </Select>
+            <div className="flex gap-2">
+              <div className="flex-1">
+                <Select 
+                  defaultValue="recent" 
+                  value={sortOption}
+                  onValueChange={handleSortOptionChange}
+                >
+                  <SelectTrigger id="sort">
+                    <SelectValue placeholder="Sort by" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="recent">Recently Added</SelectItem>
+                    <SelectItem value="alphabetical">Alphabetical</SelectItem>
+                    <SelectItem value="proficiency-high">Proficiency (High to Low)</SelectItem>
+                    <SelectItem value="proficiency-low">Proficiency (Low to High)</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <Button 
+                variant="outline" 
+                size="icon"
+                className="h-10 w-10 shrink-0"
+                title="Clear all filters and sorting"
+                onClick={() => {
+                  handleSearchTermChange("");
+                  handleTagFilterChange("all");
+                  handleSortOptionChange("recent");
+                }}
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
         </div>
       </Card>
