@@ -628,59 +628,36 @@ export default function MyList() {
     setIsPronunciationDialogOpen(true);
   };
   
-  // Play pronunciation
+  // Play pronunciation - placeholder for future implementation
   const playPronunciation = async (text: string, language: string, isOriginal: boolean) => {
     try {
+      // Set the loading state to true
       if (isOriginal) {
         setIsPlayingOriginal(true);
       } else {
         setIsPlayingTranslation(true);
       }
       
-      // Create audio URL based on Google Translate API
-      const langCode = getLangCodeForTTS(language);
-      const encodedText = encodeURIComponent(text);
-      const url = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodedText}&tl=${langCode}&client=tw-ob`;
+      // Simulate a delay to show the loading indicator
+      await new Promise(resolve => setTimeout(resolve, 500));
       
-      const audio = new Audio(url);
+      // Show the "not implemented" message through console
+      console.info("Pronunciation feature will be implemented with a custom backend service.");
       
-      audio.onended = () => {
-        if (isOriginal) {
-          setIsPlayingOriginal(false);
-        } else {
-          setIsPlayingTranslation(false);
-        }
-      };
-      
-      await audio.play();
+      // Reset the loading state
+      if (isOriginal) {
+        setIsPlayingOriginal(false);
+      } else {
+        setIsPlayingTranslation(false);
+      }
     } catch (error) {
-      console.error("Error playing audio:", error);
+      console.error("Error in pronunciation handler:", error);
       if (isOriginal) {
         setIsPlayingOriginal(false);
       } else {
         setIsPlayingTranslation(false);
       }
     }
-  };
-  
-  // Map language names to language codes for TTS
-  const getLangCodeForTTS = (language: string): string => {
-    const langMap: Record<string, string> = {
-      'english': 'en',
-      'spanish': 'es',
-      'french': 'fr',
-      'german': 'de',
-      'italian': 'it',
-      'japanese': 'ja',
-      'mandarin': 'zh-CN',
-      'portuguese': 'pt',
-      'russian': 'ru',
-      'korean': 'ko',
-      'arabic': 'ar',
-      'hindi': 'hi'
-    };
-    
-    return langMap[language.toLowerCase()] || 'en';
   };
 
   // Handle editing a phrase
@@ -1103,10 +1080,10 @@ export default function MyList() {
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="text-xl font-semibold">
-              Pronunciation
+              Pronunciation <span className="text-xs bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full ml-2">Coming Soon</span>
             </DialogTitle>
             <DialogDescription>
-              Listen to the pronunciation of this phrase
+              This feature will allow you to listen to phrase pronunciations in a future update
             </DialogDescription>
           </DialogHeader>
           <div className="border-t border-gray-200 pt-4">
@@ -1137,6 +1114,7 @@ export default function MyList() {
                         true
                       )
                     }
+                    title="Pronunciation feature coming soon"
                   >
                     {isPlayingOriginal ? (
                       <div className="h-5 w-5 rounded-full border-2 border-primary border-t-transparent animate-spin" />
@@ -1145,6 +1123,7 @@ export default function MyList() {
                     )}
                   </Button>
                 </div>
+                <p className="text-xs text-gray-500 italic">Pronunciation will be available in a future update</p>
               </div>
 
               {/* Translation pronunciation */}
@@ -1173,6 +1152,7 @@ export default function MyList() {
                         false
                       )
                     }
+                    title="Pronunciation feature coming soon"
                   >
                     {isPlayingTranslation ? (
                       <div className="h-5 w-5 rounded-full border-2 border-primary border-t-transparent animate-spin" />
@@ -1181,6 +1161,7 @@ export default function MyList() {
                     )}
                   </Button>
                 </div>
+                <p className="text-xs text-gray-500 italic">Pronunciation will be available in a future update</p>
               </div>
             </div>
           </div>
