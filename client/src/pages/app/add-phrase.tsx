@@ -114,12 +114,9 @@ export default function AddPhrase() {
                 <Textarea 
                   id="notes"
                   name="notes"
-                  placeholder="Add any notes or context about this phrase"
+                  placeholder="Add explanations, context, or example sentences."
                   rows={3}
                 />
-                <p className="mt-2 text-sm text-gray-500">
-                  Add explanations, context, or example sentences.
-                </p>
               </div>
 
               <div className="sm:col-span-3">
