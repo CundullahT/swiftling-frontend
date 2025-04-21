@@ -186,24 +186,24 @@ export default function Dashboard() {
             </div>
             
             {/* Weekly Progress */}
-            <div className="bg-secondary/5 rounded-lg p-4 shadow-sm border border-primary/10">
+            <div className="bg-gradient-to-br from-yellow-50 to-green-50 dark:from-yellow-950/20 dark:to-green-950/20 rounded-lg p-4 shadow-sm border border-primary/10">
               <h3 className="text-sm font-medium text-secondary mb-2">Weekly Progress</h3>
               <div className="flex flex-col items-center">
                 <PieChart 
                   data={[
-                    { value: progressStats.weekly.learned, color: '#2AC769' }, // Bright green for learned
-                    { value: progressStats.weekly.total - progressStats.weekly.learned, color: '#FEA011' } // Orange-gold for not yet learned
+                    { value: progressStats.weekly.learned, color: '#4D9E57' }, // Yellow-green color between orange and green
+                    { value: progressStats.weekly.total - progressStats.weekly.learned, color: 'hsl(var(--muted))' } // Gray like other charts for non-learned
                   ]}
                   size={100}
                 />
                 <div className="mt-3 flex gap-4 text-center">
                   <div>
                     <p className="text-xs text-secondary/70">Added</p>
-                    <p className="text-lg font-semibold" style={{ color: '#FEA011' }}>{progressStats.weekly.total}</p>
+                    <p className="text-lg font-semibold text-secondary">{progressStats.weekly.total}</p>
                   </div>
                   <div>
                     <p className="text-xs text-secondary/70">Learned</p>
-                    <p className="text-lg font-semibold" style={{ color: '#2AC769' }}>{progressStats.weekly.learned}</p>
+                    <p className="text-lg font-semibold" style={{ color: '#4D9E57' }}>{progressStats.weekly.learned}</p>
                   </div>
                 </div>
               </div>
