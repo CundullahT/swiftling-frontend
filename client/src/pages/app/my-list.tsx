@@ -14,6 +14,7 @@ import { Search } from "lucide-react";
 import { PhraseCard } from "@/components/ui/phrase-card";
 import { CATEGORIES } from "@/lib/constants";
 import { useState } from "react";
+import { Link } from "wouter";
 import {
   Pagination,
   PaginationContent,
