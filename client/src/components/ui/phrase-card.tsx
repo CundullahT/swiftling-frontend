@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Edit, Trash2, Volume2 } from "lucide-react";
+import { Edit, Info, Trash2, Volume2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface PhraseCardProps {
@@ -8,9 +8,11 @@ interface PhraseCardProps {
   translation: string;
   category: string;
   proficiency: number;
+  notes?: string;
   onEdit?: () => void;
   onDelete?: () => void;
   onSpeak?: () => void;
+  onViewNotes?: () => void;
 }
 
 export function PhraseCard({
@@ -18,9 +20,11 @@ export function PhraseCard({
   translation,
   category,
   proficiency,
+  notes,
   onEdit,
   onDelete,
-  onSpeak
+  onSpeak,
+  onViewNotes
 }: PhraseCardProps) {
   // Determine the color based on proficiency
   const getProficiencyColor = () => {
@@ -46,14 +50,27 @@ export function PhraseCard({
               size="icon"
               onClick={onSpeak}
               className="mr-2 text-gray-400 hover:text-gray-500 hover:bg-gray-100"
+              title="Speak"
             >
               <Volume2 className="h-5 w-5" />
             </Button>
+            {notes && (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={onViewNotes}
+                className="mr-2 text-gray-400 hover:text-gray-500 hover:bg-gray-100"
+                title="View Notes"
+              >
+                <Info className="h-5 w-5" />
+              </Button>
+            )}
             <Button
               variant="ghost"
               size="icon"
               onClick={onEdit}
               className="mr-2 text-gray-400 hover:text-gray-500 hover:bg-gray-100"
+              title="Edit"
             >
               <Edit className="h-5 w-5" />
             </Button>
@@ -62,6 +79,7 @@ export function PhraseCard({
               size="icon"
               onClick={onDelete}
               className="text-gray-400 hover:text-gray-500 hover:bg-gray-100"
+              title="Delete"
             >
               <Trash2 className="h-5 w-5" />
             </Button>

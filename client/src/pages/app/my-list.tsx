@@ -4,6 +4,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
   Select,
   SelectContent,
   SelectItem,
@@ -29,14 +36,63 @@ export default function MyList() {
   const isAuthenticated = true;
   useAuthRedirect(!isAuthenticated, "/login");
 
-  // Example phrases data
+  // State for modal
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [selectedPhrase, setSelectedPhrase] = useState<{
+    phrase: string;
+    translation: string;
+    notes: string;
+  } | null>(null);
+
+  // Example phrases data with notes
   const [phrases] = useState([
-    { id: 1, phrase: 'Buenos días', translation: 'Good morning', category: 'Greetings', proficiency: 85 },
-    { id: 2, phrase: '¿Cómo estás?', translation: 'How are you?', category: 'Greetings', proficiency: 70 },
-    { id: 3, phrase: 'Gracias', translation: 'Thank you', category: 'Common phrases', proficiency: 95 },
-    { id: 4, phrase: 'Por favor', translation: 'Please', category: 'Common phrases', proficiency: 90 },
-    { id: 5, phrase: 'Lo siento', translation: 'I\'m sorry', category: 'Common phrases', proficiency: 60 }
+    { 
+      id: 1, 
+      phrase: 'Buenos días', 
+      translation: 'Good morning', 
+      category: 'Greetings', 
+      proficiency: 85,
+      notes: 'Used as a morning greeting until around noon. The informal version is just "Hola".'
+    },
+    { 
+      id: 2, 
+      phrase: '¿Cómo estás?', 
+      translation: 'How are you?', 
+      category: 'Greetings', 
+      proficiency: 70,
+      notes: 'Informal way to ask how someone is doing. For formal situations use "¿Cómo está usted?"'
+    },
+    { 
+      id: 3, 
+      phrase: 'Gracias', 
+      translation: 'Thank you', 
+      category: 'Common phrases', 
+      proficiency: 95,
+      notes: 'The standard way to say thank you. You can add "muchas" before it for "thank you very much".'
+    },
+    { 
+      id: 4, 
+      phrase: 'Por favor', 
+      translation: 'Please', 
+      category: 'Common phrases', 
+      proficiency: 90,
+      notes: 'Used to make polite requests. Can be placed at the beginning or end of a sentence.'
+    },
+    { 
+      id: 5, 
+      phrase: 'Lo siento', 
+      translation: 'I\'m sorry', 
+      category: 'Common phrases', 
+      proficiency: 60,
+      notes: 'Used to apologize. For more serious apologies, you can say "Lo siento mucho" (I\'m very sorry).'
+    }
   ]);
+  
+  // Handle showing notes for a phrase
+  const handleViewNotes = (phrase: string, translation: string, notes: string) => {
+    setSelectedPhrase({ phrase, translation, notes });
+    setIsDialogOpen(true);
+  };
 
   return (
     <div className="py-6 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto pb-20 md:pb-6">
@@ -104,13 +160,31 @@ export default function MyList() {
               translation={phrase.translation}
               category={phrase.category}
               proficiency={phrase.proficiency}
+              notes={phrase.notes}
               onEdit={() => {}}
               onDelete={() => {}}
               onSpeak={() => {}}
+              onViewNotes={() => handleViewNotes(phrase.phrase, phrase.translation, phrase.notes)}
             />
           ))}
         </div>
       </Card>
+
+      {/* Notes Dialog */}
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-semibold flex items-center gap-2">
+              <span className="text-primary">{selectedPhrase?.phrase}</span> 
+              <span className="text-sm font-normal text-gray-500">({selectedPhrase?.translation})</span>
+            </DialogTitle>
+          </DialogHeader>
+          <div className="border-t border-gray-200 pt-4">
+            <h3 className="text-sm font-medium mb-2">Notes:</h3>
+            <p className="text-gray-700">{selectedPhrase?.notes}</p>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* Pagination */}
       <Pagination>
