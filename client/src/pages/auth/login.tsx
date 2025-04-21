@@ -59,10 +59,8 @@ export default function Login() {
                     </Label>
                   </div>
 
-                  <Link href="/forgot-password">
-                    <a className="text-sm font-medium text-primary hover:text-primary/80">
-                      Forgot your password?
-                    </a>
+                  <Link href="/forgot-password" className="text-sm font-medium text-primary hover:text-primary/80">
+                    Forgot your password?
                   </Link>
                 </div>
               </div>
@@ -75,10 +73,8 @@ export default function Login() {
             <div className="mt-6 text-center">
               <p className="text-sm text-gray-600">
                 Don't have an account?{' '}
-                <Link href="/signup">
-                  <a className="font-medium text-primary hover:text-primary/80">
-                    Sign up
-                  </a>
+                <Link href="/signup" className="font-medium text-primary hover:text-primary/80">
+                  Sign up
                 </Link>
               </p>
             </div>

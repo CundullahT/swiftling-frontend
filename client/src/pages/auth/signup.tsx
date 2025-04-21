@@ -85,13 +85,9 @@ export default function Signup() {
                 <Checkbox id="terms" />
                 <Label htmlFor="terms" className="text-sm">
                   I agree to the{" "}
-                  <Link href="#">
-                    <a className="text-primary hover:text-primary/80">Terms</a>
-                  </Link>{" "}
+                  <Link href="#" className="text-primary hover:text-primary/80">Terms</Link>{" "}
                   and{" "}
-                  <Link href="#">
-                    <a className="text-primary hover:text-primary/80">Privacy Policy</a>
-                  </Link>
+                  <Link href="#" className="text-primary hover:text-primary/80">Privacy Policy</Link>
                 </Label>
               </div>
 
@@ -103,10 +99,8 @@ export default function Signup() {
             <div className="mt-6 text-center">
               <p className="text-sm text-gray-600">
                 Already have an account?{' '}
-                <Link href="/login">
-                  <a className="font-medium text-primary hover:text-primary/80">
-                    Sign in
-                  </a>
+                <Link href="/login" className="font-medium text-primary hover:text-primary/80">
+                  Sign in
                 </Link>
               </p>
             </div>
