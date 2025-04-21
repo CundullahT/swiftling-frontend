@@ -4,13 +4,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Link, useLocation } from "wouter";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { LANGUAGES } from "@/lib/constants";
 
 export default function Signup() {
   const [, setLocation] = useLocation();
 
-  // Placeholder signup function
+  // Redirect to dashboard when Create account button is clicked
   const handleSignup = (e: React.FormEvent) => {
     e.preventDefault();
     setLocation("/dashboard");
@@ -81,22 +79,6 @@ export default function Signup() {
                   type="password" 
                   required 
                 />
-              </div>
-
-              <div>
-                <Label htmlFor="language">Language to learn</Label>
-                <Select defaultValue="spanish">
-                  <SelectTrigger id="language">
-                    <SelectValue placeholder="Select a language" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {LANGUAGES.map((language) => (
-                      <SelectItem key={language.id} value={language.id}>
-                        {language.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
               </div>
 
               <div className="flex items-center space-x-2">
