@@ -78,18 +78,18 @@ export default function Sidebar({ onClose }: SidebarProps) {
           
           <div className="space-y-1">
             {navigationItems.map((item) => (
-              <Link key={item.name} href={item.href}>
-                <a 
-                  className={`w-full flex items-center px-2 py-2 text-base font-medium rounded-md ${
-                    location === item.href 
-                      ? "text-primary bg-primary-50" 
-                      : "text-slate-700 hover:bg-slate-100"
-                  }`}
-                  onClick={onClose}
-                >
-                  {item.icon}
-                  {item.name}
-                </a>
+              <Link 
+                key={item.name} 
+                href={item.href}
+                className={`w-full flex items-center px-2 py-2 text-base font-medium rounded-md ${
+                  location === item.href 
+                    ? "text-primary bg-primary-50" 
+                    : "text-slate-700 hover:bg-slate-100"
+                }`}
+                onClick={onClose}
+              >
+                {item.icon}
+                {item.name}
               </Link>
             ))}
           </div>
@@ -97,14 +97,13 @@ export default function Sidebar({ onClose }: SidebarProps) {
       </div>
       
       <div className="border-t px-4 py-4">
-        <Link href="/login">
-          <a 
-            className="w-full flex items-center px-2 py-2 text-base font-medium rounded-md text-slate-700 hover:bg-slate-100"
-            onClick={onClose}
-          >
-            <LogOut className="h-5 w-5 mr-3" />
-            Logout
-          </a>
+        <Link 
+          href="/dashboard"
+          className="w-full flex items-center px-2 py-2 text-base font-medium rounded-md text-slate-700 hover:bg-slate-100"
+          onClick={onClose}
+        >
+          <LogOut className="h-5 w-5 mr-3" />
+          Logout
         </Link>
       </div>
     </nav>
