@@ -47,28 +47,50 @@ export function PhraseCard({
           <p className="text-md text-gray-500 line-clamp-2 overflow-hidden break-words">{translation}</p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <div className="hidden sm:flex sm:flex-col sm:gap-1">
+          {/* Tags section for desktop - fixed width column */}
+          <div className="hidden sm:block w-32">
             {tags && tags.length > 0 ? (
-              tags.map((tag, index) => (
-                <Badge key={index} variant="outline" className="bg-slate-100 text-xs">
-                  {tag}
-                </Badge>
-              ))
+              <div className="flex flex-col gap-1 mb-0.5">
+                {tags.map((tag, index) => (
+                  <div key={index} className="flex">
+                    <Badge 
+                      variant="outline" 
+                      className="bg-slate-100 hover:bg-slate-200 text-xs text-center px-2 py-0.5 mx-auto"
+                    >
+                      {tag}
+                    </Badge>
+                  </div>
+                ))}
+              </div>
             ) : category ? (
-              <Badge variant="outline" className="bg-slate-100 text-xs">
-                {category}
-              </Badge>
+              <div className="flex">
+                <Badge 
+                  variant="outline" 
+                  className="bg-slate-100 hover:bg-slate-200 text-xs text-center px-2 py-0.5 mx-auto"
+                >
+                  {category}
+                </Badge>
+              </div>
             ) : null}
           </div>
+          
+          {/* Tags section for mobile */}
           <div className="flex sm:hidden flex-wrap gap-1">
             {tags && tags.length > 0 ? (
               tags.map((tag, index) => (
-                <Badge key={index} variant="outline" className="bg-slate-100 text-xs">
+                <Badge 
+                  key={index} 
+                  variant="outline" 
+                  className="bg-slate-100 hover:bg-slate-200 text-xs text-center px-2 py-0.5"
+                >
                   {tag}
                 </Badge>
               ))
             ) : category ? (
-              <Badge variant="outline" className="bg-slate-100 text-xs">
+              <Badge 
+                variant="outline" 
+                className="bg-slate-100 hover:bg-slate-200 text-xs text-center px-2 py-0.5"
+              >
                 {category}
               </Badge>
             ) : null}
