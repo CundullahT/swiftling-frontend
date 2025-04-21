@@ -162,13 +162,13 @@ export default function Dashboard() {
           <h2 className="text-lg font-semibold text-gray-900 mb-4">Progress Statistics</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
             {/* Daily Progress */}
-            <div className="bg-blue-50 rounded-lg p-4">
-              <h3 className="text-sm font-medium text-gray-500 mb-2">Daily Progress</h3>
+            <div className="bg-primary/5 rounded-lg p-4 shadow-sm border border-primary/10">
+              <h3 className="text-sm font-medium text-secondary mb-2">Daily Progress</h3>
               <div className="flex flex-col items-center">
                 <PieChart 
                   data={[
-                    { value: progressStats.daily.learned, color: 'rgb(34, 197, 94)' }, // Green for learned
-                    { value: progressStats.daily.total - progressStats.daily.learned, color: 'rgb(209, 213, 219)' } // Gray for not learned
+                    { value: progressStats.daily.learned, color: 'hsl(var(--primary))' }, // Primary teal for learned
+                    { value: progressStats.daily.total - progressStats.daily.learned, color: 'hsl(var(--muted))' } // Muted for not learned
                   ]}
                   size={100}
                 />
@@ -186,13 +186,13 @@ export default function Dashboard() {
             </div>
             
             {/* Weekly Progress */}
-            <div className="bg-purple-50 rounded-lg p-4">
-              <h3 className="text-sm font-medium text-gray-500 mb-2">Weekly Progress</h3>
+            <div className="bg-secondary/5 rounded-lg p-4 shadow-sm border border-primary/10">
+              <h3 className="text-sm font-medium text-secondary mb-2">Weekly Progress</h3>
               <div className="flex flex-col items-center">
                 <PieChart 
                   data={[
-                    { value: progressStats.weekly.learned, color: 'rgb(168, 85, 247)' }, // Purple for learned
-                    { value: progressStats.weekly.total - progressStats.weekly.learned, color: 'rgb(209, 213, 219)' } // Gray for not learned
+                    { value: progressStats.weekly.learned, color: 'hsl(var(--secondary))' }, // Secondary for learned
+                    { value: progressStats.weekly.total - progressStats.weekly.learned, color: 'hsl(var(--muted))' } // Muted for not learned
                   ]}
                   size={100}
                 />
@@ -210,13 +210,13 @@ export default function Dashboard() {
             </div>
             
             {/* Monthly Progress */}
-            <div className="bg-amber-50 rounded-lg p-4">
-              <h3 className="text-sm font-medium text-gray-500 mb-2">Monthly Progress</h3>
+            <div className="bg-accent/5 rounded-lg p-4 shadow-sm border border-primary/10">
+              <h3 className="text-sm font-medium text-secondary mb-2">Monthly Progress</h3>
               <div className="flex flex-col items-center">
                 <PieChart 
                   data={[
-                    { value: progressStats.monthly.learned, color: 'rgb(217, 119, 6)' }, // Amber for learned
-                    { value: progressStats.monthly.total - progressStats.monthly.learned, color: 'rgb(209, 213, 219)' } // Gray for not learned
+                    { value: progressStats.monthly.learned, color: 'hsl(var(--accent))' }, // Accent/gold for learned
+                    { value: progressStats.monthly.total - progressStats.monthly.learned, color: 'hsl(var(--muted))' } // Muted for not learned
                   ]}
                   size={100}
                 />
