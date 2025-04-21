@@ -159,7 +159,7 @@ export default function Dashboard() {
       {/* Progress Statistics */}
       <Card className="mb-6">
         <CardContent className="pt-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Progress Statistics</h2>
+          <h2 className="text-xl font-semibold text-secondary mb-4">Progress Statistics</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
             {/* Daily Progress */}
             <div className="bg-primary/5 rounded-lg p-4 shadow-sm border border-primary/10">
@@ -174,12 +174,12 @@ export default function Dashboard() {
                 />
                 <div className="mt-3 flex gap-4 text-center">
                   <div>
-                    <p className="text-xs text-gray-500">Added</p>
-                    <p className="text-lg font-semibold text-primary">{progressStats.daily.total}</p>
+                    <p className="text-xs text-secondary/70">Added</p>
+                    <p className="text-lg font-semibold text-secondary">{progressStats.daily.total}</p>
                   </div>
                   <div>
-                    <p className="text-xs text-gray-500">Learned</p>
-                    <p className="text-lg font-semibold text-green-600">{progressStats.daily.learned}</p>
+                    <p className="text-xs text-secondary/70">Learned</p>
+                    <p className="text-lg font-semibold text-primary">{progressStats.daily.learned}</p>
                   </div>
                 </div>
               </div>
@@ -198,12 +198,12 @@ export default function Dashboard() {
                 />
                 <div className="mt-3 flex gap-4 text-center">
                   <div>
-                    <p className="text-xs text-gray-500">Added</p>
-                    <p className="text-lg font-semibold text-primary">{progressStats.weekly.total}</p>
+                    <p className="text-xs text-secondary/70">Added</p>
+                    <p className="text-lg font-semibold text-secondary">{progressStats.weekly.total}</p>
                   </div>
                   <div>
-                    <p className="text-xs text-gray-500">Learned</p>
-                    <p className="text-lg font-semibold text-purple-600">{progressStats.weekly.learned}</p>
+                    <p className="text-xs text-secondary/70">Learned</p>
+                    <p className="text-lg font-semibold text-secondary">{progressStats.weekly.learned}</p>
                   </div>
                 </div>
               </div>
@@ -222,36 +222,36 @@ export default function Dashboard() {
                 />
                 <div className="mt-3 flex gap-4 text-center">
                   <div>
-                    <p className="text-xs text-gray-500">Added</p>
-                    <p className="text-lg font-semibold text-primary">{progressStats.monthly.total}</p>
+                    <p className="text-xs text-secondary/70">Added</p>
+                    <p className="text-lg font-semibold text-secondary">{progressStats.monthly.total}</p>
                   </div>
                   <div>
-                    <p className="text-xs text-gray-500">Learned</p>
-                    <p className="text-lg font-semibold text-amber-600">{progressStats.monthly.learned}</p>
+                    <p className="text-xs text-secondary/70">Learned</p>
+                    <p className="text-lg font-semibold text-accent">{progressStats.monthly.learned}</p>
                   </div>
                 </div>
               </div>
             </div>
             
             {/* Total Progress */}
-            <div className="bg-emerald-50 rounded-lg p-4">
-              <h3 className="text-sm font-medium text-gray-500 mb-2">Total Progress</h3>
+            <div className="bg-gradient-to-br from-primary/10 to-accent/10 rounded-lg p-4 shadow-sm border border-primary/10">
+              <h3 className="text-sm font-medium text-secondary mb-2">Total Progress</h3>
               <div className="flex flex-col items-center">
                 <PieChart 
                   data={[
-                    { value: progressStats.total.learned, color: 'rgb(5, 150, 105)' }, // Emerald for learned
-                    { value: progressStats.total.total - progressStats.total.learned, color: 'rgb(209, 213, 219)' } // Gray for not learned
+                    { value: progressStats.total.learned, color: 'hsl(var(--chart-5))' }, // Mint green for learned
+                    { value: progressStats.total.total - progressStats.total.learned, color: 'hsl(var(--muted))' } // Muted for not learned
                   ]}
                   size={100}
                 />
                 <div className="mt-3 flex gap-4 text-center">
                   <div>
-                    <p className="text-xs text-gray-500">Added</p>
-                    <p className="text-lg font-semibold text-primary">{progressStats.total.total}</p>
+                    <p className="text-xs text-secondary/70">Added</p>
+                    <p className="text-lg font-semibold text-secondary">{progressStats.total.total}</p>
                   </div>
                   <div>
-                    <p className="text-xs text-gray-500">Learned</p>
-                    <p className="text-lg font-semibold text-emerald-600">{progressStats.total.learned}</p>
+                    <p className="text-xs text-secondary/70">Learned</p>
+                    <p className="text-lg font-semibold text-chart-5">{progressStats.total.learned}</p>
                   </div>
                 </div>
               </div>
@@ -263,15 +263,15 @@ export default function Dashboard() {
       {/* Recent Phrases */}
       <Card>
         <CardContent className="pt-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Last 10 Phrases Added</h2>
+          <h2 className="text-xl font-semibold text-secondary mb-4">Last 10 Phrases Added</h2>
           <div className="overflow-hidden">
             <div className="overflow-x-auto relative w-full">
               <Table className="w-full table-fixed">
                 <TableHeader>
-                  <TableRow>
-                    <TableHead className="w-[37%]">Phrase</TableHead>
-                    <TableHead className="w-[37%]">Translation</TableHead>
-                    <TableHead className="w-[26%] text-right">Status</TableHead>
+                  <TableRow className="border-b border-primary/10">
+                    <TableHead className="w-[37%] text-secondary">Phrase</TableHead>
+                    <TableHead className="w-[37%] text-secondary">Translation</TableHead>
+                    <TableHead className="w-[26%] text-secondary text-right">Status</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -285,11 +285,11 @@ export default function Dashboard() {
                       </TableCell>
                       <TableCell className="text-right sm:whitespace-nowrap">
                         {phrase.learned ? (
-                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 whitespace-nowrap">
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/20 text-primary whitespace-nowrap">
                             Learned
                           </span>
                         ) : (
-                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 whitespace-nowrap">
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-accent/20 text-accent/90 whitespace-nowrap">
                             In&nbsp;Progress
                           </span>
                         )}
