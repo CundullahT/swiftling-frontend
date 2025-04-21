@@ -231,12 +231,12 @@ export default function AddPhrase() {
             <div className="mb-4">
               <p className="text-sm text-gray-500">
                 Enter one phrase per line in the format: 
-                <span className="font-medium"> phrase | translation | tags (optional, comma separated)</span>
+                <span className="font-medium"> phrase | translation | tags (optional, comma separated) | notes (optional)</span>
               </p>
             </div>
             <Textarea 
               rows={5} 
-              placeholder="Buenos días | Good morning | Greetings,Morning,Spanish"
+              placeholder="Buenos días | Good morning | Greetings,Morning,Spanish | Used as a morning greeting until noon"
               value={multiplePhrasesValue}
               onChange={(e) => setMultiplePhrasesValue(e.target.value)}
             />
