@@ -111,6 +111,24 @@ export default function Dashboard() {
   const isAuthenticated = true;
   useAuthRedirect(!isAuthenticated, "/login");
   
+  // Dialog state
+  const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false);
+  const [selectedPhrase, setSelectedPhrase] = useState<{
+    id: number;
+    phrase: string;
+    translation: string;
+    learned: boolean;
+    notes?: string;
+    sourceLanguage?: string;
+    targetLanguage?: string;
+  } | null>(null);
+
+  // Handle clicking on a phrase row
+  const handlePhraseClick = (phrase: any) => {
+    setSelectedPhrase(phrase);
+    setIsDetailsDialogOpen(true);
+  };
+  
   // Dummy user data for UI display
   const user = {
     streakDays: 7,
@@ -126,16 +144,16 @@ export default function Dashboard() {
 
   // Dummy data for recent phrases
   const recentPhrases = [
-    { id: 1, phrase: 'Gracias', translation: 'Thank you', learned: true },
-    { id: 2, phrase: 'Buenos días', translation: 'Good morning', learned: true },
-    { id: 3, phrase: 'Por favor', translation: 'Please', learned: true },
-    { id: 4, phrase: '¿Cómo estás?', translation: 'How are you?', learned: false },
-    { id: 5, phrase: 'Lo siento mucho por el malentendido. No fue mi intención causar problemas. Espero que podamos resolver esto pronto.', translation: 'I\'m very sorry for the misunderstanding. It was not my intention to cause problems. I hope we can resolve this soon.', learned: false },
-    { id: 6, phrase: 'Hasta luego', translation: 'See you later', learned: true },
-    { id: 7, phrase: '¿Dónde está el museo de arte moderno? Estoy buscando la exhibición especial que comenzó la semana pasada.', translation: 'Where is the modern art museum? I am looking for the special exhibition that started last week.', learned: false },
-    { id: 8, phrase: 'Me gusta', translation: 'I like it', learned: true },
-    { id: 9, phrase: 'No entiendo lo que estás tratando de explicar. ¿Podrías hablar más despacio y usar palabras más simples, por favor?', translation: 'I don\'t understand what you are trying to explain. Could you speak more slowly and use simpler words, please?', learned: false },
-    { id: 10, phrase: 'Mucho gusto', translation: 'Nice to meet you', learned: true },
+    { id: 1, phrase: 'Gracias', translation: 'Thank you', learned: true, sourceLanguage: 'spanish', targetLanguage: 'english', notes: 'Used to express gratitude' },
+    { id: 2, phrase: 'Buenos días', translation: 'Good morning', learned: true, sourceLanguage: 'spanish', targetLanguage: 'english' },
+    { id: 3, phrase: 'Por favor', translation: 'Please', learned: true, sourceLanguage: 'spanish', targetLanguage: 'english' },
+    { id: 4, phrase: '¿Cómo estás?', translation: 'How are you?', learned: false, sourceLanguage: 'spanish', targetLanguage: 'english', notes: 'Informal greeting used with friends and family' },
+    { id: 5, phrase: 'Lo siento mucho por el malentendido. No fue mi intención causar problemas. Espero que podamos resolver esto pronto.', translation: 'I\'m very sorry for the misunderstanding. It was not my intention to cause problems. I hope we can resolve this soon.', learned: false, sourceLanguage: 'spanish', targetLanguage: 'english', notes: 'Formal apology used in professional settings' },
+    { id: 6, phrase: 'Hasta luego', translation: 'See you later', learned: true, sourceLanguage: 'spanish', targetLanguage: 'english' },
+    { id: 7, phrase: '¿Dónde está el museo de arte moderno? Estoy buscando la exhibición especial que comenzó la semana pasada.', translation: 'Where is the modern art museum? I am looking for the special exhibition that started last week.', learned: false, sourceLanguage: 'spanish', targetLanguage: 'english', notes: 'Useful for asking directions when traveling' },
+    { id: 8, phrase: 'Me gusta', translation: 'I like it', learned: true, sourceLanguage: 'spanish', targetLanguage: 'english' },
+    { id: 9, phrase: 'No entiendo lo que estás tratando de explicar. ¿Podrías hablar más despacio y usar palabras más simples, por favor?', translation: 'I don\'t understand what you are trying to explain. Could you speak more slowly and use simpler words, please?', learned: false, sourceLanguage: 'spanish', targetLanguage: 'english', notes: 'Very useful phrase when struggling to understand native speakers' },
+    { id: 10, phrase: 'Mucho gusto', translation: 'Nice to meet you', learned: true, sourceLanguage: 'spanish', targetLanguage: 'english' },
   ];
 
   return (
@@ -284,7 +302,11 @@ export default function Dashboard() {
                 </TableHeader>
                 <TableBody>
                   {recentPhrases.map((phrase) => (
-                    <TableRow key={phrase.id}>
+                    <TableRow 
+                      key={phrase.id} 
+                      onClick={() => handlePhraseClick(phrase)}
+                      className="cursor-pointer hover:bg-secondary/5 transition-colors"
+                    >
                       <TableCell className="font-medium">
                         <div className="line-clamp-2 overflow-hidden break-words">{phrase.phrase}</div>
                       </TableCell>
@@ -310,6 +332,64 @@ export default function Dashboard() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Phrase Details Dialog */}
+      <Dialog open={isDetailsDialogOpen} onOpenChange={setIsDetailsDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-semibold flex items-center gap-2">
+              <span className="text-primary">{selectedPhrase?.phrase}</span>
+              <span className="text-sm font-normal text-gray-500">({selectedPhrase?.translation})</span>
+            </DialogTitle>
+            <DialogDescription>
+              Details about this phrase
+            </DialogDescription>
+          </DialogHeader>
+          <div className="border-t border-gray-200 pt-4">
+            <div className="mb-4">
+              <h3 className="text-sm font-medium mb-2">Languages:</h3>
+              <div className="flex gap-2 items-center">
+                <Badge className="px-2 py-1 bg-primary-500/10 text-primary-700">
+                  {selectedPhrase && selectedPhrase.sourceLanguage ? 
+                    selectedPhrase.sourceLanguage.charAt(0).toUpperCase() + selectedPhrase.sourceLanguage.slice(1) :
+                    "Unknown"
+                  }
+                </Badge>
+                <span className="text-gray-400">→</span>
+                <Badge className="px-2 py-1 bg-primary-500/10 text-primary-700">
+                  {selectedPhrase && selectedPhrase.targetLanguage ? 
+                    selectedPhrase.targetLanguage.charAt(0).toUpperCase() + selectedPhrase.targetLanguage.slice(1) :
+                    "Unknown"
+                  }
+                </Badge>
+              </div>
+            </div>
+            <div className="mb-4">
+              <h3 className="text-sm font-medium mb-2">Status:</h3>
+              <div>
+                {selectedPhrase?.learned ? (
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/20 text-primary-700 dark:text-primary-300 whitespace-nowrap">
+                    Learned
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-accent/20 text-amber-700 dark:text-amber-300 whitespace-nowrap">
+                    In&nbsp;Progress
+                  </span>
+                )}
+              </div>
+            </div>
+            {selectedPhrase?.notes && (
+              <>
+                <h3 className="text-sm font-medium mb-2">Notes:</h3>
+                <p className="text-gray-700">{selectedPhrase.notes}</p>
+              </>
+            )}
+            {!selectedPhrase?.notes && (
+              <p className="text-gray-500 italic">No additional notes available for this phrase.</p>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
