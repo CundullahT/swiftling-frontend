@@ -24,11 +24,15 @@ function App() {
   const [location] = useLocation();
   const [isAuthenticated] = useState(true); // Always authenticated for now
 
+  // Check if current path is an auth route
+  const isAuthRoute = location.startsWith('/auth/');
+
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <div className="min-h-screen flex flex-col bg-slate-50">
-          {isAuthenticated && <Header />}
+          {/* Show header only for non-auth routes when authenticated */}
+          {isAuthenticated && !isAuthRoute && <Header />}
           
           <main className="flex-1">
             <Switch>
@@ -50,7 +54,8 @@ function App() {
             </Switch>
           </main>
           
-          {isAuthenticated && <MobileNav />}
+          {/* Show mobile nav only for non-auth routes when authenticated */}
+          {isAuthenticated && !isAuthRoute && <MobileNav />}
           <Toaster />
         </div>
       </TooltipProvider>
