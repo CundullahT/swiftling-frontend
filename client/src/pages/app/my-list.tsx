@@ -279,11 +279,10 @@ export default function MyList() {
   const getFilteredAndSortedPhrases = () => {
     // First, filter the phrases
     let filtered = phrases.filter(phrase => {
-      // Search term filter (case-insensitive)
+      // Search term filter (case-insensitive) - only check phrase and translation
       const matchesSearch = searchTerm === "" || 
         phrase.phrase.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        phrase.translation.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (phrase.notes && phrase.notes.toLowerCase().includes(searchTerm.toLowerCase()));
+        phrase.translation.toLowerCase().includes(searchTerm.toLowerCase());
         
       // Tag filter (case-insensitive)
       const matchesTag = tagFilter === "all" || 
@@ -330,7 +329,7 @@ export default function MyList() {
                 <Search className="h-5 w-5 text-gray-400" />
               </div>
               <Input 
-                placeholder="Search phrases" 
+                placeholder="Search phrases or translations" 
                 className="pl-10" 
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -423,6 +422,9 @@ export default function MyList() {
               <span className="text-primary">{selectedPhrase?.phrase}</span> 
               <span className="text-sm font-normal text-gray-500">({selectedPhrase?.translation})</span>
             </DialogTitle>
+            <DialogDescription>
+              Details about this phrase
+            </DialogDescription>
           </DialogHeader>
           <div className="border-t border-gray-200 pt-4">
             <div className="mb-4">
