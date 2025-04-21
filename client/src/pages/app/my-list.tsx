@@ -358,11 +358,11 @@ export default function MyList() {
     // Japanese phrases
     { 
       id: 26, 
-      phrase: 'おはようございます (Ohayou gozaimasu)', 
-      translation: 'Good morning', 
+      phrase: 'おはようございます (Ohayou gozaimasu) - 今日は素晴らしい天気ですね。早起きは健康にいいと言われています。', 
+      translation: 'Good morning - It\'s a beautiful weather today. They say waking up early is good for your health.', 
       tags: ['Greetings', 'Morning', 'Beginner'], 
       proficiency: 70,
-      notes: 'Formal morning greeting. "おはよう" (Ohayou) is the casual version.',
+      notes: 'Formal morning greeting. "おはよう" (Ohayou) is the casual version. This extended version includes a comment about the weather and a common saying about early rising.',
       sourceLanguage: 'japanese',
       targetLanguage: 'english'
     },
@@ -410,11 +410,11 @@ export default function MyList() {
     // Mandarin Chinese phrases
     { 
       id: 31, 
-      phrase: '你好 (Nǐ hǎo)', 
-      translation: 'Hello', 
+      phrase: '你好 (Nǐ hǎo) - 很高兴认识你。希望我们可以成为好朋友。我在学习中文已经有六个月了。', 
+      translation: 'Hello - Nice to meet you. I hope we can become good friends. I have been learning Chinese for six months already.', 
       tags: ['Greetings', 'Beginner'], 
       proficiency: 90,
-      notes: 'The most common greeting in Mandarin Chinese.',
+      notes: 'The most common greeting in Mandarin Chinese, extended with some friendly conversation phrases that might be used when meeting someone new.',
       sourceLanguage: 'mandarin',
       targetLanguage: 'english'
     },
@@ -566,11 +566,11 @@ export default function MyList() {
     // Korean phrases
     { 
       id: 46, 
-      phrase: '안녕하세요 (Annyeong haseyo)', 
-      translation: 'Hello', 
+      phrase: '안녕하세요 (Annyeong haseyo) - 만나서 반갑습니다. 저는 한국어를 공부하고 있습니다. 천천히 말해 주세요.', 
+      translation: 'Hello - Nice to meet you. I am studying Korean. Please speak slowly.', 
       tags: ['Greetings', 'Beginner'], 
       proficiency: 75,
-      notes: 'Standard greeting in Korean. "안녕" (Annyeong) is casual.',
+      notes: 'Standard greeting in Korean. "안녕" (Annyeong) is casual. Extended with useful phrases for language learners when meeting native speakers.',
       sourceLanguage: 'korean',
       targetLanguage: 'english'
     },

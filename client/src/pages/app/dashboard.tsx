@@ -122,11 +122,11 @@ export default function Dashboard() {
     { id: 2, phrase: 'Buenos días', translation: 'Good morning', learned: true },
     { id: 3, phrase: 'Por favor', translation: 'Please', learned: true },
     { id: 4, phrase: '¿Cómo estás?', translation: 'How are you?', learned: false },
-    { id: 5, phrase: 'Lo siento', translation: 'I\'m sorry', learned: false },
+    { id: 5, phrase: 'Lo siento mucho por el malentendido. No fue mi intención causar problemas. Espero que podamos resolver esto pronto.', translation: 'I\'m very sorry for the misunderstanding. It was not my intention to cause problems. I hope we can resolve this soon.', learned: false },
     { id: 6, phrase: 'Hasta luego', translation: 'See you later', learned: true },
-    { id: 7, phrase: '¿Dónde está?', translation: 'Where is it?', learned: false },
+    { id: 7, phrase: '¿Dónde está el museo de arte moderno? Estoy buscando la exhibición especial que comenzó la semana pasada.', translation: 'Where is the modern art museum? I am looking for the special exhibition that started last week.', learned: false },
     { id: 8, phrase: 'Me gusta', translation: 'I like it', learned: true },
-    { id: 9, phrase: 'No entiendo', translation: 'I don\'t understand', learned: false },
+    { id: 9, phrase: 'No entiendo lo que estás tratando de explicar. ¿Podrías hablar más despacio y usar palabras más simples, por favor?', translation: 'I don\'t understand what you are trying to explain. Could you speak more slowly and use simpler words, please?', learned: false },
     { id: 10, phrase: 'Mucho gusto', translation: 'Nice to meet you', learned: true },
   ];
 
