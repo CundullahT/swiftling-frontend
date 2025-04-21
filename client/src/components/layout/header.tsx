@@ -36,7 +36,7 @@ export default function Header() {
 
   return (
     <>
-      <header className="bg-white shadow-sm sticky top-0 z-10">
+      <header className="bg-white shadow-sm sticky top-0 z-10 border-b-2 border-primary/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex justify-between items-center">
             <div className="flex items-center">
@@ -46,12 +46,12 @@ export default function Header() {
                 className="md:hidden mr-2" 
                 onClick={toggleSidebar}
               >
-                <Menu className="h-6 w-6 text-slate-700" />
+                <Menu className="h-6 w-6 text-secondary" />
               </Button>
 
-              <Link href="/dashboard" className="text-primary font-bold text-xl flex items-center gap-2">
+              <Link href="/dashboard" className="font-bold text-xl flex items-center gap-2">
                 <img src="/assets/logo.png" alt="SwiftLing Logo" className="h-8 w-auto" />
-                <span>SwiftLing</span>
+                <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">SwiftLing</span>
               </Link>
             </div>
             
@@ -62,8 +62,8 @@ export default function Header() {
                   href={item.href} 
                   className={`text-sm font-medium ${
                     location === item.href 
-                      ? "text-primary" 
-                      : "text-slate-700 hover:text-primary"
+                      ? "text-primary border-b-2 border-primary pb-1" 
+                      : "text-secondary/80 hover:text-primary hover:border-b-2 hover:border-primary/50 pb-1 transition-all duration-200"
                   }`}
                 >
                   {item.name}
