@@ -9,9 +9,15 @@ import {
   Badge,
   badgeVariants
 } from "@/components/ui/badge";
-import { Checkbox } from "@/components/ui/checkbox";
+import { 
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { SAMPLE_TAGS } from "@/lib/constants";
+import { SAMPLE_TAGS, LANGUAGES } from "@/lib/constants";
 import { X, Plus } from "lucide-react";
 
 export default function AddPhrase() {
@@ -22,10 +28,12 @@ export default function AddPhrase() {
   const [, setLocation] = useLocation();
   const [multiplePhrasesValue, setMultiplePhrasesValue] = useState("");
   
-  // Tags state
+  // Form state
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState("");
   const [filteredSuggestions, setFilteredSuggestions] = useState<string[]>([]);
+  const [sourceLanguage, setSourceLanguage] = useState<string>("");
+  const [targetLanguage, setTargetLanguage] = useState<string>("");
 
   // Handle form submission - would connect to API in real implementation
   const handleSubmit = (e: React.FormEvent) => {
@@ -91,22 +99,62 @@ export default function AddPhrase() {
         <CardContent className="pt-6">
           <form className="space-y-6" onSubmit={handleSubmit}>
             <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
-              <div className="sm:col-span-3">
-                <Label htmlFor="phrase">Phrase</Label>
-                <Input 
-                  id="phrase"
-                  name="phrase"
-                  placeholder="Enter phrase in foreign language"
-                />
+              <div className="sm:col-span-3 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
+                <div className="sm:col-span-4">
+                  <Label htmlFor="phrase">Phrase</Label>
+                  <Input 
+                    id="phrase"
+                    name="phrase"
+                    placeholder="Enter phrase to learn"
+                  />
+                </div>
+                <div className="sm:col-span-2">
+                  <Label htmlFor="sourceLanguage">Language</Label>
+                  <Select 
+                    value={sourceLanguage} 
+                    onValueChange={setSourceLanguage}
+                  >
+                    <SelectTrigger id="sourceLanguage">
+                      <SelectValue placeholder="Select" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {LANGUAGES.map((language) => (
+                        <SelectItem key={language.id} value={language.id}>
+                          {language.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
 
-              <div className="sm:col-span-3">
-                <Label htmlFor="translation">Translation</Label>
-                <Input 
-                  id="translation"
-                  name="translation"
-                  placeholder="Enter translation in your language"
-                />
+              <div className="sm:col-span-3 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
+                <div className="sm:col-span-4">
+                  <Label htmlFor="translation">Translation</Label>
+                  <Input 
+                    id="translation"
+                    name="translation"
+                    placeholder="Enter translation in your language"
+                  />
+                </div>
+                <div className="sm:col-span-2">
+                  <Label htmlFor="targetLanguage">Language</Label>
+                  <Select 
+                    value={targetLanguage} 
+                    onValueChange={setTargetLanguage}
+                  >
+                    <SelectTrigger id="targetLanguage">
+                      <SelectValue placeholder="Select" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {LANGUAGES.map((language) => (
+                        <SelectItem key={language.id} value={language.id}>
+                          {language.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
 
               <div className="sm:col-span-3">
