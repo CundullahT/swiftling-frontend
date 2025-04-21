@@ -953,68 +953,79 @@ export default function MyList() {
               {/* Pagination */}
               {getFilteredAndSortedPhrases().length > itemsPerPage && (
                 <div className="w-full p-4 flex justify-center items-center border-t border-gray-200 bg-gray-50">
-                  <div className="flex items-center space-x-4">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setCurrentPage(1)}
-                      disabled={currentPage === 1}
-                    >
-                      First
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setCurrentPage(currentPage - 1)}
-                      disabled={currentPage === 1}
-                      className="flex items-center"
-                    >
-                      <ChevronLeft className="h-4 w-4 mr-1" />
-                      Previous
-                    </Button>
-                    
-                    <div className="flex items-center space-x-1">
-                      {Array.from({length: Math.min(3, Math.ceil(getFilteredAndSortedPhrases().length / itemsPerPage))}, (_, i) => {
-                        const pageNum = currentPage === 1 ? i + 1 : 
-                                       currentPage === Math.ceil(getFilteredAndSortedPhrases().length / itemsPerPage) ? 
-                                       Math.max(1, Math.ceil(getFilteredAndSortedPhrases().length / itemsPerPage) - 2) + i :
-                                       currentPage - 1 + i;
-                        
-                        if (pageNum <= Math.ceil(getFilteredAndSortedPhrases().length / itemsPerPage)) {
-                          return (
-                            <Button
-                              key={i}
-                              variant={currentPage === pageNum ? "default" : "outline"}
-                              size="sm"
-                              onClick={() => setCurrentPage(pageNum)}
-                              className="w-9 h-9 p-0"
-                            >
-                              {pageNum}
-                            </Button>
-                          );
-                        }
-                        return null;
-                      })}
+                  <div className="flex flex-wrap items-center justify-center gap-2">
+                    {/* First/Previous row on small screens */}
+                    <div className="flex items-center gap-2">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setCurrentPage(1)}
+                        disabled={currentPage === 1}
+                        className="hidden sm:flex"
+                      >
+                        First
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setCurrentPage(currentPage - 1)}
+                        disabled={currentPage === 1}
+                        className="flex items-center min-w-0"
+                      >
+                        <ChevronLeft className="h-4 w-4 sm:mr-1" />
+                        <span className="hidden sm:inline">Previous</span>
+                      </Button>
+                      
+                      {/* Page numbers */}
+                      <div className="flex items-center gap-1">
+                        {Array.from({length: Math.min(3, Math.ceil(getFilteredAndSortedPhrases().length / itemsPerPage))}, (_, i) => {
+                          const pageNum = currentPage === 1 ? i + 1 : 
+                                        currentPage === Math.ceil(getFilteredAndSortedPhrases().length / itemsPerPage) ? 
+                                        Math.max(1, Math.ceil(getFilteredAndSortedPhrases().length / itemsPerPage) - 2) + i :
+                                        currentPage - 1 + i;
+                          
+                          if (pageNum <= Math.ceil(getFilteredAndSortedPhrases().length / itemsPerPage)) {
+                            return (
+                              <Button
+                                key={i}
+                                variant={currentPage === pageNum ? "default" : "outline"}
+                                size="sm"
+                                onClick={() => setCurrentPage(pageNum)}
+                                className="w-9 h-9 p-0"
+                              >
+                                {pageNum}
+                              </Button>
+                            );
+                          }
+                          return null;
+                        })}
+                      </div>
+                      
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setCurrentPage(currentPage + 1)}
+                        disabled={currentPage === Math.ceil(getFilteredAndSortedPhrases().length / itemsPerPage)}
+                        className="flex items-center min-w-0"
+                      >
+                        <span className="hidden sm:inline">Next</span>
+                        <ChevronRight className="h-4 w-4 sm:ml-1" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setCurrentPage(Math.ceil(getFilteredAndSortedPhrases().length / itemsPerPage))}
+                        disabled={currentPage === Math.ceil(getFilteredAndSortedPhrases().length / itemsPerPage)}
+                        className="hidden sm:flex"
+                      >
+                        Last
+                      </Button>
                     </div>
                     
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setCurrentPage(currentPage + 1)}
-                      disabled={currentPage === Math.ceil(getFilteredAndSortedPhrases().length / itemsPerPage)}
-                      className="flex items-center"
-                    >
-                      Next
-                      <ChevronRight className="h-4 w-4 ml-1" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setCurrentPage(Math.ceil(getFilteredAndSortedPhrases().length / itemsPerPage))}
-                      disabled={currentPage === Math.ceil(getFilteredAndSortedPhrases().length / itemsPerPage)}
-                    >
-                      Last
-                    </Button>
+                    {/* Page indicator for small screens */}
+                    <div className="text-sm text-gray-500 w-full text-center sm:hidden mt-2">
+                      Page {currentPage} of {Math.ceil(getFilteredAndSortedPhrases().length / itemsPerPage)}
+                    </div>
                   </div>
                 </div>
               )}
