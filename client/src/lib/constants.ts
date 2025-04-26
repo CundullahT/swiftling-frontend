@@ -161,7 +161,7 @@ export const QUIZ_TYPES = [
   { 
     id: 'learned', 
     name: 'Only Learned Phrases', 
-    description: 'Test phrases you already know',
+    description: 'Test your knowledge on the phrases you already learned',
     color: 'bg-green-500/20'
   },
   { 
