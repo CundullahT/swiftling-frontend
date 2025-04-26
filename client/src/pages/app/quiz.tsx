@@ -126,12 +126,12 @@ export default function Quiz() {
                   For speed
                 </span>
               </Label>
-              <Select defaultValue="10">
+              <Select defaultValue="5">
                 <SelectTrigger id="min-time">
                   <SelectValue placeholder="Select minimum time" />
                 </SelectTrigger>
                 <SelectContent>
-                  {ADAPTIVE_TIME_PRESETS.filter(t => ['5', '10'].includes(t.id)).map((time) => (
+                  {ADAPTIVE_TIME_PRESETS.filter(t => ['3', '4', '5', '6', '7', '8', '9', '10'].includes(t.id)).map((time) => (
                     <SelectItem key={time.id} value={time.id}>
                       {time.name}
                     </SelectItem>
@@ -179,7 +179,7 @@ export default function Quiz() {
                   <SelectValue placeholder="Select maximum time" />
                 </SelectTrigger>
                 <SelectContent>
-                  {ADAPTIVE_TIME_PRESETS.filter(t => ['30', '45', '60'].includes(t.id)).map((time) => (
+                  {ADAPTIVE_TIME_PRESETS.filter(t => ['20', '25', '30', '35', '40', '45'].includes(t.id)).map((time) => (
                     <SelectItem key={time.id} value={time.id}>
                       {time.name}
                     </SelectItem>

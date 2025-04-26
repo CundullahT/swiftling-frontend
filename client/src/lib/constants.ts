@@ -179,11 +179,24 @@ export const QUIZ_TYPES = [
 ];
 
 export const ADAPTIVE_TIME_PRESETS = [
+  // Minimum time options
+  { id: '3', name: '3 seconds', description: 'Minimum time per question' },
+  { id: '4', name: '4 seconds', description: 'Minimum time per question' },
   { id: '5', name: '5 seconds', description: 'Minimum time per question' },
+  { id: '6', name: '6 seconds', description: 'Minimum time per question' },
+  { id: '7', name: '7 seconds', description: 'Minimum time per question' },
+  { id: '8', name: '8 seconds', description: 'Minimum time per question' },
+  { id: '9', name: '9 seconds', description: 'Minimum time per question' },
   { id: '10', name: '10 seconds', description: 'Minimum time per question' },
+  
+  // Starting time options
   { id: '15', name: '15 seconds', description: 'Default starting time' },
   { id: '20', name: '20 seconds', description: 'Default starting time' },
+  
+  // Maximum time options
+  { id: '25', name: '25 seconds', description: 'Maximum time per question' },
   { id: '30', name: '30 seconds', description: 'Maximum time per question' },
+  { id: '35', name: '35 seconds', description: 'Maximum time per question' },
+  { id: '40', name: '40 seconds', description: 'Maximum time per question' },
   { id: '45', name: '45 seconds', description: 'Maximum time per question' },
-  { id: '60', name: '60 seconds', description: 'Maximum time per question' },
 ];
