@@ -15,6 +15,7 @@ import {
   QUIZ_TYPES, 
   ADAPTIVE_TIME_PRESETS
 } from "@/lib/constants";
+import { QuizGame } from "@/components/quiz/quiz-game";
 
 export default function Quiz() {
   // Placeholder for auth check - would be tied to a real auth system in future
@@ -23,12 +24,55 @@ export default function Quiz() {
   
   // State to track which quiz type is selected
   const [selectedQuizType, setSelectedQuizType] = useState<string | null>(null);
+  const [minTime, setMinTime] = useState<number>(5);
+  const [startTime, setStartTime] = useState<number>(15);
+  const [maxTime, setMaxTime] = useState<number>(30);
+  const [isQuizStarted, setIsQuizStarted] = useState(false);
   
   // Handle quiz type selection
   const handleQuizTypeSelect = (quizId: string) => {
     setSelectedQuizType(quizId === selectedQuizType ? null : quizId);
   };
 
+  // Handle time selection
+  const handleMinTimeChange = (value: string) => {
+    setMinTime(parseInt(value));
+  };
+
+  const handleStartTimeChange = (value: string) => {
+    setStartTime(parseInt(value));
+  };
+
+  const handleMaxTimeChange = (value: string) => {
+    setMaxTime(parseInt(value));
+  };
+
+  // Start quiz
+  const handleStartQuiz = () => {
+    if (selectedQuizType) {
+      setIsQuizStarted(true);
+    }
+  };
+
+  // End quiz
+  const handleEndQuiz = () => {
+    setIsQuizStarted(false);
+  };
+
+  // If quiz is started, show the actual quiz game
+  if (isQuizStarted) {
+    return (
+      <QuizGame 
+        quizType={selectedQuizType || 'mixed'} 
+        minTime={minTime}
+        startTime={startTime}
+        maxTime={maxTime}
+        onComplete={handleEndQuiz}
+      />
+    );
+  }
+
+  // Otherwise show the quiz setup screen
   return (
     <div className="py-6 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto pb-20 md:pb-6">
       <h1 className="text-3xl font-semibold text-secondary bg-gradient-to-r from-primary/90 to-secondary bg-clip-text text-transparent mb-6">Quiz</h1>
@@ -126,7 +170,7 @@ export default function Quiz() {
                   For speed
                 </span>
               </Label>
-              <Select defaultValue="5">
+              <Select defaultValue="5" onValueChange={handleMinTimeChange}>
                 <SelectTrigger id="min-time">
                   <SelectValue placeholder="Select minimum time" />
                 </SelectTrigger>
@@ -150,7 +194,7 @@ export default function Quiz() {
                   Initial time
                 </span>
               </Label>
-              <Select defaultValue="15">
+              <Select defaultValue="15" onValueChange={handleStartTimeChange}>
                 <SelectTrigger id="default-time">
                   <SelectValue placeholder="Select starting time" />
                 </SelectTrigger>
@@ -174,7 +218,7 @@ export default function Quiz() {
                   Extra time
                 </span>
               </Label>
-              <Select defaultValue="30">
+              <Select defaultValue="30" onValueChange={handleMaxTimeChange}>
                 <SelectTrigger id="max-time">
                   <SelectValue placeholder="Select maximum time" />
                 </SelectTrigger>
@@ -196,6 +240,7 @@ export default function Quiz() {
             <Button 
               className="bg-primary hover:bg-primary/90 w-full sm:w-auto"
               disabled={!selectedQuizType}
+              onClick={handleStartQuiz}
             >
               Start Quiz
             </Button>

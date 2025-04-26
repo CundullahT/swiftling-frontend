@@ -1,0 +1,271 @@
+import { useState, useEffect } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { AlertCircle, Check, X } from "lucide-react";
+
+// Mock data until we connect to real API
+const MOCK_PHRASES = [
+  { id: 1, phrase: "Hello", translation: "Hola", sourceLanguage: "English", targetLanguage: "Spanish" },
+  { id: 2, phrase: "Goodbye", translation: "Adiós", sourceLanguage: "English", targetLanguage: "Spanish" },
+  { id: 3, phrase: "Thank you", translation: "Gracias", sourceLanguage: "English", targetLanguage: "Spanish" },
+  { id: 4, phrase: "Please", translation: "Por favor", sourceLanguage: "English", targetLanguage: "Spanish" },
+  { id: 5, phrase: "Sorry", translation: "Lo siento", sourceLanguage: "English", targetLanguage: "Spanish" },
+  { id: 6, phrase: "Good morning", translation: "Buenos días", sourceLanguage: "English", targetLanguage: "Spanish" },
+  { id: 7, phrase: "Good night", translation: "Buenas noches", sourceLanguage: "English", targetLanguage: "Spanish" },
+  { id: 8, phrase: "How are you?", translation: "¿Cómo estás?", sourceLanguage: "English", targetLanguage: "Spanish" },
+  { id: 9, phrase: "I don't understand", translation: "No entiendo", sourceLanguage: "English", targetLanguage: "Spanish" },
+  { id: 10, phrase: "Where is...", translation: "Dónde está...", sourceLanguage: "English", targetLanguage: "Spanish" },
+];
+
+// Shuffle array utility function
+function shuffleArray<T>(array: T[]): T[] {
+  const newArray = [...array];
+  for (let i = newArray.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+  }
+  return newArray;
+}
+
+interface QuizGameProps {
+  quizType: string;
+  minTime: number;
+  startTime: number;
+  maxTime: number;
+  onComplete: () => void;
+}
+
+export function QuizGame({ quizType, minTime, startTime, maxTime, onComplete }: QuizGameProps) {
+  // States
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [timeLeft, setTimeLeft] = useState(startTime);
+  const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
+  const [isRevealing, setIsRevealing] = useState(false);
+  const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
+  const [questionType, setQuestionType] = useState<'original' | 'translation'>(
+    Math.random() > 0.5 ? 'original' : 'translation'
+  );
+  const [phrases, setPhrases] = useState(MOCK_PHRASES);
+  const [options, setOptions] = useState<Array<{ id: number, text: string }>>([]);
+  const [correctAnswerId, setCorrectAnswerId] = useState<number | null>(null);
+  
+  // Timer interval reference
+  const [timerActive, setTimerActive] = useState(true);
+  
+  // Setup the question and options
+  useEffect(() => {
+    // Reset states for new question
+    setSelectedAnswer(null);
+    setIsRevealing(false);
+    setIsCorrect(null);
+    setTimerActive(true);
+    
+    // Reset time for new question (use adaptive timing after first question)
+    setTimeLeft(currentQuestionIndex === 0 ? startTime : 
+      isCorrect === true ? Math.max(timeLeft - 2, minTime) : 
+      isCorrect === false ? Math.min(timeLeft + 3, maxTime) : 
+      timeLeft);
+    
+    // Randomly decide if we're asking for original phrase or translation
+    const newQuestionType = Math.random() > 0.5 ? 'original' : 'translation';
+    setQuestionType(newQuestionType);
+    
+    // Create a random set of phrases for this question
+    const availablePhrases = shuffleArray(phrases);
+    const currentPhrase = availablePhrases[0];
+    const otherPhrases = availablePhrases.slice(1, 5);
+    
+    // Set up options based on question type
+    let newOptions: Array<{ id: number, text: string }> = [];
+    
+    if (newQuestionType === 'original') {
+      // Question is original phrase, options are translations
+      const correctOption = { id: currentPhrase.id, text: currentPhrase.translation };
+      const wrongOptions = otherPhrases.map(p => ({ id: p.id, text: p.translation }));
+      newOptions = shuffleArray([correctOption, ...wrongOptions]);
+      setCorrectAnswerId(currentPhrase.id);
+    } else {
+      // Question is translation, options are original phrases
+      const correctOption = { id: currentPhrase.id, text: currentPhrase.phrase };
+      const wrongOptions = otherPhrases.map(p => ({ id: p.id, text: p.phrase }));
+      newOptions = shuffleArray([correctOption, ...wrongOptions]);
+      setCorrectAnswerId(currentPhrase.id);
+    }
+    
+    setOptions(newOptions);
+  }, [currentQuestionIndex]);
+  
+  // Timer effect
+  useEffect(() => {
+    if (!timerActive) return;
+    
+    const timer = setInterval(() => {
+      setTimeLeft(prev => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          setTimerActive(false);
+          handleTimeUp();
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    
+    return () => clearInterval(timer);
+  }, [timerActive]);
+  
+  // Handle time up
+  const handleTimeUp = () => {
+    setIsRevealing(true);
+    
+    // Wait 5 seconds then move to next question
+    setTimeout(() => {
+      moveToNextQuestion();
+    }, 5000);
+  };
+  
+  // Handle answer selection
+  const handleSelectAnswer = (optionId: number) => {
+    if (isRevealing || !timerActive) return;
+    
+    setTimerActive(false);
+    setSelectedAnswer(optionId);
+    const isAnswerCorrect = optionId === correctAnswerId;
+    setIsCorrect(isAnswerCorrect);
+    setIsRevealing(true);
+    
+    // Wait 5 seconds then move to next question
+    setTimeout(() => {
+      moveToNextQuestion();
+    }, 5000);
+  };
+  
+  // Move to next question
+  const moveToNextQuestion = () => {
+    // In a real app we'd check if we've reached the end
+    // For demo we'll just loop through questions
+    setCurrentQuestionIndex(prev => (prev + 1) % phrases.length);
+  };
+  
+  // Get current question
+  const getCurrentQuestion = () => {
+    if (phrases.length === 0) return { question: '', sourceLanguage: '', targetLanguage: '' };
+    
+    const currentPhrase = phrases[currentQuestionIndex % phrases.length];
+    
+    if (questionType === 'original') {
+      return { 
+        question: currentPhrase.phrase, 
+        sourceLanguage: currentPhrase.sourceLanguage,
+        targetLanguage: currentPhrase.targetLanguage
+      };
+    } else {
+      return { 
+        question: currentPhrase.translation, 
+        sourceLanguage: currentPhrase.targetLanguage,
+        targetLanguage: currentPhrase.sourceLanguage
+      };
+    }
+  };
+  
+  const { question, sourceLanguage, targetLanguage } = getCurrentQuestion();
+  
+  // Calculate time percentage for progress bar
+  const timePercentage = Math.max(0, (timeLeft / startTime) * 100);
+  
+  return (
+    <div className="py-6 px-4 max-w-5xl mx-auto">
+      {/* Timer and Progress */}
+      <div className="flex items-center justify-between mb-6">
+        <div className="text-sm text-gray-500">
+          Question {currentQuestionIndex + 1}
+        </div>
+        <div className="flex items-center">
+          <div className="w-32 h-2 bg-gray-200 rounded-full mr-2">
+            <div 
+              className={`h-2 rounded-full ${
+                timeLeft > startTime * 0.6 ? 'bg-green-500' : 
+                timeLeft > startTime * 0.3 ? 'bg-yellow-500' : 
+                'bg-red-500'
+              }`}
+              style={{ width: `${timePercentage}%` }}
+            ></div>
+          </div>
+          <span className="text-sm font-medium">{timeLeft}s</span>
+        </div>
+      </div>
+      
+      {/* Question Card */}
+      <Card className="mb-6">
+        <CardContent className="pt-6">
+          <div className="flex justify-between items-start mb-1">
+            <div className="px-2 py-1 bg-primary/20 text-primary text-xs rounded-full">
+              {sourceLanguage}
+            </div>
+            <div className="px-2 py-1 bg-secondary/20 text-secondary text-xs rounded-full">
+              {questionType === 'original' ? 'Translate to' : 'Select the original phrase in'} {targetLanguage}
+            </div>
+          </div>
+          <h3 className="text-2xl font-medium mt-4 mb-3 text-center">
+            {question}
+          </h3>
+        </CardContent>
+      </Card>
+      
+      {/* Answer Options */}
+      <div className="space-y-3">
+        {options.map((option) => {
+          const isSelected = selectedAnswer === option.id;
+          const isCorrectAnswer = option.id === correctAnswerId;
+          
+          let optionClassName = "relative p-4 border-2 rounded-lg hover:border-primary/50 transition-all";
+          
+          if (isRevealing) {
+            if (isCorrectAnswer) {
+              optionClassName = "relative p-4 border-2 border-green-500 bg-green-50 rounded-lg";
+            } else if (isSelected && !isCorrectAnswer) {
+              optionClassName = "relative p-4 border-2 border-red-500 bg-red-50 rounded-lg";
+            } else {
+              optionClassName = "relative p-4 border-2 border-gray-200 rounded-lg opacity-70";
+            }
+          } else {
+            optionClassName = "relative p-4 border-2 border-gray-200 rounded-lg hover:border-primary/50 cursor-pointer transition-all";
+          }
+          
+          return (
+            <div 
+              key={option.id}
+              className={optionClassName}
+              onClick={() => handleSelectAnswer(option.id)}
+            >
+              <div className="flex justify-between items-center">
+                <span className="text-base">{option.text}</span>
+                {isRevealing && (
+                  <div className="flex-shrink-0">
+                    {isCorrectAnswer && (
+                      <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-green-100">
+                        <Check className="w-4 h-4 text-green-600" />
+                      </span>
+                    )}
+                    {isSelected && !isCorrectAnswer && (
+                      <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-red-100">
+                        <X className="w-4 h-4 text-red-600" />
+                      </span>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+      
+      {/* Skip button */}
+      <div className="mt-6 flex justify-center">
+        <Button variant="outline" onClick={onComplete}>
+          End Quiz
+        </Button>
+      </div>
+    </div>
+  );
+}
