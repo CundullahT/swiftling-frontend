@@ -160,20 +160,20 @@ export const SAMPLE_TAGS = [
 export const QUIZ_TYPES = [
   { 
     id: 'learned', 
-    name: 'Quiz - Learned Phrases', 
-    description: 'Test your knowledge on phrases you already know',
+    name: 'Learned Phrases', 
+    description: 'Test phrases you already know',
     color: 'bg-green-500/20'
   },
   { 
     id: 'not-learned', 
-    name: 'Quiz - New Phrases', 
-    description: 'Focus on phrases you still need to practice',
+    name: 'New Phrases', 
+    description: 'Practice phrases you need to learn',
     color: 'bg-amber-500/20'
   },
   { 
     id: 'mixed', 
-    name: 'Quiz - All Mixed', 
-    description: 'Test both learned and new phrases together',
+    name: 'All Mixed', 
+    description: 'Both learned and new phrases',
     color: 'bg-primary/20'
   }
 ];

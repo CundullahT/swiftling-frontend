@@ -31,12 +31,9 @@ export default function Quiz() {
           <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">Choose Quiz Type</h3>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             {QUIZ_TYPES.map((type) => (
-              <LanguageButton
-                key={type.id}
-                name={type.name}
-                description={type.description}
-                icon={
-                  <div className={`${type.color} h-10 w-10 rounded-full flex items-center justify-center`}>
+              <div key={type.id} className="relative overflow-hidden hover:bg-gray-50 rounded-lg transition-colors border border-gray-100 shadow-sm">
+                <div className="p-4 flex items-start gap-3">
+                  <div className={`${type.color} h-10 w-10 rounded-full flex-shrink-0 flex items-center justify-center`}>
                     {type.id === 'learned' ? (
                       <Sparkles className="h-6 w-6 text-green-600" />
                     ) : type.id === 'not-learned' ? (
@@ -45,8 +42,13 @@ export default function Quiz() {
                       <Brain className="h-6 w-6 text-primary" />
                     )}
                   </div>
-                }
-              />
+                  <div className="flex flex-col overflow-hidden">
+                    <h4 className="font-medium text-sm sm:text-base text-secondary truncate">{type.name}</h4>
+                    <p className="text-xs sm:text-sm text-gray-500 line-clamp-2">{type.description}</p>
+                  </div>
+                </div>
+                <div className="absolute inset-0 w-full h-full cursor-pointer" onClick={() => {}} aria-hidden="true" />
+              </div>
             ))}
           </div>
         </CardContent>
@@ -138,11 +140,11 @@ export default function Quiz() {
             </div>
           </div>
           
-          <div className="mt-6 flex items-center gap-4">
-            <Button className="bg-primary hover:bg-primary/90">
+          <div className="mt-6 flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4">
+            <Button className="bg-primary hover:bg-primary/90 w-full sm:w-auto">
               Start Quiz
             </Button>
-            <p className="text-sm text-gray-500 italic">Quiz continues until you choose to finish</p>
+            <p className="text-xs sm:text-sm text-gray-500 italic">Quiz continues until you choose to finish</p>
           </div>
         </CardContent>
       </Card>
