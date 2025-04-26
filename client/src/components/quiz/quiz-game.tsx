@@ -56,15 +56,17 @@ export function QuizGame({ quizType, minTime, startTime, maxTime, onComplete }: 
   // Timer interval reference
   const [timerActive, setTimerActive] = useState(true);
   
-  // Setup the question and options
+  // Setup the question and options only when currentQuestionIndex changes
   useEffect(() => {
+    // Only proceed if component is mounted
+    let isMounted = true;
+    
     // For debugging - log values
     console.log(`Question ${currentQuestionIndex}: Last result: ${lastResult}, Previous time: ${previousQuestionTime}`);
     
     // Reset states for new question
     setSelectedAnswer(null);
     setIsRevealing(false);
-    setTimerActive(true);
     
     // Calculate new time based on previous performance (or use starting time for first question)
     let newTime = startTime; // Default for first question
@@ -88,8 +90,23 @@ export function QuizGame({ quizType, minTime, startTime, maxTime, onComplete }: 
     setPreviousQuestionTime(newTime);
     
     // Set the time for the current question
-    setTimeLeft(newTime);
-    setCurrentQuestionTime(newTime);
+    if (isMounted) {
+      setTimeLeft(newTime);
+      setCurrentQuestionTime(newTime);
+      
+      // Short delay to ensure the new question is fully rendered before starting timer
+      const timerId = setTimeout(() => {
+        if (isMounted) {
+          setTimerActive(true);
+        }
+      }, 100);
+      
+      // Clean up function to prevent memory leaks or actions after unmount
+      return () => {
+        clearTimeout(timerId);
+        isMounted = false;
+      };
+    }
     
     // Randomly decide if we're asking for original phrase or translation
     const newQuestionType = Math.random() > 0.5 ? 'original' : 'translation';
@@ -146,36 +163,51 @@ export function QuizGame({ quizType, minTime, startTime, maxTime, onComplete }: 
     setLastResult(false); // Count timed out as incorrect for timer adjustment
     
     // Wait 5 seconds then move to next question
-    setTimeout(() => {
+    const timer = setTimeout(() => {
       moveToNextQuestion();
     }, 5000);
+    
+    // To be safe, ensure any potential re-renders don't cancel this timeout
+    return () => clearTimeout(timer);
   };
   
   // Handle answer selection
   const handleSelectAnswer = (optionId: number) => {
     if (isRevealing || !timerActive) return;
     
+    // Disable timer and mark as revealing answer
     setTimerActive(false);
+    setIsRevealing(true);
+    
+    // Set which answer was selected
     setSelectedAnswer(optionId);
+    
+    // Check if answer is correct and save result
     const isAnswerCorrect = optionId === correctAnswerId;
     setIsCorrect(isAnswerCorrect);
     setLastResult(isAnswerCorrect); // Save result for next question's timer
-    setIsRevealing(true);
+    
+    // Use a fixed reveal duration to ensure user can see the correct answer
+    console.log(`Answer selected. Will show result for 5 seconds.`);
     
     // Wait 5 seconds then move to next question
-    const revealTimer = setTimeout(() => {
+    setTimeout(() => {
       moveToNextQuestion();
     }, 5000);
-    
-    // Ensure the timer doesn't get cancelled
-    return () => clearTimeout(revealTimer);
   };
   
   // Move to next question
   const moveToNextQuestion = () => {
-    // In a real app we'd check if we've reached the end
-    // For demo we'll just loop through questions
-    setCurrentQuestionIndex(prev => (prev + 1) % phrases.length);
+    // Make sure timer is stopped 
+    setTimerActive(false);
+    
+    // Add a small delay to ensure state updates have time to propagate
+    console.log("Moving to next question...");
+    
+    // Update the question index which will trigger the useEffect to set up the next question
+    setTimeout(() => {
+      setCurrentQuestionIndex(prev => (prev + 1) % phrases.length);
+    }, 100);
   };
   
   // Get current question
