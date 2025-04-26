@@ -40,7 +40,9 @@ export function QuizGame({ quizType, minTime, startTime, maxTime, onComplete }: 
   // Main states
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [timeLeft, setTimeLeft] = useState(startTime);
+  const [currentQuestionStartTime, setCurrentQuestionStartTime] = useState(startTime); // Store starting time for each question
   const [answered, setAnswered] = useState(false);
+  const [userAnswered, setUserAnswered] = useState(false); // Track if user provided an answer (vs. timeout)
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [phrases, setPhrases] = useState(shuffleArray(MOCK_PHRASES));
@@ -81,10 +83,14 @@ export function QuizGame({ quizType, minTime, startTime, maxTime, onComplete }: 
     setSelectedAnswer(null);
     setIsCorrect(null);
     setAnswered(false);
+    setUserAnswered(false); // Reset user answered flag
     
     // Set the timer - ensure it's within min/max limits
     const adjustedTime = Math.min(Math.max(currentTime, minTime), maxTime);
     setTimeLeft(adjustedTime);
+    setCurrentQuestionStartTime(adjustedTime); // Save the starting time for this question
+    
+    console.log(`New question setup with time: ${adjustedTime}s`);
     
     // Random question type (original->translation or translation->original)
     const newQuestionType = Math.random() > 0.5 ? 'original' : 'translation';
@@ -125,11 +131,15 @@ export function QuizGame({ quizType, minTime, startTime, maxTime, onComplete }: 
     setAnswered(true);
     setIsCorrect(false); // Count as incorrect for next timer
     
+    console.log("Time up! Question not answered. Showing correct answer for 5 seconds.");
+    
     // Wait 5 seconds then move to next question
     setTimeout(() => {
       const nextIndex = (currentQuestionIndex + 1) % phrases.length;
-      const nextTime = Math.min(timeLeft + 1, maxTime); // Increase by 1
-      setupNewQuestion(nextIndex, nextTime);
+      
+      // If user didn't answer, use the same time as the start of this question
+      // This means no time penalty for unanswered questions
+      setupNewQuestion(nextIndex, currentQuestionStartTime);
     }, 5000);
   };
   
@@ -139,14 +149,17 @@ export function QuizGame({ quizType, minTime, startTime, maxTime, onComplete }: 
     
     setSelectedAnswer(optionId);
     setAnswered(true);
+    setUserAnswered(true); // User provided an answer
     
     const isAnswerCorrect = optionId === correctAnswerId;
     setIsCorrect(isAnswerCorrect);
     
+    console.log(`Answer selected: ${isAnswerCorrect ? 'Correct' : 'Incorrect'}. Showing result for 5 seconds.`);
+    
     // Calculate next time based on correctness
     const nextTime = isAnswerCorrect
-      ? Math.max(timeLeft - 1, minTime) // Decrease if correct
-      : Math.min(timeLeft + 1, maxTime); // Increase if wrong
+      ? Math.max(currentQuestionStartTime - 1, minTime) // Decrease if correct (based on starting time)
+      : Math.min(currentQuestionStartTime + 1, maxTime); // Increase if wrong (based on starting time)
     
     // Wait 5 seconds then move to next question
     setTimeout(() => {
