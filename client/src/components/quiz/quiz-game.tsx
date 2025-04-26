@@ -41,6 +41,7 @@ export function QuizGame({ quizType, minTime, startTime, maxTime, onComplete }: 
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [timeLeft, setTimeLeft] = useState(startTime);
   const [currentQuestionTime, setCurrentQuestionTime] = useState(startTime);
+  const [previousQuestionTime, setPreviousQuestionTime] = useState(startTime);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [isRevealing, setIsRevealing] = useState(false);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
@@ -59,20 +60,26 @@ export function QuizGame({ quizType, minTime, startTime, maxTime, onComplete }: 
     // Reset states for new question
     setSelectedAnswer(null);
     setIsRevealing(false);
-    setIsCorrect(null);
     setTimerActive(true);
     
     // Calculate new time based on previous performance (or use starting time for first question)
-    let newTime = currentQuestionIndex === 0 ? startTime : (
-      isCorrect === true 
-        ? Math.max(timeLeft - 1, minTime) // Decrease by 1 second if correct
-        : isCorrect === false 
-          ? Math.min(timeLeft + 1, maxTime) // Increase by 1 second if incorrect
-          : timeLeft // Keep the same time if time expired
-    );
+    let newTime = startTime; // Default for first question
+    
+    if (currentQuestionIndex > 0) {
+      if (isCorrect === true) {
+        // Decrease by 1 second if correct
+        newTime = Math.max(previousQuestionTime - 1, minTime);
+      } else {
+        // Increase by 1 second if incorrect OR if time expired (isCorrect is null)
+        newTime = Math.min(previousQuestionTime + 1, maxTime);
+      }
+    }
     
     // Ensure time is within min/max limits
     newTime = Math.min(Math.max(newTime, minTime), maxTime);
+    
+    // Save the current question time for reference in the next question
+    setPreviousQuestionTime(newTime);
     
     // Set the time for the current question
     setTimeLeft(newTime);
@@ -105,7 +112,7 @@ export function QuizGame({ quizType, minTime, startTime, maxTime, onComplete }: 
     }
     
     setOptions(newOptions);
-  }, [currentQuestionIndex, minTime, maxTime]);
+  }, [currentQuestionIndex, minTime, maxTime, startTime, previousQuestionTime, isCorrect]);
   
   // Timer effect
   useEffect(() => {
@@ -129,6 +136,7 @@ export function QuizGame({ quizType, minTime, startTime, maxTime, onComplete }: 
   // Handle time up
   const handleTimeUp = () => {
     setIsRevealing(true);
+    setIsCorrect(null); // Explicitly mark as timed out (null means time expired)
     
     // Wait 5 seconds then move to next question
     setTimeout(() => {
