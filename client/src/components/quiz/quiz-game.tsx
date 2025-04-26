@@ -4,18 +4,18 @@ import { Button } from "@/components/ui/button";
 import { Check, X } from "lucide-react";
 import { PieTimer } from "./pie-timer";
 
-// Mock data until we connect to real API
+// Turkish-English phrases
 const MOCK_PHRASES = [
-  { id: 1, phrase: "Hello", translation: "Hola", sourceLanguage: "English", targetLanguage: "Spanish" },
-  { id: 2, phrase: "Goodbye", translation: "Adiós", sourceLanguage: "English", targetLanguage: "Spanish" },
-  { id: 3, phrase: "Thank you", translation: "Gracias", sourceLanguage: "English", targetLanguage: "Spanish" },
-  { id: 4, phrase: "Please", translation: "Por favor", sourceLanguage: "English", targetLanguage: "Spanish" },
-  { id: 5, phrase: "Sorry", translation: "Lo siento", sourceLanguage: "English", targetLanguage: "Spanish" },
-  { id: 6, phrase: "Good morning", translation: "Buenos días", sourceLanguage: "English", targetLanguage: "Spanish" },
-  { id: 7, phrase: "Good night", translation: "Buenas noches", sourceLanguage: "English", targetLanguage: "Spanish" },
-  { id: 8, phrase: "How are you?", translation: "¿Cómo estás?", sourceLanguage: "English", targetLanguage: "Spanish" },
-  { id: 9, phrase: "I don't understand", translation: "No entiendo", sourceLanguage: "English", targetLanguage: "Spanish" },
-  { id: 10, phrase: "Where is...", translation: "Dónde está...", sourceLanguage: "English", targetLanguage: "Spanish" },
+  { id: 1, phrase: "Merhaba", translation: "Hello", sourceLanguage: "Turkish", targetLanguage: "English" },
+  { id: 2, phrase: "Hoşça kal", translation: "Goodbye", sourceLanguage: "Turkish", targetLanguage: "English" },
+  { id: 3, phrase: "Teşekkür ederim", translation: "Thank you", sourceLanguage: "Turkish", targetLanguage: "English" },
+  { id: 4, phrase: "Lütfen", translation: "Please", sourceLanguage: "Turkish", targetLanguage: "English" },
+  { id: 5, phrase: "Özür dilerim", translation: "I'm sorry", sourceLanguage: "Turkish", targetLanguage: "English" },
+  { id: 6, phrase: "Günaydın", translation: "Good morning", sourceLanguage: "Turkish", targetLanguage: "English" },
+  { id: 7, phrase: "İyi geceler", translation: "Good night", sourceLanguage: "Turkish", targetLanguage: "English" },
+  { id: 8, phrase: "Nasılsın?", translation: "How are you?", sourceLanguage: "Turkish", targetLanguage: "English" },
+  { id: 9, phrase: "Anlamıyorum", translation: "I don't understand", sourceLanguage: "Turkish", targetLanguage: "English" },
+  { id: 10, phrase: "Nerede...", translation: "Where is...", sourceLanguage: "Turkish", targetLanguage: "English" },
 ];
 
 // Shuffle array utility function
@@ -108,15 +108,33 @@ export function QuizGame({ quizType, minTime, startTime, maxTime, onComplete }: 
     let newOptions: Array<{ id: number, text: string }> = [];
     
     if (newQuestionType === 'original') {
-      // Question is original phrase, options are translations
+      // Question is original Turkish phrase, options are English translations
       const correctOption = { id: currentPhrase.id, text: currentPhrase.translation };
-      const wrongOptions = otherPhrases.map(p => ({ id: p.id, text: p.translation }));
+      
+      // Generate truly wrong translations that are plausible but incorrect
+      const wrongOptions = [
+        { id: otherPhrases[0].id, text: otherPhrases[0].translation }, // Actual wrong translation
+        { id: otherPhrases[1].id, text: otherPhrases[1].translation }, // Actual wrong translation
+        { id: otherPhrases[2].id, text: otherPhrases[2].translation }, // Actual wrong translation
+        { id: otherPhrases[3].id, text: otherPhrases[3].translation }  // Actual wrong translation
+      ];
+      
+      // Shuffle and combine the correct and wrong options
       newOptions = shuffleArray([correctOption, ...wrongOptions]);
       setCorrectAnswerId(currentPhrase.id);
     } else {
-      // Question is translation, options are original phrases
+      // Question is English translation, options are Turkish original phrases
       const correctOption = { id: currentPhrase.id, text: currentPhrase.phrase };
-      const wrongOptions = otherPhrases.map(p => ({ id: p.id, text: p.phrase }));
+      
+      // Generate truly wrong phrases that are plausible but incorrect
+      const wrongOptions = [
+        { id: otherPhrases[0].id, text: otherPhrases[0].phrase }, // Actual wrong phrase
+        { id: otherPhrases[1].id, text: otherPhrases[1].phrase }, // Actual wrong phrase
+        { id: otherPhrases[2].id, text: otherPhrases[2].phrase }, // Actual wrong phrase
+        { id: otherPhrases[3].id, text: otherPhrases[3].phrase }  // Actual wrong phrase
+      ];
+      
+      // Shuffle and combine the correct and wrong options
       newOptions = shuffleArray([correctOption, ...wrongOptions]);
       setCorrectAnswerId(currentPhrase.id);
     }
