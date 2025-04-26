@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { AlertCircle, Check, X } from "lucide-react";
+import { PieTimer } from "./pie-timer";
 
 // Mock data until we connect to real API
 const MOCK_PHRASES = [
@@ -39,6 +40,7 @@ export function QuizGame({ quizType, minTime, startTime, maxTime, onComplete }: 
   // States
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [timeLeft, setTimeLeft] = useState(startTime);
+  const [currentQuestionTime, setCurrentQuestionTime] = useState(startTime);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [isRevealing, setIsRevealing] = useState(false);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
@@ -60,11 +62,21 @@ export function QuizGame({ quizType, minTime, startTime, maxTime, onComplete }: 
     setIsCorrect(null);
     setTimerActive(true);
     
-    // Reset time for new question (use adaptive timing after first question)
-    setTimeLeft(currentQuestionIndex === 0 ? startTime : 
-      isCorrect === true ? Math.max(timeLeft - 2, minTime) : 
-      isCorrect === false ? Math.min(timeLeft + 3, maxTime) : 
-      timeLeft);
+    // Calculate new time based on previous performance (or use starting time for first question)
+    let newTime = currentQuestionIndex === 0 ? startTime : (
+      isCorrect === true 
+        ? Math.max(timeLeft - 1, minTime) // Decrease by 1 second if correct
+        : isCorrect === false 
+          ? Math.min(timeLeft + 1, maxTime) // Increase by 1 second if incorrect
+          : timeLeft // Keep the same time if time expired
+    );
+    
+    // Ensure time is within min/max limits
+    newTime = Math.min(Math.max(newTime, minTime), maxTime);
+    
+    // Set the time for the current question
+    setTimeLeft(newTime);
+    setCurrentQuestionTime(newTime);
     
     // Randomly decide if we're asking for original phrase or translation
     const newQuestionType = Math.random() > 0.5 ? 'original' : 'translation';
@@ -93,7 +105,7 @@ export function QuizGame({ quizType, minTime, startTime, maxTime, onComplete }: 
     }
     
     setOptions(newOptions);
-  }, [currentQuestionIndex]);
+  }, [currentQuestionIndex, minTime, maxTime]);
   
   // Timer effect
   useEffect(() => {
@@ -170,9 +182,6 @@ export function QuizGame({ quizType, minTime, startTime, maxTime, onComplete }: 
   
   const { question, sourceLanguage, targetLanguage } = getCurrentQuestion();
   
-  // Calculate time percentage for progress bar
-  const timePercentage = Math.max(0, (timeLeft / startTime) * 100);
-  
   return (
     <div className="py-6 px-4 max-w-5xl mx-auto">
       {/* Timer and Progress */}
@@ -181,17 +190,12 @@ export function QuizGame({ quizType, minTime, startTime, maxTime, onComplete }: 
           Question {currentQuestionIndex + 1}
         </div>
         <div className="flex items-center">
-          <div className="w-32 h-2 bg-gray-200 rounded-full mr-2">
-            <div 
-              className={`h-2 rounded-full ${
-                timeLeft > startTime * 0.6 ? 'bg-green-500' : 
-                timeLeft > startTime * 0.3 ? 'bg-yellow-500' : 
-                'bg-red-500'
-              }`}
-              style={{ width: `${timePercentage}%` }}
-            ></div>
-          </div>
-          <span className="text-sm font-medium">{timeLeft}s</span>
+          <PieTimer
+            timeLeft={timeLeft}
+            totalTime={currentQuestionTime}
+            size={70}
+            strokeWidth={6}
+          />
         </div>
       </div>
       

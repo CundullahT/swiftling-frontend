@@ -1,0 +1,70 @@
+import { useState, useEffect } from "react";
+
+interface PieTimerProps {
+  timeLeft: number;
+  totalTime: number;
+  size?: number;
+  strokeWidth?: number;
+}
+
+export function PieTimer({ 
+  timeLeft, 
+  totalTime, 
+  size = 60, 
+  strokeWidth = 6 
+}: PieTimerProps) {
+  // Calculate percentage of time remaining
+  const percentage = Math.min(100, Math.max(0, (timeLeft / totalTime) * 100));
+  
+  // Calculate remaining stroke dasharray and dashoffset
+  const radius = (size - strokeWidth) / 2;
+  const circumference = 2 * Math.PI * radius;
+  const strokeDashoffset = circumference - (percentage / 100) * circumference;
+  
+  // Determine color based on time remaining
+  const getColor = () => {
+    if (percentage > 60) return "#22c55e"; // Green
+    if (percentage > 30) return "#eab308"; // Yellow
+    return "#ef4444"; // Red
+  };
+
+  return (
+    <div className="relative flex items-center justify-center" style={{ width: size, height: size }}>
+      {/* Background circle */}
+      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="absolute">
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
+          fill="transparent"
+          stroke="#e5e7eb"
+          strokeWidth={strokeWidth}
+        />
+      </svg>
+      
+      {/* Timer progress circle */}
+      <svg 
+        width={size} 
+        height={size} 
+        viewBox={`0 0 ${size} ${size}`}
+        className="absolute"
+        style={{ transform: "rotate(-90deg)" }}
+      >
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
+          fill="transparent"
+          stroke={getColor()}
+          strokeWidth={strokeWidth}
+          strokeDasharray={circumference}
+          strokeDashoffset={strokeDashoffset}
+          strokeLinecap="round"
+        />
+      </svg>
+      
+      {/* Time left display */}
+      <div className="text-sm font-medium">{timeLeft}s</div>
+    </div>
+  );
+}
