@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useAuthRedirect } from "@/hooks/use-auth-redirect";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -9,8 +10,7 @@ import {
   SelectTrigger, 
   SelectValue 
 } from "@/components/ui/select";
-import { LanguageButton } from "@/components/ui/language-button";
-import { Sparkles, BookOpen, Brain, Lightbulb } from "lucide-react";
+import { Sparkles, BookOpen, Brain } from "lucide-react";
 import { 
   QUIZ_TYPES, 
   ADAPTIVE_TIME_PRESETS
@@ -20,6 +20,14 @@ export default function Quiz() {
   // Placeholder for auth check - would be tied to a real auth system in future
   const isAuthenticated = true;
   useAuthRedirect(!isAuthenticated, "/login");
+  
+  // State to track which quiz type is selected
+  const [selectedQuizType, setSelectedQuizType] = useState<string | null>(null);
+  
+  // Handle quiz type selection
+  const handleQuizTypeSelect = (quizId: string) => {
+    setSelectedQuizType(quizId === selectedQuizType ? null : quizId);
+  };
 
   return (
     <div className="py-6 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto pb-20 md:pb-6">
@@ -30,26 +38,70 @@ export default function Quiz() {
         <CardContent className="pt-6">
           <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">Choose Quiz Type</h3>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-            {QUIZ_TYPES.map((type) => (
-              <div key={type.id} className="relative overflow-hidden hover:bg-gray-50 rounded-lg transition-colors border border-gray-100 shadow-sm">
-                <div className="p-4 flex items-start gap-3">
-                  <div className={`${type.color} h-10 w-10 rounded-full flex-shrink-0 flex items-center justify-center`}>
-                    {type.id === 'learned' ? (
-                      <Sparkles className="h-6 w-6 text-green-600" />
-                    ) : type.id === 'not-learned' ? (
-                      <BookOpen className="h-6 w-6 text-amber-600" />
-                    ) : (
-                      <Brain className="h-6 w-6 text-primary" />
-                    )}
-                  </div>
-                  <div className="flex flex-col overflow-hidden">
-                    <h4 className="font-medium text-sm sm:text-base text-secondary truncate">{type.name}</h4>
-                    <p className="text-xs sm:text-sm text-gray-500 line-clamp-2">{type.description}</p>
+            {QUIZ_TYPES.map((type) => {
+              const isSelected = selectedQuizType === type.id;
+              let borderColor = 'border-gray-200';
+              let bgColor = '';
+              
+              // Apply selection styling
+              if (isSelected) {
+                switch(type.id) {
+                  case 'learned':
+                    borderColor = 'border-green-500';
+                    bgColor = 'bg-green-50';
+                    break;
+                  case 'not-learned':
+                    borderColor = 'border-amber-500';
+                    bgColor = 'bg-amber-50';
+                    break;
+                  case 'mixed':
+                    borderColor = 'border-primary';
+                    bgColor = 'bg-primary/5';
+                    break;
+                }
+              }
+              
+              return (
+                <div 
+                  key={type.id} 
+                  className={`
+                    relative overflow-hidden rounded-lg transition-all 
+                    border-2 ${borderColor} ${bgColor}
+                    cursor-pointer transform
+                    hover:border-primary/70 hover:bg-primary/10 hover:shadow-md 
+                    ${isSelected ? 'ring-2 ring-primary/70 shadow-md scale-[1.02]' : 'shadow-sm'}
+                  `}
+                  onClick={() => handleQuizTypeSelect(type.id)}
+                >
+                  <div className="p-4 flex items-start gap-3">
+                    <div className={`${type.color} h-12 w-12 rounded-full flex-shrink-0 flex items-center justify-center`}>
+                      {type.id === 'learned' ? (
+                        <Sparkles className="h-6 w-6 text-green-600" />
+                      ) : type.id === 'not-learned' ? (
+                        <BookOpen className="h-6 w-6 text-amber-600" />
+                      ) : (
+                        <Brain className="h-6 w-6 text-primary" />
+                      )}
+                    </div>
+                    <div className="flex flex-col overflow-hidden">
+                      <h4 className="font-semibold text-sm sm:text-base text-secondary truncate">{type.name}</h4>
+                      <p className="text-xs sm:text-sm text-gray-500 line-clamp-2">{type.description}</p>
+                      
+                      {isSelected && (
+                        <div className="mt-2 inline-flex items-center text-xs font-medium text-primary">
+                          <span className="flex h-4 w-4 items-center justify-center rounded-full bg-primary mr-1.5">
+                            <svg className="h-2.5 w-2.5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                              <path d="M10 15l-5.878-5.878 1.415-1.414L10 12.172l4.464-4.464 1.415 1.414z" />
+                            </svg>
+                          </span>
+                          Selected
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
-                <div className="absolute inset-0 w-full h-full cursor-pointer" onClick={() => {}} aria-hidden="true" />
-              </div>
-            ))}
+              );
+            })}
           </div>
         </CardContent>
       </Card>
@@ -141,7 +193,10 @@ export default function Quiz() {
           </div>
           
           <div className="mt-6 flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4">
-            <Button className="bg-primary hover:bg-primary/90 w-full sm:w-auto">
+            <Button 
+              className="bg-primary hover:bg-primary/90 w-full sm:w-auto"
+              disabled={!selectedQuizType}
+            >
               Start Quiz
             </Button>
             <p className="text-xs sm:text-sm text-gray-500 italic">Quiz continues until you choose to finish</p>
