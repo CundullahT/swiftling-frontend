@@ -45,6 +45,7 @@ export function QuizGame({ quizType, minTime, startTime, maxTime, onComplete }: 
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [isRevealing, setIsRevealing] = useState(false);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
+  const [lastResult, setLastResult] = useState<boolean | null>(null); // Track the last answer result separately
   const [questionType, setQuestionType] = useState<'original' | 'translation'>(
     Math.random() > 0.5 ? 'original' : 'translation'
   );
@@ -57,6 +58,9 @@ export function QuizGame({ quizType, minTime, startTime, maxTime, onComplete }: 
   
   // Setup the question and options
   useEffect(() => {
+    // For debugging - log values
+    console.log(`Question ${currentQuestionIndex}: Last result: ${lastResult}, Previous time: ${previousQuestionTime}`);
+    
     // Reset states for new question
     setSelectedAnswer(null);
     setIsRevealing(false);
@@ -66,12 +70,14 @@ export function QuizGame({ quizType, minTime, startTime, maxTime, onComplete }: 
     let newTime = startTime; // Default for first question
     
     if (currentQuestionIndex > 0) {
-      if (isCorrect === true) {
-        // Decrease by 1 second if correct
+      if (lastResult === true) {
+        // Decrease by 1 second if previous answer was correct
         newTime = Math.max(previousQuestionTime - 1, minTime);
+        console.log(`Decreasing time by 1 second. New time: ${newTime}`);
       } else {
-        // Increase by 1 second if incorrect OR if time expired (isCorrect is null)
+        // Increase by 1 second if previous answer was incorrect OR time expired
         newTime = Math.min(previousQuestionTime + 1, maxTime);
+        console.log(`Increasing time by 1 second. New time: ${newTime}`);
       }
     }
     
@@ -112,7 +118,7 @@ export function QuizGame({ quizType, minTime, startTime, maxTime, onComplete }: 
     }
     
     setOptions(newOptions);
-  }, [currentQuestionIndex, minTime, maxTime, startTime, previousQuestionTime, isCorrect]);
+  }, [currentQuestionIndex, minTime, maxTime, startTime, previousQuestionTime, lastResult]);
   
   // Timer effect
   useEffect(() => {
@@ -137,6 +143,7 @@ export function QuizGame({ quizType, minTime, startTime, maxTime, onComplete }: 
   const handleTimeUp = () => {
     setIsRevealing(true);
     setIsCorrect(null); // Explicitly mark as timed out (null means time expired)
+    setLastResult(false); // Count timed out as incorrect for timer adjustment
     
     // Wait 5 seconds then move to next question
     setTimeout(() => {
@@ -152,12 +159,16 @@ export function QuizGame({ quizType, minTime, startTime, maxTime, onComplete }: 
     setSelectedAnswer(optionId);
     const isAnswerCorrect = optionId === correctAnswerId;
     setIsCorrect(isAnswerCorrect);
+    setLastResult(isAnswerCorrect); // Save result for next question's timer
     setIsRevealing(true);
     
     // Wait 5 seconds then move to next question
-    setTimeout(() => {
+    const revealTimer = setTimeout(() => {
       moveToNextQuestion();
     }, 5000);
+    
+    // Ensure the timer doesn't get cancelled
+    return () => clearTimeout(revealTimer);
   };
   
   // Move to next question
