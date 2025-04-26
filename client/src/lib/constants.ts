@@ -159,43 +159,31 @@ export const SAMPLE_TAGS = [
 
 export const QUIZ_TYPES = [
   { 
-    id: 'translation', 
-    name: 'Translation Quiz', 
-    description: 'Translate phrases between languages',
-    color: 'bg-primary'
+    id: 'learned', 
+    name: 'Quiz - Learned Phrases', 
+    description: 'Test your knowledge on phrases you already know',
+    color: 'bg-green-500/20'
   },
   { 
-    id: 'multiple-choice', 
-    name: 'Multiple Choice', 
-    description: 'Choose the correct translation',
-    color: 'bg-secondary'
+    id: 'not-learned', 
+    name: 'Quiz - New Phrases', 
+    description: 'Focus on phrases you still need to practice',
+    color: 'bg-amber-500/20'
   },
   { 
-    id: 'listening', 
-    name: 'Listening Quiz', 
-    description: 'Write what you hear',
-    color: 'bg-accent'
+    id: 'mixed', 
+    name: 'Quiz - All Mixed', 
+    description: 'Test both learned and new phrases together',
+    color: 'bg-primary/20'
   }
 ];
 
-export const QUIZ_DIFFICULTIES = [
-  { id: 'easy', name: 'Easy' },
-  { id: 'medium', name: 'Medium' },
-  { id: 'hard', name: 'Hard' },
-  { id: 'mixed', name: 'Mixed' },
-];
-
-export const QUIZ_LENGTHS = [
-  { id: '5', name: '5 questions' },
-  { id: '10', name: '10 questions' },
-  { id: '15', name: '15 questions' },
-  { id: '20', name: '20 questions' },
-];
-
-export const QUIZ_TIME_LIMITS = [
-  { id: 'none', name: 'No Limit' },
-  { id: '1', name: '1 Minute' },
-  { id: '2', name: '2 Minutes' },
-  { id: '5', name: '5 Minutes' },
-  { id: '10', name: '10 Minutes' },
+export const ADAPTIVE_TIME_PRESETS = [
+  { id: '5', name: '5 seconds', description: 'Minimum time per question' },
+  { id: '10', name: '10 seconds', description: 'Minimum time per question' },
+  { id: '15', name: '15 seconds', description: 'Default starting time' },
+  { id: '20', name: '20 seconds', description: 'Default starting time' },
+  { id: '30', name: '30 seconds', description: 'Maximum time per question' },
+  { id: '45', name: '45 seconds', description: 'Maximum time per question' },
+  { id: '60', name: '60 seconds', description: 'Maximum time per question' },
 ];
