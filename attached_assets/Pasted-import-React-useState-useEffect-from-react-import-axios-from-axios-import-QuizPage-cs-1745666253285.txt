@@ -1,0 +1,147 @@
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import "./QuizPage.css";
+
+const QuizPage = () => {
+  const [questions, setQuestions] = useState([]);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [correctCounts, setCorrectCounts] = useState({});
+  const [selectedAnswer, setSelectedAnswer] = useState(null);
+  const [isCorrect, setIsCorrect] = useState(null);
+  const [bestTime, setBestTime] = useState(15);
+  const [timeLeft, setTimeLeft] = useState(15);
+  const [startTime, setStartTime] = useState(null);
+  const [answered, setAnswered] = useState(false);
+  const [showCongrats, setShowCongrats] = useState(false);
+  const [shuffledAnswers, setShuffledAnswers] = useState([]);
+
+  useEffect(() => {
+    fetchQuestions();
+  }, []);
+
+  useEffect(() => {
+    if (timeLeft > 0 && !answered) {
+      const timer = setTimeout(() => setTimeLeft((prev) => Math.max(prev - 0.1, 0)), 100);
+      return () => clearTimeout(timer);
+    } 
+  }, [timeLeft, answered]);
+
+  const fetchQuestions = async () => {
+    try {
+      const response = await axios.get("http://cundi.onthewifi.com:8282/api/quiz/questions");
+      const randomizedQuestions = response.data.sort(() => Math.random() - 0.5);
+      setQuestions(randomizedQuestions);
+      setCorrectCounts({});
+      setCurrentIndex(0);
+      setShowCongrats(false);
+      startNewQuestion(randomizedQuestions, 0, bestTime);
+    } catch (error) {
+      console.error("Error fetching questions:", error);
+    }
+  };
+
+  const [timeLeftAtStart, setTimeLeftAtStart] = useState(15);
+
+  const startNewQuestion = (questionsList, index, initialBestTime) => {
+    if (questionsList.length === 0) {
+      setShowCongrats(true);
+      return;
+    }
+  
+    setSelectedAnswer(null);
+    setIsCorrect(null);
+  
+    let newTimeLeft = initialBestTime < 3 ? 3 : initialBestTime;
+
+    setTimeLeft(newTimeLeft);
+    setTimeLeftAtStart(newTimeLeft);
+  
+    setAnswered(false);
+    setCurrentIndex(index);
+  
+    const shuffled = [...questionsList[index].random_wrong_answers, questionsList[index].correct_answer].sort(() => Math.random() - 0.5);
+    setShuffledAnswers(shuffled);
+  };
+  
+
+  const handleAnswerClick = (answer) => {
+    if (answered) return;
+    setSelectedAnswer(answer);
+    setAnswered(true);
+  
+    const responseTime = (timeLeftAtStart - timeLeft).toFixed(1);
+  
+    const isCorrectAnswer = answer === questions[currentIndex].correct_answer;
+    setIsCorrect(isCorrectAnswer);
+  
+    if (isCorrectAnswer) {
+      if (parseFloat(responseTime) < bestTime) {
+        const updatedBestTime = parseFloat(responseTime);
+        setBestTime(updatedBestTime);
+  
+        setTimeout(() => moveToNextQuestion(true, updatedBestTime), 5000);
+      } else {
+        setTimeout(() => moveToNextQuestion(true, bestTime), 5000);
+      }
+  
+      setCorrectCounts((prev) => ({
+        ...prev,
+        [questions[currentIndex].foreign_word]: (prev[questions[currentIndex].foreign_word] || 0) + 1,
+      }));
+    } else {
+      setTimeout(() => moveToNextQuestion(false, bestTime), 5000);
+    }
+  };
+
+  const moveToNextQuestion = (wasCorrect, updatedBestTime) => {
+    const filteredQuestions = questions.filter((q) => (correctCounts[q.foreign_word] || 0) < 3);
+  
+    if (filteredQuestions.length === 0) {
+      setShowCongrats(true);
+      return;
+    }
+  
+    const nextIndex = (currentIndex + 1) % filteredQuestions.length;
+    setQuestions(filteredQuestions);
+    startNewQuestion(filteredQuestions, nextIndex, updatedBestTime);
+  };
+  
+  return (
+    <div className="quiz-container">
+      <h1>Quiz</h1>
+      {showCongrats ? (
+        <h2 className="congrats-text">CONGRATS, YOU LEARNED ALL!!!</h2>
+      ) : questions.length > 0 ? (
+        <>
+          <h2 className="question-text">{questions[currentIndex].foreign_word}</h2>
+          <p className="timer">Time left: {timeLeft.toFixed(1)}s</p>
+          <div className="options">
+            {shuffledAnswers.map((option, index) => (
+              <button
+                key={index}
+                className={`option-btn ${
+                  selectedAnswer
+                    ? option === questions[currentIndex].correct_answer
+                      ? "correct"
+                      : option === selectedAnswer
+                      ? "wrong"
+                      : "disabled"
+                    : ""
+                }`}
+                onClick={() => handleAnswerClick(option)}
+                disabled={selectedAnswer !== null}
+              >
+                {option}
+              </button>
+            ))}
+          </div>
+        </>
+      ) : (
+        <p>Loading questions...</p>
+      )}
+      <p className="best-time">Best Time: {bestTime.toFixed(1)}s</p>
+    </div>
+  );
+};
+
+export default QuizPage;

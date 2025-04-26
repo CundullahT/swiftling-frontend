@@ -1,5 +1,3 @@
-import { useState, useEffect } from "react";
-
 interface PieTimerProps {
   timeLeft: number;
   totalTime: number;
@@ -13,7 +11,7 @@ export function PieTimer({
   size = 60, 
   strokeWidth = 6 
 }: PieTimerProps) {
-  // Calculate percentage of time remaining
+  // Calculate percentage of time remaining (ensure between 0-100)
   const percentage = Math.min(100, Math.max(0, (timeLeft / totalTime) * 100));
   
   // Calculate remaining stroke dasharray and dashoffset
@@ -60,11 +58,12 @@ export function PieTimer({
           strokeDasharray={circumference}
           strokeDashoffset={strokeDashoffset}
           strokeLinecap="round"
+          className="transition-all duration-500 ease-linear"
         />
       </svg>
       
       {/* Time left display */}
-      <div className="text-sm font-medium">{timeLeft}s</div>
+      <div className="text-sm font-medium">{Math.ceil(timeLeft)}</div>
     </div>
   );
 }

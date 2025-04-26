@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { AlertCircle, Check, X } from "lucide-react";
+import { Check, X } from "lucide-react";
 import { PieTimer } from "./pie-timer";
 
 // Mock data until we connect to real API
@@ -37,83 +37,64 @@ interface QuizGameProps {
 }
 
 export function QuizGame({ quizType, minTime, startTime, maxTime, onComplete }: QuizGameProps) {
-  // States
+  // Main states
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [timeLeft, setTimeLeft] = useState(startTime);
-  const [currentQuestionTime, setCurrentQuestionTime] = useState(startTime);
-  const [previousQuestionTime, setPreviousQuestionTime] = useState(startTime);
+  const [answered, setAnswered] = useState(false);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
-  const [isRevealing, setIsRevealing] = useState(false);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
-  const [lastResult, setLastResult] = useState<boolean | null>(null); // Track the last answer result separately
+  const [phrases, setPhrases] = useState(shuffleArray(MOCK_PHRASES));
+  const [options, setOptions] = useState<Array<{ id: number, text: string }>>([]);
+  const [correctAnswerId, setCorrectAnswerId] = useState<number | null>(null);
   const [questionType, setQuestionType] = useState<'original' | 'translation'>(
     Math.random() > 0.5 ? 'original' : 'translation'
   );
-  const [phrases, setPhrases] = useState(MOCK_PHRASES);
-  const [options, setOptions] = useState<Array<{ id: number, text: string }>>([]);
-  const [correctAnswerId, setCorrectAnswerId] = useState<number | null>(null);
   
-  // Timer interval reference
-  const [timerActive, setTimerActive] = useState(true);
-  
-  // Setup the question and options only when currentQuestionIndex changes
+  // Set up initial question when component mounts
   useEffect(() => {
-    // Only proceed if component is mounted
-    let isMounted = true;
-    
-    // For debugging - log values
-    console.log(`Question ${currentQuestionIndex}: Last result: ${lastResult}, Previous time: ${previousQuestionTime}`);
-    
+    setupNewQuestion(currentQuestionIndex, startTime);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  
+  // Timer countdown effect
+  useEffect(() => {
+    if (timeLeft > 0 && !answered) {
+      const timer = setTimeout(() => {
+        setTimeLeft(prev => {
+          // Decrement by 1 second
+          const newTime = Math.max(prev - 1, 0);
+          // If timer reaches zero, handle timeout
+          if (newTime === 0) {
+            handleTimeUp();
+          }
+          return newTime;
+        });
+      }, 1000);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [timeLeft, answered]);
+  
+  // Setup a new question
+  const setupNewQuestion = (index: number, currentTime: number) => {
     // Reset states for new question
     setSelectedAnswer(null);
-    setIsRevealing(false);
+    setIsCorrect(null);
+    setAnswered(false);
     
-    // Calculate new time based on previous performance (or use starting time for first question)
-    let newTime = startTime; // Default for first question
+    // Set the timer - ensure it's within min/max limits
+    const adjustedTime = Math.min(Math.max(currentTime, minTime), maxTime);
+    setTimeLeft(adjustedTime);
     
-    if (currentQuestionIndex > 0) {
-      if (lastResult === true) {
-        // Decrease by 1 second if previous answer was correct
-        newTime = Math.max(previousQuestionTime - 1, minTime);
-        console.log(`Decreasing time by 1 second. New time: ${newTime}`);
-      } else {
-        // Increase by 1 second if previous answer was incorrect OR time expired
-        newTime = Math.min(previousQuestionTime + 1, maxTime);
-        console.log(`Increasing time by 1 second. New time: ${newTime}`);
-      }
-    }
-    
-    // Ensure time is within min/max limits
-    newTime = Math.min(Math.max(newTime, minTime), maxTime);
-    
-    // Save the current question time for reference in the next question
-    setPreviousQuestionTime(newTime);
-    
-    // Set the time for the current question
-    if (isMounted) {
-      setTimeLeft(newTime);
-      setCurrentQuestionTime(newTime);
-      
-      // Short delay to ensure the new question is fully rendered before starting timer
-      const timerId = setTimeout(() => {
-        if (isMounted) {
-          setTimerActive(true);
-        }
-      }, 100);
-      
-      // Clean up function to prevent memory leaks or actions after unmount
-      return () => {
-        clearTimeout(timerId);
-        isMounted = false;
-      };
-    }
-    
-    // Randomly decide if we're asking for original phrase or translation
+    // Random question type (original->translation or translation->original)
     const newQuestionType = Math.random() > 0.5 ? 'original' : 'translation';
     setQuestionType(newQuestionType);
     
-    // Create a random set of phrases for this question
-    const availablePhrases = shuffleArray(phrases);
+    // Update current question index
+    setCurrentQuestionIndex(index);
+    
+    // Get current phrase and 4 other random phrases for wrong answers
+    const availablePhrases = shuffleArray([...phrases]);
     const currentPhrase = availablePhrases[0];
     const otherPhrases = availablePhrases.slice(1, 5);
     
@@ -135,82 +116,46 @@ export function QuizGame({ quizType, minTime, startTime, maxTime, onComplete }: 
     }
     
     setOptions(newOptions);
-  }, [currentQuestionIndex, minTime, maxTime, startTime, previousQuestionTime, lastResult]);
+  };
   
-  // Timer effect
-  useEffect(() => {
-    if (!timerActive) return;
-    
-    const timer = setInterval(() => {
-      setTimeLeft(prev => {
-        if (prev <= 1) {
-          clearInterval(timer);
-          setTimerActive(false);
-          handleTimeUp();
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-    
-    return () => clearInterval(timer);
-  }, [timerActive]);
-  
-  // Handle time up
+  // Handle when time runs out
   const handleTimeUp = () => {
-    setIsRevealing(true);
-    setIsCorrect(null); // Explicitly mark as timed out (null means time expired)
-    setLastResult(false); // Count timed out as incorrect for timer adjustment
+    if (answered) return; // Prevent double-handling
+    
+    setAnswered(true);
+    setIsCorrect(false); // Count as incorrect for next timer
     
     // Wait 5 seconds then move to next question
-    const timer = setTimeout(() => {
-      moveToNextQuestion();
+    setTimeout(() => {
+      const nextIndex = (currentQuestionIndex + 1) % phrases.length;
+      const nextTime = Math.min(timeLeft + 1, maxTime); // Increase by 1
+      setupNewQuestion(nextIndex, nextTime);
     }, 5000);
-    
-    // To be safe, ensure any potential re-renders don't cancel this timeout
-    return () => clearTimeout(timer);
   };
   
   // Handle answer selection
-  const handleSelectAnswer = (optionId: number) => {
-    if (isRevealing || !timerActive) return;
+  const handleAnswerClick = (optionId: number) => {
+    if (answered) return; // Prevent multiple selections
     
-    // Disable timer and mark as revealing answer
-    setTimerActive(false);
-    setIsRevealing(true);
-    
-    // Set which answer was selected
     setSelectedAnswer(optionId);
+    setAnswered(true);
     
-    // Check if answer is correct and save result
     const isAnswerCorrect = optionId === correctAnswerId;
     setIsCorrect(isAnswerCorrect);
-    setLastResult(isAnswerCorrect); // Save result for next question's timer
     
-    // Use a fixed reveal duration to ensure user can see the correct answer
-    console.log(`Answer selected. Will show result for 5 seconds.`);
+    // Calculate next time based on correctness
+    const nextTime = isAnswerCorrect
+      ? Math.max(timeLeft - 1, minTime) // Decrease if correct
+      : Math.min(timeLeft + 1, maxTime); // Increase if wrong
     
     // Wait 5 seconds then move to next question
     setTimeout(() => {
-      moveToNextQuestion();
+      const nextIndex = (currentQuestionIndex + 1) % phrases.length;
+      setupNewQuestion(nextIndex, nextTime);
     }, 5000);
   };
   
-  // Move to next question
-  const moveToNextQuestion = () => {
-    // Make sure timer is stopped 
-    setTimerActive(false);
-    
-    // Add a small delay to ensure state updates have time to propagate
-    console.log("Moving to next question...");
-    
-    // Update the question index which will trigger the useEffect to set up the next question
-    setTimeout(() => {
-      setCurrentQuestionIndex(prev => (prev + 1) % phrases.length);
-    }, 100);
-  };
-  
-  // Get current question
+  // Get current question data
   const getCurrentQuestion = () => {
     if (phrases.length === 0) return { question: '', sourceLanguage: '', targetLanguage: '' };
     
@@ -243,7 +188,7 @@ export function QuizGame({ quizType, minTime, startTime, maxTime, onComplete }: 
         <div className="flex items-center">
           <PieTimer
             timeLeft={timeLeft}
-            totalTime={currentQuestionTime}
+            totalTime={startTime} // Use start time as reference
             size={70}
             strokeWidth={6}
           />
@@ -273,9 +218,9 @@ export function QuizGame({ quizType, minTime, startTime, maxTime, onComplete }: 
           const isSelected = selectedAnswer === option.id;
           const isCorrectAnswer = option.id === correctAnswerId;
           
-          let optionClassName = "relative p-4 border-2 rounded-lg hover:border-primary/50 transition-all";
+          let optionClassName = "relative p-4 border-2 rounded-lg transition-all cursor-pointer";
           
-          if (isRevealing) {
+          if (answered) {
             if (isCorrectAnswer) {
               optionClassName = "relative p-4 border-2 border-green-500 bg-green-50 rounded-lg";
             } else if (isSelected && !isCorrectAnswer) {
@@ -284,18 +229,18 @@ export function QuizGame({ quizType, minTime, startTime, maxTime, onComplete }: 
               optionClassName = "relative p-4 border-2 border-gray-200 rounded-lg opacity-70";
             }
           } else {
-            optionClassName = "relative p-4 border-2 border-gray-200 rounded-lg hover:border-primary/50 cursor-pointer transition-all";
+            optionClassName = "relative p-4 border-2 border-gray-200 rounded-lg hover:border-primary/50 hover:bg-primary/5 cursor-pointer";
           }
           
           return (
             <div 
               key={option.id}
               className={optionClassName}
-              onClick={() => handleSelectAnswer(option.id)}
+              onClick={() => handleAnswerClick(option.id)}
             >
               <div className="flex justify-between items-center">
                 <span className="text-base">{option.text}</span>
-                {isRevealing && (
+                {answered && (
                   <div className="flex-shrink-0">
                     {isCorrectAnswer && (
                       <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-green-100">
