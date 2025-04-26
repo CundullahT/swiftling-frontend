@@ -155,7 +155,7 @@ export default function Quiz() {
                   <SelectValue placeholder="Select starting time" />
                 </SelectTrigger>
                 <SelectContent>
-                  {ADAPTIVE_TIME_PRESETS.filter(t => ['15', '20'].includes(t.id)).map((time) => (
+                  {ADAPTIVE_TIME_PRESETS.filter(t => ['10', '15', '20'].includes(t.id)).map((time) => (
                     <SelectItem key={time.id} value={time.id}>
                       {time.name}
                     </SelectItem>
