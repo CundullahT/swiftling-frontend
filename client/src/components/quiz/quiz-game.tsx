@@ -223,17 +223,35 @@ export function QuizGame({ quizType, minTime, startTime, maxTime, onComplete }: 
   
   return (
     <div className="py-2 px-3 max-w-5xl mx-auto flex flex-col h-full">
-      {/* Compact Header with Timer and Progress */}
-      <div className="flex items-center justify-between mb-3">
-        <div className="text-sm text-gray-500">
-          Q{currentQuestionIndex + 1}
+      {/* Compact Header with Timer, Progress, and Counters */}
+      <div className="mb-3">
+        <div className="flex items-center justify-between mb-2">
+          <div className="text-sm text-gray-500">
+            Q{currentQuestionIndex + 1}
+          </div>
+          <PieTimer
+            timeLeft={timeLeft}
+            totalTime={startTime}
+            size={50} // Smaller timer size
+            strokeWidth={4}
+          />
         </div>
-        <PieTimer
-          timeLeft={timeLeft}
-          totalTime={startTime}
-          size={50} // Smaller timer size
-          strokeWidth={4}
-        />
+        
+        {/* Performance Counters */}
+        <div className="flex justify-center gap-4 mb-1 text-xs">
+          <div className="flex items-center">
+            <div className="w-3 h-3 rounded-full bg-green-500 mr-1 flex-shrink-0"></div>
+            <span className="text-green-700">Correct: {correctCount}</span>
+          </div>
+          <div className="flex items-center">
+            <div className="w-3 h-3 rounded-full bg-red-500 mr-1 flex-shrink-0"></div>
+            <span className="text-red-700">Wrong: {wrongCount}</span>
+          </div>
+          <div className="flex items-center">
+            <div className="w-3 h-3 rounded-full bg-amber-500 mr-1 flex-shrink-0"></div>
+            <span className="text-amber-700">Timeout: {timeoutCount}</span>
+          </div>
+        </div>
       </div>
       
       {/* Streamlined Question Display */}
@@ -241,22 +259,6 @@ export function QuizGame({ quizType, minTime, startTime, maxTime, onComplete }: 
         <h3 className="text-lg font-medium break-words">
           {question}
         </h3>
-      </div>
-      
-      {/* Performance Counters */}
-      <div className="flex justify-between mb-3 text-xs sm:text-sm px-1">
-        <div className="flex items-center">
-          <div className="w-4 h-4 rounded-full bg-green-500 mr-1 flex-shrink-0"></div>
-          <span className="text-green-700">Correct: {correctCount}</span>
-        </div>
-        <div className="flex items-center">
-          <div className="w-4 h-4 rounded-full bg-red-500 mr-1 flex-shrink-0"></div>
-          <span className="text-red-700">Wrong: {wrongCount}</span>
-        </div>
-        <div className="flex items-center">
-          <div className="w-4 h-4 rounded-full bg-amber-500 mr-1 flex-shrink-0"></div>
-          <span className="text-amber-700">Timeout: {timeoutCount}</span>
-        </div>
       </div>
       
       {/* Answer Options - More Compact */}
