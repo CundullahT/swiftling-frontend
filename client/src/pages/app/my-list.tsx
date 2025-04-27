@@ -1215,281 +1215,283 @@ export default function MyList() {
       
       {/* Edit Dialog */}
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent className="sm:max-w-3xl max-h-[90vh] overflow-y-auto rounded-xl">
+        <DialogContent className="sm:max-w-3xl rounded-xl">
           <DialogHeader>
             <DialogTitle>Edit Phrase</DialogTitle>
             <DialogDescription>
               Make changes to your phrase below.
             </DialogDescription>
           </DialogHeader>
-          <form onSubmit={handleSubmit} className="space-y-5">
-            <div className="grid grid-cols-1 gap-y-5 gap-x-4 sm:grid-cols-4">
-              {/* Row 1: Phrase & Source Language */}
-              <div className="sm:col-span-3">
-                <div className="space-y-2">
-                  <Label htmlFor="edit-phrase">Phrase</Label>
-                  <Input 
-                    id="edit-phrase"
-                    name="phrase"
-                    value={editedPhrase}
-                    onChange={(e) => {
-                      setEditedPhrase(e.target.value);
-                      if (formErrors.phrase) {
-                        setFormErrors({...formErrors, phrase: false});
-                      }
-                    }}
-                    placeholder="Enter phrase to learn"
-                    className={formErrors.phrase ? "border-red-500" : ""}
-                  />
-                  {formErrors.phrase && (
-                    <p className="text-sm text-red-500">Phrase is required</p>
-                  )}
-                </div>
-              </div>
-              <div className="sm:col-span-1">
-                <div className="space-y-2">
-                  <Label htmlFor="edit-sourceLanguage">Source Language</Label>
-                  <div className="relative">
+          <div className="flex flex-col">
+            <form onSubmit={handleSubmit} className="space-y-5 max-h-[60vh] overflow-y-auto md:max-h-none md:overflow-visible pb-4">
+              <div className="grid grid-cols-1 gap-y-5 gap-x-4 sm:grid-cols-4">
+                {/* Row 1: Phrase & Source Language */}
+                <div className="sm:col-span-3">
+                  <div className="space-y-2">
+                    <Label htmlFor="edit-phrase">Phrase</Label>
                     <Input 
-                      id="edit-sourceLanguage"
-                      placeholder="Type or select language"
-                      value={sourceLanguageInput}
+                      id="edit-phrase"
+                      name="phrase"
+                      value={editedPhrase}
                       onChange={(e) => {
-                        handleSourceLanguageChange(e);
-                        if (formErrors.sourceLanguage) {
-                          setFormErrors({...formErrors, sourceLanguage: false});
+                        setEditedPhrase(e.target.value);
+                        if (formErrors.phrase) {
+                          setFormErrors({...formErrors, phrase: false});
                         }
                       }}
-                      onKeyDown={(e) => handleLanguageKeyDown('source', e)}
-                      className={formErrors.sourceLanguage && !sourceLanguage ? "border-red-500" : ""}
+                      placeholder="Enter phrase to learn"
+                      className={formErrors.phrase ? "border-red-500" : ""}
                     />
-                    {sourceLanguageInput && (
-                      <button
-                        type="button"
-                        className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
-                        onClick={() => setLanguage('source', sourceLanguageInput)}
-                      >
-                        <Plus className="h-4 w-4" />
-                      </button>
-                    )}
-
-                    {/* Source language suggestions */}
-                    {filteredSourceLanguages.length > 0 && (
-                      <div className="absolute z-20 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base overflow-auto focus:outline-none sm:text-sm">
-                        <ul className="divide-y divide-gray-200">
-                          {filteredSourceLanguages.map((language) => (
-                            <li
-                              key={language.id}
-                              className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                              onClick={() => {
-                                setLanguage('source', language.id);
-                                if (formErrors.sourceLanguage) {
-                                  setFormErrors({...formErrors, sourceLanguage: false});
-                                }
-                              }}
-                            >
-                              {language.name}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
+                    {formErrors.phrase && (
+                      <p className="text-sm text-red-500">Phrase is required</p>
                     )}
                   </div>
-                  {sourceLanguage && (
-                    <div className="mt-2">
-                      <Badge className="px-2 py-1 bg-primary-500/10 text-primary-700 hover:bg-primary-500/20 transition-colors duration-200">
-                        {LANGUAGES.find(l => l.id === sourceLanguage)?.name || sourceLanguage}
+                </div>
+                <div className="sm:col-span-1">
+                  <div className="space-y-2">
+                    <Label htmlFor="edit-sourceLanguage">Source Language</Label>
+                    <div className="relative">
+                      <Input 
+                        id="edit-sourceLanguage"
+                        placeholder="Type or select language"
+                        value={sourceLanguageInput}
+                        onChange={(e) => {
+                          handleSourceLanguageChange(e);
+                          if (formErrors.sourceLanguage) {
+                            setFormErrors({...formErrors, sourceLanguage: false});
+                          }
+                        }}
+                        onKeyDown={(e) => handleLanguageKeyDown('source', e)}
+                        className={formErrors.sourceLanguage && !sourceLanguage ? "border-red-500" : ""}
+                      />
+                      {sourceLanguageInput && (
                         <button
                           type="button"
-                          onClick={() => {
-                            setSourceLanguage("");
-                            setFormErrors({...formErrors, sourceLanguage: true});
-                          }}
-                          className="ml-1 rounded-full outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+                          className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+                          onClick={() => setLanguage('source', sourceLanguageInput)}
                         >
-                          <X className="h-3 w-3" />
+                          <Plus className="h-4 w-4" />
                         </button>
-                      </Badge>
+                      )}
+
+                      {/* Source language suggestions */}
+                      {filteredSourceLanguages.length > 0 && (
+                        <div className="absolute z-20 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base overflow-auto focus:outline-none sm:text-sm">
+                          <ul className="divide-y divide-gray-200">
+                            {filteredSourceLanguages.map((language) => (
+                              <li
+                                key={language.id}
+                                className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                                onClick={() => {
+                                  setLanguage('source', language.id);
+                                  if (formErrors.sourceLanguage) {
+                                    setFormErrors({...formErrors, sourceLanguage: false});
+                                  }
+                                }}
+                              >
+                                {language.name}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
                     </div>
-                  )}
-                  {formErrors.sourceLanguage && !sourceLanguage && (
-                    <p className="text-sm text-red-500">Source language is required</p>
-                  )}
-                </div>
-              </div>
-
-              {/* Row 2: Translation & Target Language */}
-              <div className="sm:col-span-3">
-                <div className="space-y-2">
-                  <Label htmlFor="edit-translation">Translation</Label>
-                  <Input 
-                    id="edit-translation"
-                    name="translation"
-                    value={editedTranslation}
-                    onChange={(e) => {
-                      setEditedTranslation(e.target.value);
-                      if (formErrors.translation) {
-                        setFormErrors({...formErrors, translation: false});
-                      }
-                    }}
-                    placeholder="Enter translation in your language"
-                    className={formErrors.translation ? "border-red-500" : ""}
-                  />
-                  {formErrors.translation && (
-                    <p className="text-sm text-red-500">Translation is required</p>
-                  )}
-                </div>
-              </div>
-              
-              <div className="sm:col-span-1">
-                <div className="space-y-2">
-                  <Label htmlFor="edit-targetLanguage">Target Language</Label>
-                  <div className="relative">
-                    <Input 
-                      id="edit-targetLanguage"
-                      placeholder="Type or select language"
-                      value={targetLanguageInput}
-                      onChange={(e) => {
-                        handleTargetLanguageChange(e);
-                        if (formErrors.targetLanguage) {
-                          setFormErrors({...formErrors, targetLanguage: false});
-                        }
-                      }}
-                      onKeyDown={(e) => handleLanguageKeyDown('target', e)}
-                      className={formErrors.targetLanguage && !targetLanguage ? "border-red-500" : ""}
-                    />
-                    {targetLanguageInput && (
-                      <button
-                        type="button"
-                        className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
-                        onClick={() => setLanguage('target', targetLanguageInput)}
-                      >
-                        <Plus className="h-4 w-4" />
-                      </button>
-                    )}
-
-                    {/* Target language suggestions */}
-                    {filteredTargetLanguages.length > 0 && (
-                      <div className="absolute z-20 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base overflow-auto focus:outline-none sm:text-sm">
-                        <ul className="divide-y divide-gray-200">
-                          {filteredTargetLanguages.map((language) => (
-                            <li
-                              key={language.id}
-                              className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                              onClick={() => {
-                                setLanguage('target', language.id);
-                                if (formErrors.targetLanguage) {
-                                  setFormErrors({...formErrors, targetLanguage: false});
-                                }
-                              }}
-                            >
-                              {language.name}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                  </div>
-                  {targetLanguage && (
-                    <div className="mt-2">
-                      <Badge className="px-2 py-1 bg-primary-500/10 text-primary-700 hover:bg-primary-500/20 transition-colors duration-200">
-                        {LANGUAGES.find(l => l.id === targetLanguage)?.name || targetLanguage}
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setTargetLanguage("");
-                            setFormErrors({...formErrors, targetLanguage: true});
-                          }}
-                          className="ml-1 rounded-full outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
-                        >
-                          <X className="h-3 w-3" />
-                        </button>
-                      </Badge>
-                    </div>
-                  )}
-                  {formErrors.targetLanguage && !targetLanguage && (
-                    <p className="text-sm text-red-500">Target language is required</p>
-                  )}
-                </div>
-              </div>
-
-              {/* Row 3: Notes & Tags */}
-              <div className="sm:col-span-2">
-                <Label htmlFor="edit-notes">Notes (optional)</Label>
-                <Textarea 
-                  id="edit-notes"
-                  name="notes"
-                  value={editedNotes}
-                  onChange={(e) => setEditedNotes(e.target.value)}
-                  placeholder="Add explanations, context, or example sentences."
-                  rows={3}
-                />
-              </div>
-
-              <div className="sm:col-span-2">
-                <Label htmlFor="edit-tags">Tags (optional, max 3)</Label>
-                <div className="flex flex-wrap gap-2 mb-2">
-                  {selectedTags.map(tag => (
-                    <Badge key={tag} className="px-2 py-1 bg-primary-500/10 text-primary-700 hover:bg-primary-500/20 transition-colors duration-200">
-                      {tag}
-                      <button
-                        type="button"
-                        onClick={() => removeTag(tag)}
-                        className="ml-1 rounded-full outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
-                      >
-                        <X className="h-3 w-3" />
-                      </button>
-                    </Badge>
-                  ))}
-                </div>
-                <div className="relative">
-                  <Input
-                    id="edit-tags"
-                    placeholder={selectedTags.length >= 3 ? "Maximum 3 tags reached" : "Type to add a tag..."}
-                    value={tagInput}
-                    onChange={(e) => {
-                      handleTagInputChange(e);
-                      if (formErrors.tagLength) {
-                        setFormErrors({...formErrors, tagLength: false});
-                      }
-                    }}
-                    onKeyDown={handleTagKeyDown}
-                    className={`pr-8 ${formErrors.tagLength ? "border-red-500" : ""}`}
-                    disabled={selectedTags.length >= 3}
-                  />
-                  {formErrors.tagLength && (
-                    <p className="text-sm text-red-500">Tags must be between 3-16 characters</p>
-                  )}
-                  {tagInput && selectedTags.length < 3 && (
-                    <button
-                      type="button"
-                      className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
-                      onClick={() => addTag(tagInput)}
-                    >
-                      <Plus className="h-4 w-4" />
-                    </button>
-                  )}
-                  
-                  {/* Tag suggestions */}
-                  {filteredSuggestions.length > 0 && selectedTags.length < 3 && (
-                    <div className="absolute z-20 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base overflow-auto focus:outline-none sm:text-sm">
-                      <ul className="divide-y divide-gray-200">
-                        {filteredSuggestions.map((tag) => (
-                          <li
-                            key={tag}
-                            className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                            onClick={() => addTag(tag)}
+                    {sourceLanguage && (
+                      <div className="mt-2">
+                        <Badge className="px-2 py-1 bg-primary-500/10 text-primary-700 hover:bg-primary-500/20 transition-colors duration-200">
+                          {LANGUAGES.find(l => l.id === sourceLanguage)?.name || sourceLanguage}
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setSourceLanguage("");
+                              setFormErrors({...formErrors, sourceLanguage: true});
+                            }}
+                            className="ml-1 rounded-full outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
                           >
-                            {tag}
-                          </li>
-                        ))}
-                      </ul>
+                            <X className="h-3 w-3" />
+                          </button>
+                        </Badge>
+                      </div>
+                    )}
+                    {formErrors.sourceLanguage && !sourceLanguage && (
+                      <p className="text-sm text-red-500">Source language is required</p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Row 2: Translation & Target Language */}
+                <div className="sm:col-span-3">
+                  <div className="space-y-2">
+                    <Label htmlFor="edit-translation">Translation</Label>
+                    <Input 
+                      id="edit-translation"
+                      name="translation"
+                      value={editedTranslation}
+                      onChange={(e) => {
+                        setEditedTranslation(e.target.value);
+                        if (formErrors.translation) {
+                          setFormErrors({...formErrors, translation: false});
+                        }
+                      }}
+                      placeholder="Enter translation in your language"
+                      className={formErrors.translation ? "border-red-500" : ""}
+                    />
+                    {formErrors.translation && (
+                      <p className="text-sm text-red-500">Translation is required</p>
+                    )}
+                  </div>
+                </div>
+                
+                <div className="sm:col-span-1">
+                  <div className="space-y-2">
+                    <Label htmlFor="edit-targetLanguage">Target Language</Label>
+                    <div className="relative">
+                      <Input 
+                        id="edit-targetLanguage"
+                        placeholder="Type or select language"
+                        value={targetLanguageInput}
+                        onChange={(e) => {
+                          handleTargetLanguageChange(e);
+                          if (formErrors.targetLanguage) {
+                            setFormErrors({...formErrors, targetLanguage: false});
+                          }
+                        }}
+                        onKeyDown={(e) => handleLanguageKeyDown('target', e)}
+                        className={formErrors.targetLanguage && !targetLanguage ? "border-red-500" : ""}
+                      />
+                      {targetLanguageInput && (
+                        <button
+                          type="button"
+                          className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+                          onClick={() => setLanguage('target', targetLanguageInput)}
+                        >
+                          <Plus className="h-4 w-4" />
+                        </button>
+                      )}
+
+                      {/* Target language suggestions */}
+                      {filteredTargetLanguages.length > 0 && (
+                        <div className="absolute z-20 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base overflow-auto focus:outline-none sm:text-sm">
+                          <ul className="divide-y divide-gray-200">
+                            {filteredTargetLanguages.map((language) => (
+                              <li
+                                key={language.id}
+                                className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                                onClick={() => {
+                                  setLanguage('target', language.id);
+                                  if (formErrors.targetLanguage) {
+                                    setFormErrors({...formErrors, targetLanguage: false});
+                                  }
+                                }}
+                              >
+                                {language.name}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
                     </div>
-                  )}
+                    {targetLanguage && (
+                      <div className="mt-2">
+                        <Badge className="px-2 py-1 bg-primary-500/10 text-primary-700 hover:bg-primary-500/20 transition-colors duration-200">
+                          {LANGUAGES.find(l => l.id === targetLanguage)?.name || targetLanguage}
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setTargetLanguage("");
+                              setFormErrors({...formErrors, targetLanguage: true});
+                            }}
+                            className="ml-1 rounded-full outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+                          >
+                            <X className="h-3 w-3" />
+                          </button>
+                        </Badge>
+                      </div>
+                    )}
+                    {formErrors.targetLanguage && !targetLanguage && (
+                      <p className="text-sm text-red-500">Target language is required</p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Row 3: Notes & Tags */}
+                <div className="sm:col-span-2">
+                  <Label htmlFor="edit-notes">Notes (optional)</Label>
+                  <Textarea 
+                    id="edit-notes"
+                    name="notes"
+                    value={editedNotes}
+                    onChange={(e) => setEditedNotes(e.target.value)}
+                    placeholder="Add explanations, context, or example sentences."
+                    rows={3}
+                  />
+                </div>
+
+                <div className="sm:col-span-2">
+                  <Label htmlFor="edit-tags">Tags (optional, max 3)</Label>
+                  <div className="flex flex-wrap gap-2 mb-2">
+                    {selectedTags.map(tag => (
+                      <Badge key={tag} className="px-2 py-1 bg-primary-500/10 text-primary-700 hover:bg-primary-500/20 transition-colors duration-200">
+                        {tag}
+                        <button
+                          type="button"
+                          onClick={() => removeTag(tag)}
+                          className="ml-1 rounded-full outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+                        >
+                          <X className="h-3 w-3" />
+                        </button>
+                      </Badge>
+                    ))}
+                  </div>
+                  <div className="relative">
+                    <Input
+                      id="edit-tags"
+                      placeholder={selectedTags.length >= 3 ? "Maximum 3 tags reached" : "Type to add a tag..."}
+                      value={tagInput}
+                      onChange={(e) => {
+                        handleTagInputChange(e);
+                        if (formErrors.tagLength) {
+                          setFormErrors({...formErrors, tagLength: false});
+                        }
+                      }}
+                      onKeyDown={handleTagKeyDown}
+                      className={`pr-8 ${formErrors.tagLength ? "border-red-500" : ""}`}
+                      disabled={selectedTags.length >= 3}
+                    />
+                    {formErrors.tagLength && (
+                      <p className="text-sm text-red-500">Tags must be between 3-16 characters</p>
+                    )}
+                    {tagInput && selectedTags.length < 3 && (
+                      <button
+                        type="button"
+                        className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+                        onClick={() => addTag(tagInput)}
+                      >
+                        <Plus className="h-4 w-4" />
+                      </button>
+                    )}
+                    
+                    {/* Tag suggestions */}
+                    {filteredSuggestions.length > 0 && selectedTags.length < 3 && (
+                      <div className="absolute z-20 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base overflow-auto focus:outline-none sm:text-sm">
+                        <ul className="divide-y divide-gray-200">
+                          {filteredSuggestions.map((tag) => (
+                            <li
+                              key={tag}
+                              className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                              onClick={() => addTag(tag)}
+                            >
+                              {tag}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className="flex flex-col sm:flex-row sm:justify-end gap-3 mt-6">
+            </form>
+            <div className="flex flex-col sm:flex-row sm:justify-end gap-3 pt-4 border-t">
               <Button 
                 type="button" 
                 variant="outline" 
@@ -1499,13 +1501,13 @@ export default function MyList() {
                 Cancel
               </Button>
               <Button 
-                type="submit"
+                onClick={() => document.querySelector('form')?.dispatchEvent(new Event('submit', {cancelable: true, bubbles: true}))}
                 className="w-full sm:w-auto"
               >
                 Save Changes
               </Button>
             </div>
-          </form>
+          </div>
         </DialogContent>
       </Dialog>
     </div>
