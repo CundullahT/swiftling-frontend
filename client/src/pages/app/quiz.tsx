@@ -49,7 +49,7 @@ export default function Quiz() {
   const [isQuizStarted, setIsQuizStarted] = useState(false);
   
   // State for language selection
-  const [selectedLanguages, setSelectedLanguages] = useState<string[]>(['all']);
+  const [selectedLanguages, setSelectedLanguages] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [showLanguageDropdown, setShowLanguageDropdown] = useState(false);
   const languageInputRef = useRef<HTMLInputElement>(null);
@@ -83,12 +83,7 @@ export default function Quiz() {
   
   // Remove a selected language
   const removeLanguage = (languageId: string) => {
-    // If removing the last language, default back to "All Languages"
-    if (selectedLanguages.length === 1) {
-      setSelectedLanguages(['all']);
-    } else {
-      setSelectedLanguages(selectedLanguages.filter(id => id !== languageId));
-    }
+    setSelectedLanguages(selectedLanguages.filter(id => id !== languageId));
   };
   
   // Filter languages based on search query
@@ -278,16 +273,17 @@ export default function Quiz() {
               
               {/* Selected languages display */}
               <div className="flex flex-wrap gap-2 mb-2 mt-2">
-                {selectedLanguages.includes('all') ? (
+                {selectedLanguages.length === 0 ? (
+                  <p className="text-xs text-gray-500">No languages selected</p>
+                ) : selectedLanguages.includes('all') ? (
                   <Badge 
                     className="px-2 py-1 bg-primary/10 text-primary hover:bg-primary/20 transition-colors duration-200"
                   >
                     All Languages
                     <button
                       type="button"
-                      onClick={() => {}}
-                      className="ml-1 rounded-full outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:opacity-50"
-                      disabled={true} // Can't remove "All Languages" if it's the only option
+                      onClick={() => removeLanguage('all')}
+                      className="ml-1 rounded-full outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
                     >
                       <X className="h-3 w-3" />
                     </button>
@@ -341,7 +337,7 @@ export default function Quiz() {
                   <div className="absolute z-10 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base overflow-auto focus:outline-none sm:text-sm">
                     <div className="divide-y divide-gray-200">
                       {/* "All Languages" option always appears first */}
-                      {searchQuery.toLowerCase().includes('all') && !selectedLanguages.includes('all') && (
+                      {!selectedLanguages.includes('all') && (
                         <div
                           className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
                           onMouseDown={() => handleLanguageSelect('all')}
