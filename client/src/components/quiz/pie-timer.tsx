@@ -12,7 +12,9 @@ export function PieTimer({
   strokeWidth = 6 
 }: PieTimerProps) {
   // Calculate percentage of time remaining (ensure between 0-100)
-  const percentage = Math.min(100, Math.max(0, (timeLeft / totalTime) * 100));
+  // Use the current timeLeft compared to its own starting time, not the original totalTime
+  const currentTotalTime = Math.max(timeLeft, totalTime); // Use the max of timeLeft or totalTime to handle higher limits
+  const percentage = Math.min(100, Math.max(0, (timeLeft / currentTotalTime) * 100));
   
   // Calculate remaining stroke dasharray and dashoffset
   const radius = (size - strokeWidth) / 2;

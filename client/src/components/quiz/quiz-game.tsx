@@ -231,7 +231,7 @@ export function QuizGame({ quizType, minTime, startTime, maxTime, onComplete }: 
           </div>
           <PieTimer
             timeLeft={timeLeft}
-            totalTime={startTime}
+            totalTime={currentQuestionStartTime}
             size={50} // Smaller timer size
             strokeWidth={4}
           />
