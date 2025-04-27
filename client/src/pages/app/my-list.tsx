@@ -979,7 +979,11 @@ export default function MyList() {
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => setCurrentPage(1)}
+                        onClick={() => {
+                          // Scroll to top with smooth behavior
+                          window.scrollTo({ top: 0, behavior: 'smooth' });
+                          setCurrentPage(1);
+                        }}
                         disabled={currentPage === 1}
                         className="hidden sm:flex"
                       >
@@ -988,7 +992,11 @@ export default function MyList() {
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => setCurrentPage(currentPage - 1)}
+                        onClick={() => {
+                          // Scroll to top with smooth behavior
+                          window.scrollTo({ top: 0, behavior: 'smooth' });
+                          setCurrentPage(currentPage - 1);
+                        }}
                         disabled={currentPage === 1}
                         className="flex items-center min-w-0"
                       >
@@ -1010,7 +1018,11 @@ export default function MyList() {
                                 key={i}
                                 variant={currentPage === pageNum ? "default" : "outline"}
                                 size="sm"
-                                onClick={() => setCurrentPage(pageNum)}
+                                onClick={() => {
+                                  // Scroll to top with smooth behavior
+                                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                                  setCurrentPage(pageNum);
+                                }}
                                 className="w-9 h-9 p-0"
                               >
                                 {pageNum}
@@ -1024,7 +1036,11 @@ export default function MyList() {
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => setCurrentPage(currentPage + 1)}
+                        onClick={() => {
+                          // Scroll to top with smooth behavior
+                          window.scrollTo({ top: 0, behavior: 'smooth' });
+                          setCurrentPage(currentPage + 1);
+                        }}
                         disabled={currentPage === Math.ceil(getFilteredAndSortedPhrases().length / itemsPerPage)}
                         className="flex items-center min-w-0"
                       >
@@ -1034,7 +1050,11 @@ export default function MyList() {
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => setCurrentPage(Math.ceil(getFilteredAndSortedPhrases().length / itemsPerPage))}
+                        onClick={() => {
+                          // Scroll to top with smooth behavior
+                          window.scrollTo({ top: 0, behavior: 'smooth' });
+                          setCurrentPage(Math.ceil(getFilteredAndSortedPhrases().length / itemsPerPage));
+                        }}
                         disabled={currentPage === Math.ceil(getFilteredAndSortedPhrases().length / itemsPerPage)}
                         className="hidden sm:flex"
                       >
