@@ -34,6 +34,7 @@ interface QuizGameProps {
   startTime: number;
   maxTime: number;
   onComplete: () => void;
+  selectedLanguages?: string[];
 }
 
 export function QuizGame({ quizType, minTime, startTime, maxTime, onComplete }: QuizGameProps) {

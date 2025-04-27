@@ -3,6 +3,10 @@ import { useAuthRedirect } from "@/hooks/use-auth-redirect";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
+import { X, Search } from "lucide-react";
+import { Input } from "@/components/ui/input";
 import { 
   Select, 
   SelectContent, 
@@ -13,7 +17,8 @@ import {
 import { Sparkles, BookOpen, Brain } from "lucide-react";
 import { 
   QUIZ_TYPES, 
-  ADAPTIVE_TIME_PRESETS
+  ADAPTIVE_TIME_PRESETS,
+  LANGUAGES
 } from "@/lib/constants";
 import { QuizGame } from "@/components/quiz/quiz-game";
 
@@ -28,6 +33,11 @@ export default function Quiz() {
   const [startTime, setStartTime] = useState<number>(15);
   const [maxTime, setMaxTime] = useState<number>(30);
   const [isQuizStarted, setIsQuizStarted] = useState(false);
+  
+  // State for language selection
+  const [selectedLanguages, setSelectedLanguages] = useState<string[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [showLanguageDropdown, setShowLanguageDropdown] = useState(false);
   
   // Handle quiz type selection
   const handleQuizTypeSelect = (quizId: string) => {
@@ -46,6 +56,26 @@ export default function Quiz() {
   const handleMaxTimeChange = (value: string) => {
     setMaxTime(parseInt(value));
   };
+  
+  // Handle language selection
+  const handleLanguageSelect = (languageId: string) => {
+    if (selectedLanguages.includes(languageId)) {
+      setSelectedLanguages(selectedLanguages.filter(id => id !== languageId));
+    } else {
+      setSelectedLanguages([...selectedLanguages, languageId]);
+    }
+    setSearchQuery('');
+  };
+  
+  const removeLanguage = (languageId: string) => {
+    setSelectedLanguages(selectedLanguages.filter(id => id !== languageId));
+  };
+  
+  // Filter languages based on search query
+  const filteredLanguages = LANGUAGES.filter(language => 
+    language.name.toLowerCase().includes(searchQuery.toLowerCase()) && 
+    !selectedLanguages.includes(language.id)
+  );
 
   // Start quiz
   const handleStartQuiz = () => {
@@ -73,6 +103,7 @@ export default function Quiz() {
               startTime={startTime}
               maxTime={maxTime}
               onComplete={handleEndQuiz}
+              selectedLanguages={selectedLanguages}
             />
           </div>
         </div>
@@ -158,6 +189,90 @@ export default function Quiz() {
         </CardContent>
       </Card>
 
+      {/* Language Selection */}
+      <Card className="mb-6">
+        <CardContent className="pt-6">
+          <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">
+            Language Selection
+            <span className="ml-2 inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-blue-100 text-blue-800">
+              New Feature
+            </span>
+          </h3>
+          
+          <div className="mb-6">
+            <p className="text-sm text-gray-500 mb-4">
+              Select which languages you want to practice in the quiz. You can select multiple languages.
+              If no languages are selected, phrases from all languages will be included.
+            </p>
+            
+            {/* Selected languages */}
+            <div className="mb-3 flex flex-wrap gap-2">
+              {selectedLanguages.map(langId => {
+                const language = LANGUAGES.find(l => l.id === langId);
+                return (
+                  <Badge 
+                    key={langId} 
+                    className="px-2 py-1 bg-primary-500/10 text-primary-700 hover:bg-primary-500/20 transition-colors duration-200"
+                  >
+                    {language?.name || langId}
+                    <button
+                      type="button"
+                      onClick={() => removeLanguage(langId)}
+                      className="ml-1 rounded-full outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  </Badge>
+                );
+              })}
+            </div>
+            
+            {/* Language search and dropdown */}
+            <div className="relative">
+              <div className="flex items-center">
+                <div className="relative flex-grow">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Search className="h-4 w-4 text-gray-400" />
+                  </div>
+                  <Input
+                    placeholder="Search languages..."
+                    value={searchQuery}
+                    onChange={(e) => {
+                      setSearchQuery(e.target.value);
+                      if (!showLanguageDropdown) setShowLanguageDropdown(true);
+                    }}
+                    onFocus={() => setShowLanguageDropdown(true)}
+                    onBlur={() => setTimeout(() => setShowLanguageDropdown(false), 200)}
+                    className="pl-10"
+                  />
+                </div>
+              </div>
+              
+              {/* Dropdown for language selection */}
+              {showLanguageDropdown && filteredLanguages.length > 0 && (
+                <div className="absolute z-10 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base overflow-auto focus:outline-none sm:text-sm">
+                  <div className="divide-y divide-gray-200">
+                    {filteredLanguages.slice(0, 10).map((language) => (
+                      <div
+                        key={language.id}
+                        className="px-4 py-2 hover:bg-gray-100 cursor-pointer flex items-center"
+                        onMouseDown={() => handleLanguageSelect(language.id)}
+                      >
+                        <Checkbox 
+                          checked={selectedLanguages.includes(language.id)}
+                          className="mr-2"
+                        />
+                        <span>{language.name}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+      
       {/* Adaptive Timer Settings */}
       <Card className="mb-6">
         <CardContent className="pt-6">
