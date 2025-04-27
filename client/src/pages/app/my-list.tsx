@@ -132,8 +132,502 @@ export default function MyList() {
       sourceLanguage: 'spanish',
       targetLanguage: 'english'
     },
-    /* The rest of your phrases example data */
-    // For brevity, we're not including all 50 phrases in this snippet
+    { 
+      id: 3, 
+      phrase: 'Gracias', 
+      translation: 'Thank you', 
+      tags: ['Common phrases', 'Beginner'], 
+      proficiency: 95,
+      notes: 'The standard way to say thank you. You can add "muchas" before it for "thank you very much".',
+      sourceLanguage: 'spanish',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 4, 
+      phrase: 'Por favor', 
+      translation: 'Please', 
+      tags: ['Common phrases', 'Beginner'], 
+      proficiency: 90,
+      notes: 'Used to make polite requests. Can be placed at the beginning or end of a sentence.',
+      sourceLanguage: 'spanish',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 5, 
+      phrase: 'Lo siento', 
+      translation: 'I\'m sorry', 
+      tags: ['Common phrases', 'Expressions', 'Beginner'], 
+      proficiency: 60,
+      notes: 'Used to apologize. For more serious apologies, you can say "Lo siento mucho" (I\'m very sorry).',
+      sourceLanguage: 'spanish',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 6, 
+      phrase: 'Buenas noches', 
+      translation: 'Good evening/night', 
+      tags: ['Greetings', 'Evening', 'Beginner'], 
+      proficiency: 80,
+      notes: 'Used in the evening and at night as both a greeting and a farewell.',
+      sourceLanguage: 'spanish',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 7, 
+      phrase: 'Adiós', 
+      translation: 'Goodbye', 
+      tags: ['Farewells', 'Beginner'], 
+      proficiency: 95,
+      notes: 'Formal way to say goodbye. "Hasta luego" (see you later) is often more common.',
+      sourceLanguage: 'spanish',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 8, 
+      phrase: 'Hasta mañana', 
+      translation: 'See you tomorrow', 
+      tags: ['Farewells', 'Intermediate'], 
+      proficiency: 75,
+      notes: 'A common way to say goodbye when you expect to see the person the next day.',
+      sourceLanguage: 'spanish',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 9, 
+      phrase: 'Mucho gusto', 
+      translation: 'Nice to meet you', 
+      tags: ['Greetings', 'Introductions', 'Beginner'], 
+      proficiency: 65,
+      notes: 'Used when meeting someone for the first time.',
+      sourceLanguage: 'spanish',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 10, 
+      phrase: 'No entiendo', 
+      translation: 'I don\'t understand', 
+      tags: ['Common phrases', 'Learning', 'Beginner'], 
+      proficiency: 85,
+      notes: 'Very useful phrase when learning a language. You can follow it with "¿Puedes repetir?" (Can you repeat?)',
+      sourceLanguage: 'spanish',
+      targetLanguage: 'english'
+    },
+    
+    // French phrases
+    { 
+      id: 11, 
+      phrase: 'Bonjour', 
+      translation: 'Hello/Good day', 
+      tags: ['Greetings', 'Beginner'], 
+      proficiency: 90,
+      notes: 'The most common greeting in French, used during the day.',
+      sourceLanguage: 'french',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 12, 
+      phrase: 'Comment ça va?', 
+      translation: 'How are you?', 
+      tags: ['Greetings', 'Questions', 'Beginner'], 
+      proficiency: 75,
+      notes: 'Casual way to ask how someone is doing. "Comment allez-vous?" is more formal.',
+      sourceLanguage: 'french',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 13, 
+      phrase: 'Merci', 
+      translation: 'Thank you', 
+      tags: ['Common phrases', 'Beginner'], 
+      proficiency: 100,
+      notes: 'Basic way to say "thank you". "Merci beaucoup" means "thank you very much".',
+      sourceLanguage: 'french',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 14, 
+      phrase: 'S\'il vous plaît', 
+      translation: 'Please', 
+      tags: ['Common phrases', 'Beginner'], 
+      proficiency: 85,
+      notes: 'Formal way to say "please". "S\'il te plaît" is the informal version.',
+      sourceLanguage: 'french',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 15, 
+      phrase: 'Je suis désolé(e)', 
+      translation: 'I\'m sorry', 
+      tags: ['Common phrases', 'Expressions', 'Beginner'], 
+      proficiency: 70,
+      notes: 'Add "e" at the end if you are female (désolée).',
+      sourceLanguage: 'french',
+      targetLanguage: 'english'
+    },
+    
+    // German phrases
+    { 
+      id: 16, 
+      phrase: 'Guten Tag', 
+      translation: 'Good day', 
+      tags: ['Greetings', 'Beginner'], 
+      proficiency: 80,
+      notes: 'Formal greeting used during the day. "Hallo" is more casual.',
+      sourceLanguage: 'german',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 17, 
+      phrase: 'Wie geht es dir?', 
+      translation: 'How are you?', 
+      tags: ['Greetings', 'Questions', 'Beginner'], 
+      proficiency: 65,
+      notes: 'Informal way to ask how someone is doing. "Wie geht es Ihnen?" is formal.',
+      sourceLanguage: 'german',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 18, 
+      phrase: 'Danke', 
+      translation: 'Thank you', 
+      tags: ['Common phrases', 'Beginner'], 
+      proficiency: 95,
+      notes: 'The basic way to say "thank you". "Vielen Dank" means "many thanks".',
+      sourceLanguage: 'german',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 19, 
+      phrase: 'Bitte', 
+      translation: 'Please/You\'re welcome', 
+      tags: ['Common phrases', 'Beginner'], 
+      proficiency: 85,
+      notes: 'This word can mean both "please" and "you\'re welcome" depending on context.',
+      sourceLanguage: 'german',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 20, 
+      phrase: 'Es tut mir leid', 
+      translation: 'I\'m sorry', 
+      tags: ['Common phrases', 'Expressions', 'Beginner'], 
+      proficiency: 60,
+      notes: 'The standard way to apologize in German.',
+      sourceLanguage: 'german',
+      targetLanguage: 'english'
+    },
+    
+    // Italian phrases
+    { 
+      id: 21, 
+      phrase: 'Buongiorno', 
+      translation: 'Good morning/day', 
+      tags: ['Greetings', 'Beginner'], 
+      proficiency: 85,
+      notes: 'Used as a greeting until the afternoon, when "buonasera" (good evening) is used.',
+      sourceLanguage: 'italian',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 22, 
+      phrase: 'Come stai?', 
+      translation: 'How are you?', 
+      tags: ['Greetings', 'Questions', 'Beginner'], 
+      proficiency: 75,
+      notes: 'Informal way to ask how someone is doing. "Come sta?" is formal.',
+      sourceLanguage: 'italian',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 23, 
+      phrase: 'Grazie', 
+      translation: 'Thank you', 
+      tags: ['Common phrases', 'Beginner'], 
+      proficiency: 100,
+      notes: 'Basic way to say thanks. "Grazie mille" means "a thousand thanks".',
+      sourceLanguage: 'italian',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 24, 
+      phrase: 'Per favore', 
+      translation: 'Please', 
+      tags: ['Common phrases', 'Beginner'], 
+      proficiency: 90,
+      notes: 'Used to make a request polite. "Per piacere" is also commonly used.',
+      sourceLanguage: 'italian',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 25, 
+      phrase: 'Mi dispiace', 
+      translation: 'I\'m sorry', 
+      tags: ['Common phrases', 'Expressions', 'Beginner'], 
+      proficiency: 65,
+      notes: 'Used to apologize in Italian. "Scusi" is used for more minor apologies or to get attention.',
+      sourceLanguage: 'italian',
+      targetLanguage: 'english'
+    },
+    
+    // Japanese phrases
+    { 
+      id: 26, 
+      phrase: 'おはようございます (Ohayou gozaimasu) - 今日は素晴らしい天気ですね。早起きは健康にいいと言われています。', 
+      translation: 'Good morning - It\'s a beautiful weather today. They say waking up early is good for your health.', 
+      tags: ['Greetings', 'Morning', 'Beginner'], 
+      proficiency: 70,
+      notes: 'Formal morning greeting. "おはよう" (Ohayou) is the casual version. This extended version includes a comment about the weather and a common saying about early rising.',
+      sourceLanguage: 'japanese',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 27, 
+      phrase: 'お元気ですか？ (O-genki desu ka?)', 
+      translation: 'How are you?', 
+      tags: ['Greetings', 'Questions', 'Beginner'], 
+      proficiency: 55,
+      notes: 'Formal way to ask how someone is doing.',
+      sourceLanguage: 'japanese',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 28, 
+      phrase: 'ありがとうございます (Arigatou gozaimasu)', 
+      translation: 'Thank you', 
+      tags: ['Common phrases', 'Beginner'], 
+      proficiency: 80,
+      notes: 'Formal way to express gratitude. "ありがとう" (Arigatou) is more casual.',
+      sourceLanguage: 'japanese',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 29, 
+      phrase: 'お願いします (Onegai shimasu)', 
+      translation: 'Please', 
+      tags: ['Common phrases', 'Beginner'], 
+      proficiency: 75,
+      notes: 'Used when making a request or asking for something.',
+      sourceLanguage: 'japanese',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 30, 
+      phrase: 'すみません (Sumimasen)', 
+      translation: 'Excuse me/I\'m sorry', 
+      tags: ['Common phrases', 'Expressions', 'Beginner'], 
+      proficiency: 85,
+      notes: 'Very versatile word that can be used to apologize, get attention, or express gratitude.',
+      sourceLanguage: 'japanese',
+      targetLanguage: 'english'
+    },
+    
+    // Mandarin Chinese phrases
+    { 
+      id: 31, 
+      phrase: '你好 (Nǐ hǎo)', 
+      translation: 'Hello', 
+      tags: ['Greetings', 'Beginner'], 
+      proficiency: 90,
+      notes: 'The most common greeting in Mandarin.',
+      sourceLanguage: 'chinese',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 32, 
+      phrase: '你好吗？ (Nǐ hǎo ma?)', 
+      translation: 'How are you?', 
+      tags: ['Greetings', 'Questions', 'Beginner'], 
+      proficiency: 65,
+      notes: 'Used to ask how someone is doing, though it\'s not as common in everyday speech as in English.',
+      sourceLanguage: 'chinese',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 33, 
+      phrase: '谢谢 (Xièxiè)', 
+      translation: 'Thank you', 
+      tags: ['Common phrases', 'Beginner'], 
+      proficiency: 95,
+      notes: 'The standard way to say thank you.',
+      sourceLanguage: 'chinese',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 34, 
+      phrase: '请 (Qǐng)', 
+      translation: 'Please', 
+      tags: ['Common phrases', 'Beginner'], 
+      proficiency: 85,
+      notes: 'Used before a verb to make a request more polite.',
+      sourceLanguage: 'chinese',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 35, 
+      phrase: '对不起 (Duìbùqǐ)', 
+      translation: 'I\'m sorry', 
+      tags: ['Common phrases', 'Expressions', 'Beginner'], 
+      proficiency: 70,
+      notes: 'Used to apologize for a mistake. "不好意思" (Bù hǎo yìsi) is used for minor inconveniences.',
+      sourceLanguage: 'chinese',
+      targetLanguage: 'english'
+    },
+    
+    // Russian phrases
+    { 
+      id: 36, 
+      phrase: 'Здравствуйте (Zdravstvuyte)', 
+      translation: 'Hello', 
+      tags: ['Greetings', 'Beginner'], 
+      proficiency: 60,
+      notes: 'Formal greeting. "Привет" (Privet) is the informal version.',
+      sourceLanguage: 'russian',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 37, 
+      phrase: 'Как дела? (Kak dela?)', 
+      translation: 'How are you?', 
+      tags: ['Greetings', 'Questions', 'Beginner'], 
+      proficiency: 55,
+      notes: 'Informal way to ask how someone is doing.',
+      sourceLanguage: 'russian',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 38, 
+      phrase: 'Спасибо (Spasibo)', 
+      translation: 'Thank you', 
+      tags: ['Common phrases', 'Beginner'], 
+      proficiency: 80,
+      notes: 'The standard way to say thank you. "Большое спасибо" (Bolshoye spasibo) means "thank you very much".',
+      sourceLanguage: 'russian',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 39, 
+      phrase: 'Пожалуйста (Pozhaluysta)', 
+      translation: 'Please/You\'re welcome', 
+      tags: ['Common phrases', 'Beginner'], 
+      proficiency: 70,
+      notes: 'Can mean both "please" and "you\'re welcome" depending on context.',
+      sourceLanguage: 'russian',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 40, 
+      phrase: 'Извините (Izvinite)', 
+      translation: 'I\'m sorry/Excuse me', 
+      tags: ['Common phrases', 'Expressions', 'Beginner'], 
+      proficiency: 65,
+      notes: 'Formal way to apologize or get someone\'s attention. "Прости" (Prosti) is informal.',
+      sourceLanguage: 'russian',
+      targetLanguage: 'english'
+    },
+    
+    // Arabic phrases
+    { 
+      id: 41, 
+      phrase: 'مرحبا (Marhaban)', 
+      translation: 'Hello', 
+      tags: ['Greetings', 'Beginner'], 
+      proficiency: 60,
+      notes: 'Common greeting. "السلام عليكم" (As-salamu alaykum) is more formal/traditional.',
+      sourceLanguage: 'arabic',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 42, 
+      phrase: 'كيف حالك؟ (Kayfa haluka?)', 
+      translation: 'How are you?', 
+      tags: ['Greetings', 'Questions', 'Beginner'], 
+      proficiency: 50,
+      notes: 'Used to ask about someone\'s wellbeing. For a female, it\'s "كيف حالك؟" (Kayfa haluki?).',
+      sourceLanguage: 'arabic',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 43, 
+      phrase: 'شكرا (Shukran)', 
+      translation: 'Thank you', 
+      tags: ['Common phrases', 'Beginner'], 
+      proficiency: 85,
+      notes: 'The standard way to say thank you. "شكرا جزيلا" (Shukran jazilan) means "thank you very much".',
+      sourceLanguage: 'arabic',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 44, 
+      phrase: 'من فضلك (Min fadlika)', 
+      translation: 'Please', 
+      tags: ['Common phrases', 'Beginner'], 
+      proficiency: 65,
+      notes: 'Used when making a request. For a female, it\'s "من فضلك" (Min fadliki).',
+      sourceLanguage: 'arabic',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 45, 
+      phrase: 'آسف (Asif)', 
+      translation: 'I\'m sorry', 
+      tags: ['Common phrases', 'Expressions', 'Beginner'], 
+      proficiency: 60,
+      notes: 'Used to apologize. For a female, it\'s "آسفة" (Asifah).',
+      sourceLanguage: 'arabic',
+      targetLanguage: 'english'
+    },
+    
+    // Portuguese phrases
+    { 
+      id: 46, 
+      phrase: 'Bom dia', 
+      translation: 'Good morning', 
+      tags: ['Greetings', 'Morning', 'Beginner'], 
+      proficiency: 80,
+      notes: 'Used as a morning greeting until noon.',
+      sourceLanguage: 'portuguese',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 47, 
+      phrase: 'Como vai?', 
+      translation: 'How are you?', 
+      tags: ['Greetings', 'Questions', 'Beginner'], 
+      proficiency: 70,
+      notes: 'Informal way to ask how someone is doing. "Como está?" is more formal.',
+      sourceLanguage: 'portuguese',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 48, 
+      phrase: 'Obrigado', 
+      translation: 'Thank you', 
+      tags: ['Common phrases', 'Beginner'], 
+      proficiency: 90,
+      notes: 'Used by males. Females say "Obrigada".',
+      sourceLanguage: 'portuguese',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 49, 
+      phrase: 'Por favor', 
+      translation: 'Please', 
+      tags: ['Common phrases', 'Beginner'], 
+      proficiency: 95,
+      notes: 'Used when making a request or asking for something.',
+      sourceLanguage: 'portuguese',
+      targetLanguage: 'english'
+    },
+    { 
+      id: 50, 
+      phrase: 'Desculpe', 
+      translation: 'Sorry/Excuse me', 
+      tags: ['Common phrases', 'Expressions', 'Beginner'], 
+      proficiency: 75,
+      notes: 'Used for minor apologies or to get attention. "Sinto muito" is for more serious apologies.',
+      sourceLanguage: 'portuguese',
+      targetLanguage: 'english'
+    },
   ]);
   
   // Form validation errors
