@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useLocation } from "wouter";
 import { useAuthRedirect } from "@/hooks/use-auth-redirect";
 import { useScrollTop } from "@/hooks/use-scroll-top";
@@ -15,7 +15,7 @@ import {
   SelectTrigger, 
   SelectValue 
 } from "@/components/ui/select";
-import { Sparkles, BookOpen, Brain, PlusCircle, Search, X } from "lucide-react";
+import { Sparkles, BookOpen, Brain, PlusCircle, Search, X, Tag } from "lucide-react";
 import { 
   QUIZ_TYPES, 
   ADAPTIVE_TIME_PRESETS,
@@ -38,7 +38,7 @@ export default function Quiz() {
   // In a real app, this would be a database query or API call
   const hasPhrases = () => {
     // For the prototype, you can set this to false to test the empty state
-    return false; // Set to false to show the empty state message, true to show the quiz setup
+    return true; // Set to false to show the empty state message, true to show the quiz setup
   };
   
   // State to track which quiz type is selected
@@ -50,7 +50,52 @@ export default function Quiz() {
   
   // State for language selection
   const [selectedLanguages, setSelectedLanguages] = useState<string[]>(['all']);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [showLanguageDropdown, setShowLanguageDropdown] = useState(false);
+  const languageInputRef = useRef<HTMLInputElement>(null);
   
+  // Handle language selection
+  const handleLanguageSelect = (languageId: string) => {
+    if (languageId === 'all') {
+      // If selecting "All Languages", that's the only option we can have
+      setSelectedLanguages(['all']);
+    } else {
+      // If selecting a specific language, remove 'all' if it's selected
+      let newSelection = [...selectedLanguages];
+      if (newSelection.includes('all')) {
+        newSelection = newSelection.filter(id => id !== 'all');
+      }
+
+      // Add the language if it's not already selected
+      if (!newSelection.includes(languageId)) {
+        newSelection.push(languageId);
+      }
+
+      setSelectedLanguages(newSelection);
+    }
+    setSearchQuery('');
+    
+    // Focus back on the input after selection
+    if (languageInputRef.current) {
+      languageInputRef.current.focus();
+    }
+  };
+  
+  // Remove a selected language
+  const removeLanguage = (languageId: string) => {
+    // If removing the last language, default back to "All Languages"
+    if (selectedLanguages.length === 1) {
+      setSelectedLanguages(['all']);
+    } else {
+      setSelectedLanguages(selectedLanguages.filter(id => id !== languageId));
+    }
+  };
+  
+  // Filter languages based on search query
+  const filteredLanguages = LANGUAGES.filter(language => 
+    language.name.toLowerCase().includes(searchQuery.toLowerCase()) && 
+    !selectedLanguages.includes(language.id)
+  );
   // Handle quiz type selection
   const handleQuizTypeSelect = (quizId: string) => {
     setSelectedQuizType(quizId === selectedQuizType ? null : quizId);
@@ -224,30 +269,111 @@ export default function Quiz() {
               while adding phrases will be available for practice.
             </p>
             
-            {/* Language dropdown */}
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <div>
-                <Label htmlFor="language-select">Source Language</Label>
-                <Select 
-                  defaultValue="all" 
-                  onValueChange={(val) => setSelectedLanguages(val === 'all' ? ['all'] : [val])}
-                >
-                  <SelectTrigger id="language-select" className="w-full">
-                    <SelectValue placeholder="Select a language" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Languages</SelectItem>
-                    {LANGUAGES.map((language) => (
-                      <SelectItem key={language.id} value={language.id}>
-                        {language.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <p className="text-xs text-gray-500 mt-1">
-                  Select "All Languages" to practice with phrases from all your languages
-                </p>
+            {/* Language Tags Input */}
+            <div>
+              <Label htmlFor="languages" className="flex items-center gap-2">
+                <Tag className="h-4 w-4" />
+                Languages for Quiz
+              </Label>
+              
+              {/* Selected languages display */}
+              <div className="flex flex-wrap gap-2 mb-2 mt-2">
+                {selectedLanguages.includes('all') ? (
+                  <Badge 
+                    className="px-2 py-1 bg-primary/10 text-primary hover:bg-primary/20 transition-colors duration-200"
+                  >
+                    All Languages
+                    <button
+                      type="button"
+                      onClick={() => {}}
+                      className="ml-1 rounded-full outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:opacity-50"
+                      disabled={true} // Can't remove "All Languages" if it's the only option
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  </Badge>
+                ) : (
+                  selectedLanguages.map(langId => {
+                    const language = LANGUAGES.find(l => l.id === langId);
+                    return (
+                      <Badge 
+                        key={langId} 
+                        className="px-2 py-1 bg-primary/10 text-primary hover:bg-primary/20 transition-colors duration-200"
+                      >
+                        {language?.name || langId}
+                        <button
+                          type="button"
+                          onClick={() => removeLanguage(langId)}
+                          className="ml-1 rounded-full outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+                        >
+                          <X className="h-3 w-3" />
+                        </button>
+                      </Badge>
+                    );
+                  })
+                )}
               </div>
+              
+              {/* Language search input */}
+              <div className="relative">
+                <div className="flex items-center">
+                  <div className="relative flex-grow">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <Search className="h-4 w-4 text-gray-400" />
+                    </div>
+                    <Input
+                      ref={languageInputRef}
+                      placeholder="Search languages or type 'all' for all languages..."
+                      value={searchQuery}
+                      onChange={(e) => {
+                        setSearchQuery(e.target.value);
+                        if (!showLanguageDropdown) setShowLanguageDropdown(true);
+                      }}
+                      onFocus={() => setShowLanguageDropdown(true)}
+                      onBlur={() => setTimeout(() => setShowLanguageDropdown(false), 200)}
+                      className="pl-10"
+                    />
+                  </div>
+                </div>
+                
+                {/* Dropdown for language selection */}
+                {showLanguageDropdown && (
+                  <div className="absolute z-10 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base overflow-auto focus:outline-none sm:text-sm">
+                    <div className="divide-y divide-gray-200">
+                      {/* "All Languages" option always appears first */}
+                      {searchQuery.toLowerCase().includes('all') && !selectedLanguages.includes('all') && (
+                        <div
+                          className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                          onMouseDown={() => handleLanguageSelect('all')}
+                        >
+                          <span className="font-medium">All Languages</span>
+                        </div>
+                      )}
+                      
+                      {/* Filtered languages */}
+                      {filteredLanguages.length > 0 ? (
+                        filteredLanguages.map((language) => (
+                          <div
+                            key={language.id}
+                            className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                            onMouseDown={() => handleLanguageSelect(language.id)}
+                          >
+                            <span>{language.name}</span>
+                          </div>
+                        ))
+                      ) : searchQuery && !searchQuery.toLowerCase().includes('all') ? (
+                        <div className="px-4 py-2 text-gray-500">
+                          No matching languages found
+                        </div>
+                      ) : null}
+                    </div>
+                  </div>
+                )}
+              </div>
+              
+              <p className="text-xs text-gray-500 mt-2">
+                Select multiple languages or choose "All Languages" to practice with phrases from all available languages
+              </p>
             </div>
           </div>
         </CardContent>
