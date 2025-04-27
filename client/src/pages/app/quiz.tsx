@@ -212,9 +212,6 @@ export default function Quiz() {
         <CardContent className="pt-6">
           <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">
             Language Selection
-            <span className="ml-2 inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-blue-100 text-blue-800">
-              New Feature
-            </span>
           </h3>
           
           <div className="mb-6">

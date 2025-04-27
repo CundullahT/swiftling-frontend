@@ -339,15 +339,6 @@ export function QuizGame({ quizType, minTime, startTime, maxTime, onComplete, se
           </span>
         </div>
         
-        {/* Display selected quiz languages */}
-        {selectedLanguages.length > 0 && selectedLanguages.includes('all') && (
-          <div className="mb-2">
-            <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
-              Quiz Mode: All Languages
-            </span>
-          </div>
-        )}
-        
         <h3 className="text-lg font-medium break-words mt-2">
           {question}
         </h3>
