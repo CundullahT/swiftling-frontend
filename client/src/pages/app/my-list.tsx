@@ -22,7 +22,7 @@ import {
 } from "@/components/ui/select";
 import { PhraseCard } from "@/components/ui/phrase-card";
 import { SAMPLE_TAGS, LANGUAGES } from "@/lib/constants";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "wouter";
 
 
@@ -59,10 +59,33 @@ export default function MyList() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
   
-  // Custom page setter that includes scroll to top functionality
+  // Use an effect to scroll to top whenever the page changes
+  useEffect(() => {
+    // Three different approaches to ensure scroll works across all browsers/scenarios
+    
+    // 1. Force scroll to top immediately with coordinates
+    window.scrollTo(0, 0);
+    
+    // 2. Use smooth scrolling with a slight delay
+    const smoothScrollTimer = setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 10);
+    
+    // 3. As a fallback, use the scroll element approach
+    const scrollElement = document.scrollingElement || document.documentElement;
+    if (scrollElement) {
+      scrollElement.scrollTop = 0;
+    }
+    
+    // Log for debugging
+    console.log(`Page changed to ${currentPage}, scrolling to top`);
+    
+    // Clean up timer
+    return () => clearTimeout(smoothScrollTimer);
+  }, [currentPage]);
+  
+  // Simpler page setter function
   const changePage = (pageNumber: number) => {
-    // Always scroll to top when changing pages
-    window.scrollTo({ top: 0, behavior: 'smooth' });
     setCurrentPage(pageNumber);
   };
   
