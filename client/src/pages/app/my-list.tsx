@@ -1071,7 +1071,7 @@ export default function MyList() {
 
       {/* Notes Dialog */}
       <Dialog open={isNotesDialogOpen} onOpenChange={setIsNotesDialogOpen}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-md rounded-xl">
           <DialogHeader>
             <DialogTitle className="text-xl font-semibold flex items-center gap-2">
               <span className="text-primary">{selectedPhrase?.phrase}</span> 
@@ -1122,7 +1122,7 @@ export default function MyList() {
       
       {/* Pronunciation Dialog */}
       <Dialog open={isPronunciationDialogOpen} onOpenChange={setIsPronunciationDialogOpen}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-md rounded-xl">
           <DialogHeader>
             <DialogTitle className="text-xl font-semibold">
               Pronunciation <span className="text-xs bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full ml-2">Coming Soon</span>
@@ -1215,15 +1215,15 @@ export default function MyList() {
       
       {/* Edit Dialog */}
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent className="sm:max-w-3xl">
+        <DialogContent className="sm:max-w-3xl max-h-[90vh] overflow-y-auto rounded-xl">
           <DialogHeader>
             <DialogTitle>Edit Phrase</DialogTitle>
             <DialogDescription>
               Make changes to your phrase below.
             </DialogDescription>
           </DialogHeader>
-          <form onSubmit={handleSubmit}>
-            <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-4">
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <div className="grid grid-cols-1 gap-y-5 gap-x-4 sm:grid-cols-4">
               {/* Row 1: Phrase & Source Language */}
               <div className="sm:col-span-3">
                 <div className="space-y-2">
@@ -1248,7 +1248,7 @@ export default function MyList() {
               </div>
               <div className="sm:col-span-1">
                 <div className="space-y-2">
-                  <Label htmlFor="edit-sourceLanguage">Language</Label>
+                  <Label htmlFor="edit-sourceLanguage">Source Language</Label>
                   <div className="relative">
                     <Input 
                       id="edit-sourceLanguage"
@@ -1343,7 +1343,7 @@ export default function MyList() {
               
               <div className="sm:col-span-1">
                 <div className="space-y-2">
-                  <Label htmlFor="edit-targetLanguage">Language</Label>
+                  <Label htmlFor="edit-targetLanguage">Target Language</Label>
                   <div className="relative">
                     <Input 
                       id="edit-targetLanguage"
@@ -1489,15 +1489,21 @@ export default function MyList() {
                 </div>
               </div>
             </div>
-            <div className="flex justify-end space-x-3 mt-6">
+            <div className="flex flex-col sm:flex-row sm:justify-end gap-3 mt-6">
               <Button 
                 type="button" 
                 variant="outline" 
                 onClick={() => setIsEditDialogOpen(false)}
+                className="w-full sm:w-auto"
               >
                 Cancel
               </Button>
-              <Button type="submit">Save Changes</Button>
+              <Button 
+                type="submit"
+                className="w-full sm:w-auto"
+              >
+                Save Changes
+              </Button>
             </div>
           </form>
         </DialogContent>
