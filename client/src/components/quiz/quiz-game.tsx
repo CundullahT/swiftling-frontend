@@ -51,6 +51,10 @@ export function QuizGame({ quizType, minTime, startTime, maxTime, onComplete }: 
   const [questionType, setQuestionType] = useState<'original' | 'translation'>(
     Math.random() > 0.5 ? 'original' : 'translation'
   );
+  // Performance counters
+  const [correctCount, setCorrectCount] = useState(0);
+  const [wrongCount, setWrongCount] = useState(0);
+  const [timeoutCount, setTimeoutCount] = useState(0);
   
   // Set up initial question when component mounts
   useEffect(() => {
@@ -148,6 +152,7 @@ export function QuizGame({ quizType, minTime, startTime, maxTime, onComplete }: 
     
     setAnswered(true);
     setIsCorrect(false); // Count as incorrect for next timer
+    setTimeoutCount(prevCount => prevCount + 1); // Increment timeout counter
     
     console.log("Time up! Question not answered. Showing correct answer for 5 seconds.");
     
@@ -171,6 +176,13 @@ export function QuizGame({ quizType, minTime, startTime, maxTime, onComplete }: 
     
     const isAnswerCorrect = optionId === correctAnswerId;
     setIsCorrect(isAnswerCorrect);
+    
+    // Update correct/wrong counters
+    if (isAnswerCorrect) {
+      setCorrectCount(prevCount => prevCount + 1);
+    } else {
+      setWrongCount(prevCount => prevCount + 1);
+    }
     
     console.log(`Answer selected: ${isAnswerCorrect ? 'Correct' : 'Incorrect'}. Showing result for 5 seconds.`);
     
@@ -229,6 +241,22 @@ export function QuizGame({ quizType, minTime, startTime, maxTime, onComplete }: 
         <h3 className="text-lg font-medium break-words">
           {question}
         </h3>
+      </div>
+      
+      {/* Performance Counters */}
+      <div className="flex justify-between mb-3 text-xs sm:text-sm px-1">
+        <div className="flex items-center">
+          <div className="w-4 h-4 rounded-full bg-green-500 mr-1 flex-shrink-0"></div>
+          <span className="text-green-700">Correct: {correctCount}</span>
+        </div>
+        <div className="flex items-center">
+          <div className="w-4 h-4 rounded-full bg-red-500 mr-1 flex-shrink-0"></div>
+          <span className="text-red-700">Wrong: {wrongCount}</span>
+        </div>
+        <div className="flex items-center">
+          <div className="w-4 h-4 rounded-full bg-amber-500 mr-1 flex-shrink-0"></div>
+          <span className="text-amber-700">Timeout: {timeoutCount}</span>
+        </div>
       </div>
       
       {/* Answer Options - More Compact */}
