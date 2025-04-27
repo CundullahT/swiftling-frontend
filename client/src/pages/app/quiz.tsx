@@ -50,6 +50,8 @@ export default function Quiz() {
   // Start quiz
   const handleStartQuiz = () => {
     if (selectedQuizType) {
+      // Scroll to top before starting the quiz
+      window.scrollTo({ top: 0, behavior: 'smooth' });
       setIsQuizStarted(true);
     }
   };

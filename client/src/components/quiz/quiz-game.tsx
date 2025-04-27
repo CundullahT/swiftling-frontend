@@ -83,6 +83,9 @@ export function QuizGame({ quizType, minTime, startTime, maxTime, onComplete }: 
   
   // Setup a new question
   const setupNewQuestion = (index: number, currentTime: number) => {
+    // Scroll to top of the page for the new question
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    
     // Reset states for new question
     setSelectedAnswer(null);
     setIsCorrect(null);
