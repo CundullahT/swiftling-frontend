@@ -15,7 +15,7 @@ import {
   SelectTrigger, 
   SelectValue 
 } from "@/components/ui/select";
-import { Sparkles, BookOpen, Brain, PlusCircle, Search, X, Tag } from "lucide-react";
+import { Sparkles, BookOpen, Brain, PlusCircle, Search, X } from "lucide-react";
 import { 
   QUIZ_TYPES, 
   ADAPTIVE_TIME_PRESETS,
@@ -266,11 +266,6 @@ export default function Quiz() {
             
             {/* Language Tags Input */}
             <div>
-              <Label htmlFor="languages" className="flex items-center gap-2">
-                <Tag className="h-4 w-4" />
-                Languages for Quiz
-              </Label>
-              
               {/* Selected languages display */}
               <div className="flex flex-wrap gap-2 mb-2 mt-2">
                 {selectedLanguages.length === 0 ? (
