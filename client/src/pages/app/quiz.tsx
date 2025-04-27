@@ -1,12 +1,13 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useLocation } from "wouter";
 import { useAuthRedirect } from "@/hooks/use-auth-redirect";
+import { useScrollTop } from "@/hooks/use-scroll-top";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Checkbox } from "@/components/ui/checkbox";
-import { X, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import { 
   Select, 
   SelectContent, 
@@ -14,7 +15,7 @@ import {
   SelectTrigger, 
   SelectValue 
 } from "@/components/ui/select";
-import { Sparkles, BookOpen, Brain } from "lucide-react";
+import { Sparkles, BookOpen, Brain, PlusCircle, Search, X } from "lucide-react";
 import { 
   QUIZ_TYPES, 
   ADAPTIVE_TIME_PRESETS,
@@ -23,9 +24,22 @@ import {
 import { QuizGame } from "@/components/quiz/quiz-game";
 
 export default function Quiz() {
+  // Scroll to top when navigating to this page
+  useScrollTop();
+  
+  // For navigating to Add Phrase page
+  const [, setLocation] = useLocation();
+  
   // Placeholder for auth check - would be tied to a real auth system in future
   const isAuthenticated = true;
   useAuthRedirect(!isAuthenticated, "/login");
+  
+  // Placeholder function to check if user has added any phrases
+  // In a real app, this would be a database query or API call
+  const hasPhrases = () => {
+    // For the prototype, you can set this to false to test the empty state
+    return false; // Set to false to show the empty state message, true to show the quiz setup
+  };
   
   // State to track which quiz type is selected
   const [selectedQuizType, setSelectedQuizType] = useState<string | null>(null);
@@ -35,9 +49,7 @@ export default function Quiz() {
   const [isQuizStarted, setIsQuizStarted] = useState(false);
   
   // State for language selection
-  const [selectedLanguages, setSelectedLanguages] = useState<string[]>([]);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [showLanguageDropdown, setShowLanguageDropdown] = useState(false);
+  const [selectedLanguages, setSelectedLanguages] = useState<string[]>(['all']);
   
   // Handle quiz type selection
   const handleQuizTypeSelect = (quizId: string) => {
@@ -56,44 +68,6 @@ export default function Quiz() {
   const handleMaxTimeChange = (value: string) => {
     setMaxTime(parseInt(value));
   };
-  
-  // Handle language selection
-  const handleLanguageSelect = (languageId: string) => {
-    if (languageId === 'all') {
-      // If selecting "All Languages", remove all other languages
-      if (selectedLanguages.includes('all')) {
-        setSelectedLanguages(selectedLanguages.filter(id => id !== 'all'));
-      } else {
-        setSelectedLanguages(['all']);
-      }
-    } else {
-      // If selecting a specific language, remove 'all' if it's selected
-      let newSelection = [...selectedLanguages];
-      if (newSelection.includes('all')) {
-        newSelection = newSelection.filter(id => id !== 'all');
-      }
-
-      // Toggle the selected language
-      if (newSelection.includes(languageId)) {
-        newSelection = newSelection.filter(id => id !== languageId);
-      } else {
-        newSelection.push(languageId);
-      }
-
-      setSelectedLanguages(newSelection);
-    }
-    setSearchQuery('');
-  };
-  
-  const removeLanguage = (languageId: string) => {
-    setSelectedLanguages(selectedLanguages.filter(id => id !== languageId));
-  };
-  
-  // Filter languages based on search query
-  const filteredLanguages = LANGUAGES.filter(language => 
-    language.name.toLowerCase().includes(searchQuery.toLowerCase()) && 
-    !selectedLanguages.includes(language.id)
-  );
 
   // Start quiz
   const handleStartQuiz = () => {
@@ -125,6 +99,36 @@ export default function Quiz() {
             />
           </div>
         </div>
+      </div>
+    );
+  }
+
+  // Check if user has phrases, if not - show the empty state message
+  if (!hasPhrases()) {
+    return (
+      <div className="py-6 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto pb-20 md:pb-6">
+        <h1 className="text-3xl font-semibold text-secondary bg-gradient-to-r from-primary/90 to-secondary bg-clip-text text-transparent mb-6">Quiz</h1>
+        
+        {/* No phrases yet message */}
+        <Card className="mb-6 border-2 border-dashed border-gray-200">
+          <CardContent className="pt-6 flex flex-col items-center justify-center text-center py-12">
+            <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mb-4">
+              <Brain className="h-10 w-10 text-primary" />
+            </div>
+            <h3 className="text-xl font-medium text-gray-900 mb-2">No Phrases Available</h3>
+            <p className="text-gray-500 max-w-md mb-6">
+              You need to add at least one phrase before you can start a quiz. Add your first phrase to begin practicing!
+            </p>
+            <Button
+              onClick={() => setLocation('/add-phrase')}
+              size="lg"
+              className="gap-2"
+            >
+              <PlusCircle className="h-4 w-4" />
+              Add Your First Phrase
+            </Button>
+          </CardContent>
+        </Card>
       </div>
     );
   }
@@ -216,104 +220,34 @@ export default function Quiz() {
           
           <div className="mb-6">
             <p className="text-sm text-gray-500 mb-4">
-              Select which languages you want to practice in the quiz. You can select multiple languages,
-              or choose "All Languages" to practice with phrases from all available languages.
+              Select which language you want to practice in the quiz. Only languages that you've used 
+              while adding phrases will be available for practice.
             </p>
             
-            {/* All Languages option */}
-            <div className="mb-4">
-              <div
-                className={`
-                  px-3 py-2 rounded-md cursor-pointer border transition-all
-                  ${selectedLanguages.includes('all') 
-                    ? 'border-primary bg-primary/5 shadow-sm' 
-                    : 'border-gray-200 hover:border-primary/70 hover:bg-primary/5'
-                  }
-                `}
-                onClick={() => {
-                  if (selectedLanguages.includes('all')) {
-                    setSelectedLanguages(selectedLanguages.filter(id => id !== 'all'));
-                  } else {
-                    setSelectedLanguages(['all']);
-                  }
-                }}
-              >
-                <div className="flex items-center">
-                  <Checkbox 
-                    checked={selectedLanguages.includes('all')}
-                    className="mr-2"
-                  />
-                  <div>
-                    <span className="font-medium">All Languages</span>
-                    <p className="text-xs text-gray-500 mt-1">Include phrases from all available languages</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            {/* Selected languages */}
-            <div className="mb-3 flex flex-wrap gap-2">
-              {selectedLanguages.map(langId => {
-                const language = LANGUAGES.find(l => l.id === langId);
-                return (
-                  <Badge 
-                    key={langId} 
-                    className="px-2 py-1 bg-primary-500/10 text-primary-700 hover:bg-primary-500/20 transition-colors duration-200"
-                  >
-                    {language?.name || langId}
-                    <button
-                      type="button"
-                      onClick={() => removeLanguage(langId)}
-                      className="ml-1 rounded-full outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
-                    >
-                      <X className="h-3 w-3" />
-                    </button>
-                  </Badge>
-                );
-              })}
-            </div>
-            
-            {/* Language search and dropdown */}
-            <div className="relative">
-              <div className="flex items-center">
-                <div className="relative flex-grow">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Search className="h-4 w-4 text-gray-400" />
-                  </div>
-                  <Input
-                    placeholder="Search languages..."
-                    value={searchQuery}
-                    onChange={(e) => {
-                      setSearchQuery(e.target.value);
-                      if (!showLanguageDropdown) setShowLanguageDropdown(true);
-                    }}
-                    onFocus={() => setShowLanguageDropdown(true)}
-                    onBlur={() => setTimeout(() => setShowLanguageDropdown(false), 200)}
-                    className="pl-10"
-                  />
-                </div>
-              </div>
-              
-              {/* Dropdown for language selection */}
-              {showLanguageDropdown && filteredLanguages.length > 0 && (
-                <div className="absolute z-10 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base overflow-auto focus:outline-none sm:text-sm">
-                  <div className="divide-y divide-gray-200">
-                    {filteredLanguages.slice(0, 10).map((language) => (
-                      <div
-                        key={language.id}
-                        className="px-4 py-2 hover:bg-gray-100 cursor-pointer flex items-center"
-                        onMouseDown={() => handleLanguageSelect(language.id)}
-                      >
-                        <Checkbox 
-                          checked={selectedLanguages.includes(language.id)}
-                          className="mr-2"
-                        />
-                        <span>{language.name}</span>
-                      </div>
+            {/* Language dropdown */}
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div>
+                <Label htmlFor="language-select">Source Language</Label>
+                <Select 
+                  defaultValue="all" 
+                  onValueChange={(val) => setSelectedLanguages(val === 'all' ? ['all'] : [val])}
+                >
+                  <SelectTrigger id="language-select" className="w-full">
+                    <SelectValue placeholder="Select a language" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Languages</SelectItem>
+                    {LANGUAGES.map((language) => (
+                      <SelectItem key={language.id} value={language.id}>
+                        {language.name}
+                      </SelectItem>
                     ))}
-                  </div>
-                </div>
-              )}
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-gray-500 mt-1">
+                  Select "All Languages" to practice with phrases from all your languages
+                </p>
+              </div>
             </div>
           </div>
         </CardContent>
