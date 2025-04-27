@@ -5,18 +5,35 @@ import { Check, X } from "lucide-react";
 import { PieTimer } from "./pie-timer";
 import { LANGUAGES } from "@/lib/constants";
 
-// Turkish-English phrases
+// Multi-language phrases
 const MOCK_PHRASES = [
+  // Turkish-English phrases
   { id: 1, phrase: "Merhaba", translation: "Hello", sourceLanguage: "Turkish", targetLanguage: "English" },
   { id: 2, phrase: "Hoşça kal", translation: "Goodbye", sourceLanguage: "Turkish", targetLanguage: "English" },
   { id: 3, phrase: "Teşekkür ederim", translation: "Thank you", sourceLanguage: "Turkish", targetLanguage: "English" },
   { id: 4, phrase: "Lütfen", translation: "Please", sourceLanguage: "Turkish", targetLanguage: "English" },
   { id: 5, phrase: "Özür dilerim", translation: "I'm sorry", sourceLanguage: "Turkish", targetLanguage: "English" },
-  { id: 6, phrase: "Günaydın", translation: "Good morning", sourceLanguage: "Turkish", targetLanguage: "English" },
-  { id: 7, phrase: "İyi geceler", translation: "Good night", sourceLanguage: "Turkish", targetLanguage: "English" },
-  { id: 8, phrase: "Nasılsın?", translation: "How are you?", sourceLanguage: "Turkish", targetLanguage: "English" },
-  { id: 9, phrase: "Anlamıyorum", translation: "I don't understand", sourceLanguage: "Turkish", targetLanguage: "English" },
-  { id: 10, phrase: "Nerede...", translation: "Where is...", sourceLanguage: "Turkish", targetLanguage: "English" },
+  
+  // Spanish-English phrases
+  { id: 6, phrase: "Hola", translation: "Hello", sourceLanguage: "Spanish", targetLanguage: "English" },
+  { id: 7, phrase: "Adiós", translation: "Goodbye", sourceLanguage: "Spanish", targetLanguage: "English" },
+  { id: 8, phrase: "Gracias", translation: "Thank you", sourceLanguage: "Spanish", targetLanguage: "English" },
+  { id: 9, phrase: "Por favor", translation: "Please", sourceLanguage: "Spanish", targetLanguage: "English" },
+  { id: 10, phrase: "Lo siento", translation: "I'm sorry", sourceLanguage: "Spanish", targetLanguage: "English" },
+  
+  // French-English phrases
+  { id: 11, phrase: "Bonjour", translation: "Hello", sourceLanguage: "French", targetLanguage: "English" },
+  { id: 12, phrase: "Au revoir", translation: "Goodbye", sourceLanguage: "French", targetLanguage: "English" },
+  { id: 13, phrase: "Merci", translation: "Thank you", sourceLanguage: "French", targetLanguage: "English" },
+  { id: 14, phrase: "S'il vous plaît", translation: "Please", sourceLanguage: "French", targetLanguage: "English" },
+  { id: 15, phrase: "Je suis désolé", translation: "I'm sorry", sourceLanguage: "French", targetLanguage: "English" },
+  
+  // German-English phrases
+  { id: 16, phrase: "Hallo", translation: "Hello", sourceLanguage: "German", targetLanguage: "English" },
+  { id: 17, phrase: "Auf Wiedersehen", translation: "Goodbye", sourceLanguage: "German", targetLanguage: "English" },
+  { id: 18, phrase: "Danke", translation: "Thank you", sourceLanguage: "German", targetLanguage: "English" },
+  { id: 19, phrase: "Bitte", translation: "Please", sourceLanguage: "German", targetLanguage: "English" },
+  { id: 20, phrase: "Es tut mir leid", translation: "I'm sorry", sourceLanguage: "German", targetLanguage: "English" },
 ];
 
 // Shuffle array utility function
@@ -311,41 +328,27 @@ export function QuizGame({ quizType, minTime, startTime, maxTime, onComplete, se
       
       {/* Streamlined Question Display */}
       <div className="bg-gray-50 rounded-lg px-4 py-3 mb-3 shadow-sm text-center">
-        {/* Display selected languages if any */}
-        {selectedLanguages.length > 0 && (
-          <div className="flex justify-center gap-1 mb-2 flex-wrap">
-            {selectedLanguages.map(langId => {
-              if (langId === 'all') {
-                return (
-                  <span 
-                    key="all"
-                    className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-primary/10 text-primary"
-                  >
-                    All Languages
-                  </span>
-                );
-              }
-              
-              const language = LANGUAGES.find((l: { id: string, name: string }) => l.id === langId);
-              return language ? (
-                <span 
-                  key={langId}
-                  className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-primary/10 text-primary"
-                >
-                  {language.name}
-                </span>
-              ) : (
-                <span 
-                  key={langId}
-                  className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-primary/10 text-primary"
-                >
-                  {langId}
-                </span>
-              );
-            })}
+        {/* Current Question Language Tag */}
+        <div className="flex justify-center items-center mb-2">
+          <span className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-primary text-white">
+            {questionType === 'original' ? sourceLanguage : targetLanguage}
+          </span>
+          <span className="mx-2 text-gray-400 text-xs">→</span>
+          <span className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-gray-200 text-gray-800">
+            {questionType === 'original' ? targetLanguage : sourceLanguage}
+          </span>
+        </div>
+        
+        {/* Display selected quiz languages */}
+        {selectedLanguages.length > 0 && selectedLanguages.includes('all') && (
+          <div className="mb-2">
+            <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
+              Quiz Mode: All Languages
+            </span>
           </div>
         )}
-        <h3 className="text-lg font-medium break-words">
+        
+        <h3 className="text-lg font-medium break-words mt-2">
           {question}
         </h3>
       </div>
