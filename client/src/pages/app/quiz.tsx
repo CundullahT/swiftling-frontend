@@ -59,10 +59,28 @@ export default function Quiz() {
   
   // Handle language selection
   const handleLanguageSelect = (languageId: string) => {
-    if (selectedLanguages.includes(languageId)) {
-      setSelectedLanguages(selectedLanguages.filter(id => id !== languageId));
+    if (languageId === 'all') {
+      // If selecting "All Languages", remove all other languages
+      if (selectedLanguages.includes('all')) {
+        setSelectedLanguages(selectedLanguages.filter(id => id !== 'all'));
+      } else {
+        setSelectedLanguages(['all']);
+      }
     } else {
-      setSelectedLanguages([...selectedLanguages, languageId]);
+      // If selecting a specific language, remove 'all' if it's selected
+      let newSelection = [...selectedLanguages];
+      if (newSelection.includes('all')) {
+        newSelection = newSelection.filter(id => id !== 'all');
+      }
+
+      // Toggle the selected language
+      if (newSelection.includes(languageId)) {
+        newSelection = newSelection.filter(id => id !== languageId);
+      } else {
+        newSelection.push(languageId);
+      }
+
+      setSelectedLanguages(newSelection);
     }
     setSearchQuery('');
   };
@@ -201,9 +219,40 @@ export default function Quiz() {
           
           <div className="mb-6">
             <p className="text-sm text-gray-500 mb-4">
-              Select which languages you want to practice in the quiz. You can select multiple languages.
-              If no languages are selected, phrases from all languages will be included.
+              Select which languages you want to practice in the quiz. You can select multiple languages,
+              or choose "All Languages" to practice with phrases from all available languages.
             </p>
+            
+            {/* All Languages option */}
+            <div className="mb-4">
+              <div
+                className={`
+                  px-3 py-2 rounded-md cursor-pointer border transition-all
+                  ${selectedLanguages.includes('all') 
+                    ? 'border-primary bg-primary/5 shadow-sm' 
+                    : 'border-gray-200 hover:border-primary/70 hover:bg-primary/5'
+                  }
+                `}
+                onClick={() => {
+                  if (selectedLanguages.includes('all')) {
+                    setSelectedLanguages(selectedLanguages.filter(id => id !== 'all'));
+                  } else {
+                    setSelectedLanguages(['all']);
+                  }
+                }}
+              >
+                <div className="flex items-center">
+                  <Checkbox 
+                    checked={selectedLanguages.includes('all')}
+                    className="mr-2"
+                  />
+                  <div>
+                    <span className="font-medium">All Languages</span>
+                    <p className="text-xs text-gray-500 mt-1">Include phrases from all available languages</p>
+                  </div>
+                </div>
+              </div>
+            </div>
             
             {/* Selected languages */}
             <div className="mb-3 flex flex-wrap gap-2">

@@ -62,12 +62,18 @@ export function QuizGame({ quizType, minTime, startTime, maxTime, onComplete, se
   useEffect(() => {
     let newPhrases;
     
-    if (selectedLanguages.length > 0) {
+    // If "all" is selected or no language selected, use all phrases
+    if (selectedLanguages.includes('all') || selectedLanguages.length === 0) {
+      newPhrases = shuffleArray(MOCK_PHRASES);
+    } else {
       // Filter phrases to include only those in the selected languages
       const filteredPhrases = MOCK_PHRASES.filter(phrase => {
         const sourceLang = phrase.sourceLanguage.toLowerCase();
         const targetLang = phrase.targetLanguage.toLowerCase();
-        return selectedLanguages.some(lang => lang.toLowerCase() === sourceLang || lang.toLowerCase() === targetLang);
+        return selectedLanguages.some(lang => 
+          lang.toLowerCase() === sourceLang || 
+          lang.toLowerCase() === targetLang
+        );
       });
       
       // If we have matching phrases, use them; otherwise use all phrases
@@ -76,9 +82,6 @@ export function QuizGame({ quizType, minTime, startTime, maxTime, onComplete, se
       } else {
         newPhrases = shuffleArray(MOCK_PHRASES);
       }
-    } else {
-      // If no languages selected, use all phrases
-      newPhrases = shuffleArray(MOCK_PHRASES);
     }
     
     setPhrases(newPhrases);
@@ -312,6 +315,17 @@ export function QuizGame({ quizType, minTime, startTime, maxTime, onComplete, se
         {selectedLanguages.length > 0 && (
           <div className="flex justify-center gap-1 mb-2 flex-wrap">
             {selectedLanguages.map(langId => {
+              if (langId === 'all') {
+                return (
+                  <span 
+                    key="all"
+                    className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-primary/10 text-primary"
+                  >
+                    All Languages
+                  </span>
+                );
+              }
+              
               const language = LANGUAGES.find((l: { id: string, name: string }) => l.id === langId);
               return language ? (
                 <span 
