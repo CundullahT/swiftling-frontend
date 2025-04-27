@@ -213,9 +213,8 @@ export function QuizGame({ quizType, minTime, startTime, maxTime, onComplete }: 
     <div className="py-2 px-3 max-w-5xl mx-auto flex flex-col h-full">
       {/* Compact Header with Timer and Progress */}
       <div className="flex items-center justify-between mb-3">
-        <div className="text-sm text-gray-500 flex items-center">
-          <span className="mr-2">Q{currentQuestionIndex + 1}</span>
-          <span className="text-xs px-2 py-0.5 bg-primary/10 text-primary rounded-full">{sourceLanguage}</span>
+        <div className="text-sm text-gray-500">
+          Q{currentQuestionIndex + 1}
         </div>
         <PieTimer
           timeLeft={timeLeft}
@@ -280,8 +279,8 @@ export function QuizGame({ quizType, minTime, startTime, maxTime, onComplete }: 
         })}
       </div>
       
-      {/* End Quiz Button - Fixed at Bottom */}
-      <div className="mt-3 pt-2 border-t border-gray-100">
+      {/* End Quiz Button - Fixed above mobile navigation bar */}
+      <div className="mt-3 pt-2 mb-2 border-t border-gray-100">
         <Button 
           variant="ghost" 
           size="sm" 

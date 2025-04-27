@@ -62,11 +62,8 @@ export default function Quiz() {
   // If quiz is started, show the actual quiz game
   if (isQuizStarted) {
     return (
-      <div className="container mx-auto h-[calc(100vh-4rem)] px-2">
+      <div className="container mx-auto h-[calc(100vh-8rem)] px-2 pb-16 md:pb-2">
         <div className="h-full flex flex-col">
-          <div className="text-2xl font-semibold text-secondary bg-gradient-to-r from-primary/90 to-secondary bg-clip-text text-transparent mb-2">
-            Quiz
-          </div>
           <div className="flex-1 overflow-hidden">
             <QuizGame 
               quizType={selectedQuizType || 'mixed'} 
