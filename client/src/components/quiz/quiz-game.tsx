@@ -223,34 +223,32 @@ export function QuizGame({ quizType, minTime, startTime, maxTime, onComplete }: 
   
   return (
     <div className="py-2 px-3 max-w-5xl mx-auto flex flex-col h-full">
-      {/* Compact Header with Timer, Progress, and Counters */}
+      {/* Compact Header with Counters and Timer */}
       <div className="mb-3">
         <div className="flex items-center justify-between mb-2">
-          <div className="text-sm text-gray-500">
-            Q{currentQuestionIndex + 1}
+          {/* Performance Counters - Left side */}
+          <div className="flex gap-2 text-xs">
+            <div className="flex items-center">
+              <div className="w-3 h-3 rounded-full bg-green-500 mr-1 flex-shrink-0"></div>
+              <span className="text-green-700">{correctCount}</span>
+            </div>
+            <div className="flex items-center">
+              <div className="w-3 h-3 rounded-full bg-red-500 mr-1 flex-shrink-0"></div>
+              <span className="text-red-700">{wrongCount}</span>
+            </div>
+            <div className="flex items-center">
+              <div className="w-3 h-3 rounded-full bg-amber-500 mr-1 flex-shrink-0"></div>
+              <span className="text-amber-700">{timeoutCount}</span>
+            </div>
           </div>
+          
+          {/* Timer - Right side */}
           <PieTimer
             timeLeft={timeLeft}
             totalTime={currentQuestionStartTime}
-            size={50} // Smaller timer size
+            size={50}
             strokeWidth={4}
           />
-        </div>
-        
-        {/* Performance Counters */}
-        <div className="flex justify-center gap-4 mb-1 text-xs">
-          <div className="flex items-center">
-            <div className="w-3 h-3 rounded-full bg-green-500 mr-1 flex-shrink-0"></div>
-            <span className="text-green-700">Correct: {correctCount}</span>
-          </div>
-          <div className="flex items-center">
-            <div className="w-3 h-3 rounded-full bg-red-500 mr-1 flex-shrink-0"></div>
-            <span className="text-red-700">Wrong: {wrongCount}</span>
-          </div>
-          <div className="flex items-center">
-            <div className="w-3 h-3 rounded-full bg-amber-500 mr-1 flex-shrink-0"></div>
-            <span className="text-amber-700">Timeout: {timeoutCount}</span>
-          </div>
         </div>
       </div>
       
