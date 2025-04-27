@@ -20,9 +20,15 @@ import Header from "@/components/layout/header";
 import MobileNav from "@/components/layout/mobile-nav";
 import { useState, useEffect } from "react";
 
+// Custom Hooks
+import { useScrollTop } from "@/hooks/use-scroll-top";
+
 function App() {
   const [location] = useLocation();
   const [isAuthenticated] = useState(true); // Always authenticated for now
+  
+  // Use scroll-to-top hook
+  useScrollTop();
 
   // Check if current path is an auth route
   const isAuthRoute = location.startsWith('/auth/');
