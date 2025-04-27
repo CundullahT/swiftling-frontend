@@ -314,7 +314,7 @@ export default function Quiz() {
                     </div>
                     <Input
                       ref={languageInputRef}
-                      placeholder="Search languages or type 'all' for all languages..."
+                      placeholder="Select a Language"
                       value={searchQuery}
                       onChange={(e) => {
                         setSearchQuery(e.target.value);
