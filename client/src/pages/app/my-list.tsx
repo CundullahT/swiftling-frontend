@@ -1222,8 +1222,9 @@ export default function MyList() {
               Make changes to your phrase below.
             </DialogDescription>
           </DialogHeader>
-          <div className="flex flex-col">
-            <form onSubmit={handleSubmit} className="space-y-5 max-h-[60vh] overflow-y-auto md:max-h-none md:overflow-visible pb-4">
+          
+          <form onSubmit={handleSubmit} className="flex flex-col">
+            <div className="flex-1 space-y-5 pr-1 -mr-1 overflow-y-auto" style={{ maxHeight: "50vh" }}>
               <div className="grid grid-cols-1 gap-y-5 gap-x-4 sm:grid-cols-4">
                 {/* Row 1: Phrase & Source Language */}
                 <div className="sm:col-span-3">
@@ -1490,8 +1491,9 @@ export default function MyList() {
                   </div>
                 </div>
               </div>
-            </form>
-            <div className="flex flex-col sm:flex-row sm:justify-end gap-3 pt-4 border-t">
+            </div>
+            
+            <div className="flex flex-col sm:flex-row sm:justify-end gap-3 pt-4 mt-4 border-t">
               <Button 
                 type="button" 
                 variant="outline" 
@@ -1501,13 +1503,13 @@ export default function MyList() {
                 Cancel
               </Button>
               <Button 
-                onClick={() => document.querySelector('form')?.dispatchEvent(new Event('submit', {cancelable: true, bubbles: true}))}
+                type="submit"
                 className="w-full sm:w-auto"
               >
                 Save Changes
               </Button>
             </div>
-          </div>
+          </form>
         </DialogContent>
       </Dialog>
     </div>
