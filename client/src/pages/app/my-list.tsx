@@ -22,7 +22,7 @@ import {
 } from "@/components/ui/select";
 import { PhraseCard } from "@/components/ui/phrase-card";
 import { SAMPLE_TAGS, LANGUAGES } from "@/lib/constants";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Link } from "wouter";
 
 
@@ -59,52 +59,22 @@ export default function MyList() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
   
-  // Use an effect to scroll to top whenever the page changes
-  useEffect(() => {
-    // Three different approaches to ensure scroll works across all browsers/scenarios
-    
-    // 1. Force scroll to top immediately with coordinates
-    window.scrollTo(0, 0);
-    
-    // 2. Use smooth scrolling with a slight delay
-    const smoothScrollTimer = setTimeout(() => {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }, 10);
-    
-    // 3. As a fallback, use the scroll element approach
-    const scrollElement = document.scrollingElement || document.documentElement;
-    if (scrollElement) {
-      scrollElement.scrollTop = 0;
-    }
-    
-    // Log for debugging
-    console.log(`Page changed to ${currentPage}, scrolling to top`);
-    
-    // Clean up timer
-    return () => clearTimeout(smoothScrollTimer);
-  }, [currentPage]);
-  
-  // Simpler page setter function
-  const changePage = (pageNumber: number) => {
-    setCurrentPage(pageNumber);
-  };
-  
   // Custom setter for search term that also resets pagination
   const handleSearchTermChange = (value: string) => {
     setSearchTerm(value);
-    changePage(1); // Reset to page 1 when search changes
+    setCurrentPage(1); // Reset to page 1 when search changes
   };
   
   // Custom setter for tag filter that also resets pagination
   const handleTagFilterChange = (value: string) => {
     setTagFilter(value);
-    changePage(1); // Reset to page 1 when filter changes
+    setCurrentPage(1); // Reset to page 1 when filter changes
   };
   
   // Custom setter for sort option that also resets pagination
   const handleSortOptionChange = (value: string) => {
     setSortOption(value);
-    changePage(1); // Reset to page 1 when sort changes
+    setCurrentPage(1); // Reset to page 1 when sort changes
   };
 
   // Form state for edit dialog
@@ -1009,7 +979,7 @@ export default function MyList() {
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => changePage(1)}
+                        onClick={() => setCurrentPage(1)}
                         disabled={currentPage === 1}
                         className="hidden sm:flex"
                       >
@@ -1018,7 +988,7 @@ export default function MyList() {
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => changePage(currentPage - 1)}
+                        onClick={() => setCurrentPage(currentPage - 1)}
                         disabled={currentPage === 1}
                         className="flex items-center min-w-0"
                       >
@@ -1040,7 +1010,7 @@ export default function MyList() {
                                 key={i}
                                 variant={currentPage === pageNum ? "default" : "outline"}
                                 size="sm"
-                                onClick={() => changePage(pageNum)}
+                                onClick={() => setCurrentPage(pageNum)}
                                 className="w-9 h-9 p-0"
                               >
                                 {pageNum}
@@ -1054,7 +1024,7 @@ export default function MyList() {
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => changePage(currentPage + 1)}
+                        onClick={() => setCurrentPage(currentPage + 1)}
                         disabled={currentPage === Math.ceil(getFilteredAndSortedPhrases().length / itemsPerPage)}
                         className="flex items-center min-w-0"
                       >
@@ -1064,7 +1034,7 @@ export default function MyList() {
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => changePage(Math.ceil(getFilteredAndSortedPhrases().length / itemsPerPage))}
+                        onClick={() => setCurrentPage(Math.ceil(getFilteredAndSortedPhrases().length / itemsPerPage))}
                         disabled={currentPage === Math.ceil(getFilteredAndSortedPhrases().length / itemsPerPage)}
                         className="hidden sm:flex"
                       >
