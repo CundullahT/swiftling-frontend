@@ -210,57 +210,46 @@ export function QuizGame({ quizType, minTime, startTime, maxTime, onComplete }: 
   const { question, sourceLanguage, targetLanguage } = getCurrentQuestion();
   
   return (
-    <div className="py-6 px-4 max-w-5xl mx-auto">
-      {/* Timer and Progress */}
-      <div className="flex items-center justify-between mb-6">
-        <div className="text-sm text-gray-500">
-          Question {currentQuestionIndex + 1}
+    <div className="py-2 px-3 max-w-5xl mx-auto flex flex-col h-full">
+      {/* Compact Header with Timer and Progress */}
+      <div className="flex items-center justify-between mb-3">
+        <div className="text-sm text-gray-500 flex items-center">
+          <span className="mr-2">Q{currentQuestionIndex + 1}</span>
+          <span className="text-xs px-2 py-0.5 bg-primary/10 text-primary rounded-full">{sourceLanguage}</span>
         </div>
-        <div className="flex items-center">
-          <PieTimer
-            timeLeft={timeLeft}
-            totalTime={startTime} // Use start time as reference
-            size={70}
-            strokeWidth={6}
-          />
-        </div>
+        <PieTimer
+          timeLeft={timeLeft}
+          totalTime={startTime}
+          size={50} // Smaller timer size
+          strokeWidth={4}
+        />
       </div>
       
-      {/* Question Card */}
-      <Card className="mb-6">
-        <CardContent className="pt-6">
-          <div className="flex justify-between items-start mb-1">
-            <div className="px-2 py-1 bg-primary/20 text-primary text-xs rounded-full">
-              {sourceLanguage}
-            </div>
-            <div className="px-2 py-1 bg-secondary/20 text-secondary text-xs rounded-full">
-              {questionType === 'original' ? 'Translate to' : 'Select the original phrase in'} {targetLanguage}
-            </div>
-          </div>
-          <h3 className="text-2xl font-medium mt-4 mb-3 text-center">
-            {question}
-          </h3>
-        </CardContent>
-      </Card>
+      {/* Streamlined Question Display */}
+      <div className="bg-gray-50 rounded-lg px-4 py-3 mb-3 shadow-sm text-center">
+        <h3 className="text-lg font-medium break-words">
+          {question}
+        </h3>
+      </div>
       
-      {/* Answer Options */}
-      <div className="space-y-3">
+      {/* Answer Options - More Compact */}
+      <div className="space-y-2 flex-grow overflow-y-auto">
         {options.map((option) => {
           const isSelected = selectedAnswer === option.id;
           const isCorrectAnswer = option.id === correctAnswerId;
           
-          let optionClassName = "relative p-4 border-2 rounded-lg transition-all cursor-pointer";
+          let optionClassName = "relative py-2 px-3 border rounded-lg transition-all cursor-pointer";
           
           if (answered) {
             if (isCorrectAnswer) {
-              optionClassName = "relative p-4 border-2 border-green-500 bg-green-50 rounded-lg";
+              optionClassName = "relative py-2 px-3 border border-green-500 bg-green-50 rounded-lg";
             } else if (isSelected && !isCorrectAnswer) {
-              optionClassName = "relative p-4 border-2 border-red-500 bg-red-50 rounded-lg";
+              optionClassName = "relative py-2 px-3 border border-red-500 bg-red-50 rounded-lg";
             } else {
-              optionClassName = "relative p-4 border-2 border-gray-200 rounded-lg opacity-70";
+              optionClassName = "relative py-2 px-3 border border-gray-200 rounded-lg opacity-70";
             }
           } else {
-            optionClassName = "relative p-4 border-2 border-gray-200 rounded-lg hover:border-primary/50 hover:bg-primary/5 cursor-pointer";
+            optionClassName = "relative py-2 px-3 border border-gray-200 rounded-lg hover:border-primary/50 hover:bg-primary/5 cursor-pointer";
           }
           
           return (
@@ -270,17 +259,17 @@ export function QuizGame({ quizType, minTime, startTime, maxTime, onComplete }: 
               onClick={() => handleAnswerClick(option.id)}
             >
               <div className="flex justify-between items-center">
-                <span className="text-base">{option.text}</span>
+                <span className="text-sm break-words flex-grow">{option.text}</span>
                 {answered && (
-                  <div className="flex-shrink-0">
+                  <div className="flex-shrink-0 ml-2">
                     {isCorrectAnswer && (
-                      <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-green-100">
-                        <Check className="w-4 h-4 text-green-600" />
+                      <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-green-100">
+                        <Check className="w-3 h-3 text-green-600" />
                       </span>
                     )}
                     {isSelected && !isCorrectAnswer && (
-                      <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-red-100">
-                        <X className="w-4 h-4 text-red-600" />
+                      <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-red-100">
+                        <X className="w-3 h-3 text-red-600" />
                       </span>
                     )}
                   </div>
@@ -291,9 +280,14 @@ export function QuizGame({ quizType, minTime, startTime, maxTime, onComplete }: 
         })}
       </div>
       
-      {/* Skip button */}
-      <div className="mt-6 flex justify-center">
-        <Button variant="outline" onClick={onComplete}>
+      {/* End Quiz Button - Fixed at Bottom */}
+      <div className="mt-3 pt-2 border-t border-gray-100">
+        <Button 
+          variant="ghost" 
+          size="sm" 
+          onClick={onComplete}
+          className="w-full text-gray-500 hover:text-gray-700"
+        >
           End Quiz
         </Button>
       </div>
