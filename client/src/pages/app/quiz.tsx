@@ -377,8 +377,8 @@ export default function Quiz() {
           
           <div className="mb-6">
             <p className="text-sm text-gray-500 mb-4">
-              The quiz uses an adaptive timer that adjusts based on your performance. Correct answers decrease time,
-              while incorrect answers increase it, within the limits you set below.
+              The quiz uses an adaptive timer that adjusts based on your performance. Correct answers decrease time by 1 second,
+              while incorrect answers increase it by 1 second, within the limits you set below.
             </p>
           </div>
           
