@@ -465,7 +465,9 @@ export default function Quiz() {
               Start Quiz
             </Button>
             <p className="text-xs sm:text-sm text-gray-500 italic">
-              {!selectedQuizType ? (
+              {!selectedQuizType && selectedLanguages.length === 0 ? (
+                "Select a quiz type and a language to continue"
+              ) : !selectedQuizType ? (
                 "Select a quiz type to continue"
               ) : selectedLanguages.length === 0 ? (
                 "Select at least one language to continue"
