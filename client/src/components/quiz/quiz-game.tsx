@@ -3,6 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Check, X } from "lucide-react";
 import { PieTimer } from "./pie-timer";
+import { LANGUAGES } from "@/lib/constants";
 
 // Turkish-English phrases
 const MOCK_PHRASES = [
@@ -63,10 +64,11 @@ export function QuizGame({ quizType, minTime, startTime, maxTime, onComplete, se
     
     if (selectedLanguages.length > 0) {
       // Filter phrases to include only those in the selected languages
-      const filteredPhrases = MOCK_PHRASES.filter(phrase => 
-        selectedLanguages.includes(phrase.sourceLanguage.toLowerCase()) || 
-        selectedLanguages.includes(phrase.targetLanguage.toLowerCase())
-      );
+      const filteredPhrases = MOCK_PHRASES.filter(phrase => {
+        const sourceLang = phrase.sourceLanguage.toLowerCase();
+        const targetLang = phrase.targetLanguage.toLowerCase();
+        return selectedLanguages.some(lang => lang.toLowerCase() === sourceLang || lang.toLowerCase() === targetLang);
+      });
       
       // If we have matching phrases, use them; otherwise use all phrases
       if (filteredPhrases.length > 0) {
@@ -310,7 +312,7 @@ export function QuizGame({ quizType, minTime, startTime, maxTime, onComplete, se
         {selectedLanguages.length > 0 && (
           <div className="flex justify-center gap-1 mb-2 flex-wrap">
             {selectedLanguages.map(langId => {
-              const language = LANGUAGES.find(l => l.id === langId);
+              const language = LANGUAGES.find((l: { id: string, name: string }) => l.id === langId);
               return language ? (
                 <span 
                   key={langId}
@@ -318,7 +320,14 @@ export function QuizGame({ quizType, minTime, startTime, maxTime, onComplete, se
                 >
                   {language.name}
                 </span>
-              ) : null;
+              ) : (
+                <span 
+                  key={langId}
+                  className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-primary/10 text-primary"
+                >
+                  {langId}
+                </span>
+              );
             })}
           </div>
         )}

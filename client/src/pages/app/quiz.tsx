@@ -362,12 +362,20 @@ export default function Quiz() {
           <div className="mt-6 flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4">
             <Button 
               className="bg-primary hover:bg-primary/90 w-full sm:w-auto"
-              disabled={!selectedQuizType}
+              disabled={!selectedQuizType || selectedLanguages.length === 0}
               onClick={handleStartQuiz}
             >
               Start Quiz
             </Button>
-            <p className="text-xs sm:text-sm text-gray-500 italic">Quiz continues until you choose to finish</p>
+            <p className="text-xs sm:text-sm text-gray-500 italic">
+              {!selectedQuizType ? (
+                "Select a quiz type to continue"
+              ) : selectedLanguages.length === 0 ? (
+                "Select at least one language to continue"
+              ) : (
+                "Quiz continues until you choose to finish"
+              )}
+            </p>
           </div>
         </CardContent>
       </Card>
