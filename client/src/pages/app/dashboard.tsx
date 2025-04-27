@@ -425,7 +425,7 @@ export default function Dashboard() {
 
       {/* Phrase Details Dialog */}
       <Dialog open={isDetailsDialogOpen} onOpenChange={setIsDetailsDialogOpen}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-md rounded-xl">
           <DialogHeader>
             <DialogTitle className="text-xl font-semibold flex items-center gap-2">
               <span className="text-primary">{selectedPhrase?.phrase}</span>
