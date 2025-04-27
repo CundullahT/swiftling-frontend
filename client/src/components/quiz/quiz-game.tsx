@@ -37,7 +37,7 @@ interface QuizGameProps {
   selectedLanguages?: string[];
 }
 
-export function QuizGame({ quizType, minTime, startTime, maxTime, onComplete }: QuizGameProps) {
+export function QuizGame({ quizType, minTime, startTime, maxTime, onComplete, selectedLanguages = [] }: QuizGameProps) {
   // Main states
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [timeLeft, setTimeLeft] = useState(startTime);
@@ -57,6 +57,54 @@ export function QuizGame({ quizType, minTime, startTime, maxTime, onComplete }: 
   const [wrongCount, setWrongCount] = useState(0);
   const [timeoutCount, setTimeoutCount] = useState(0);
   
+  // Filter phrases based on selected languages
+  useEffect(() => {
+    let newPhrases;
+    
+    if (selectedLanguages.length > 0) {
+      // Filter phrases to include only those in the selected languages
+      const filteredPhrases = MOCK_PHRASES.filter(phrase => 
+        selectedLanguages.includes(phrase.sourceLanguage.toLowerCase()) || 
+        selectedLanguages.includes(phrase.targetLanguage.toLowerCase())
+      );
+      
+      // If we have matching phrases, use them; otherwise use all phrases
+      if (filteredPhrases.length > 0) {
+        newPhrases = shuffleArray(filteredPhrases);
+      } else {
+        newPhrases = shuffleArray(MOCK_PHRASES);
+      }
+    } else {
+      // If no languages selected, use all phrases
+      newPhrases = shuffleArray(MOCK_PHRASES);
+    }
+    
+    setPhrases(newPhrases);
+    
+    // Reset quiz with the new phrases
+    if (phrases.length > 0) {
+      // Only reset if we've loaded phrases
+      setCurrentQuestionIndex(0);
+      setAnswered(false);
+      setSelectedAnswer(null);
+      setIsCorrect(null);
+      setOptions([]);
+      setCorrectAnswerId(null);
+      
+      // Only reset counters if this is not the initial load
+      if (correctCount > 0 || wrongCount > 0 || timeoutCount > 0) {
+        setCorrectCount(0);
+        setWrongCount(0);
+        setTimeoutCount(0);
+      }
+      
+      // Use setTimeout to ensure the state updates before setting up a new question
+      setTimeout(() => {
+        setupNewQuestion(0, startTime);
+      }, 10);
+    }
+  }, [selectedLanguages]);
+
   // Set up initial question when component mounts
   useEffect(() => {
     setupNewQuestion(currentQuestionIndex, startTime);
@@ -258,6 +306,22 @@ export function QuizGame({ quizType, minTime, startTime, maxTime, onComplete }: 
       
       {/* Streamlined Question Display */}
       <div className="bg-gray-50 rounded-lg px-4 py-3 mb-3 shadow-sm text-center">
+        {/* Display selected languages if any */}
+        {selectedLanguages.length > 0 && (
+          <div className="flex justify-center gap-1 mb-2 flex-wrap">
+            {selectedLanguages.map(langId => {
+              const language = LANGUAGES.find(l => l.id === langId);
+              return language ? (
+                <span 
+                  key={langId}
+                  className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-primary/10 text-primary"
+                >
+                  {language.name}
+                </span>
+              ) : null;
+            })}
+          </div>
+        )}
         <h3 className="text-lg font-medium break-words">
           {question}
         </h3>
