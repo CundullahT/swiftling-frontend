@@ -59,22 +59,29 @@ export default function MyList() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
   
+  // Custom page setter that includes scroll to top functionality
+  const changePage = (pageNumber: number) => {
+    // Always scroll to top when changing pages
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setCurrentPage(pageNumber);
+  };
+  
   // Custom setter for search term that also resets pagination
   const handleSearchTermChange = (value: string) => {
     setSearchTerm(value);
-    setCurrentPage(1); // Reset to page 1 when search changes
+    changePage(1); // Reset to page 1 when search changes
   };
   
   // Custom setter for tag filter that also resets pagination
   const handleTagFilterChange = (value: string) => {
     setTagFilter(value);
-    setCurrentPage(1); // Reset to page 1 when filter changes
+    changePage(1); // Reset to page 1 when filter changes
   };
   
   // Custom setter for sort option that also resets pagination
   const handleSortOptionChange = (value: string) => {
     setSortOption(value);
-    setCurrentPage(1); // Reset to page 1 when sort changes
+    changePage(1); // Reset to page 1 when sort changes
   };
 
   // Form state for edit dialog
@@ -979,11 +986,7 @@ export default function MyList() {
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => {
-                          // Scroll to top with smooth behavior
-                          window.scrollTo({ top: 0, behavior: 'smooth' });
-                          setCurrentPage(1);
-                        }}
+                        onClick={() => changePage(1)}
                         disabled={currentPage === 1}
                         className="hidden sm:flex"
                       >
@@ -992,11 +995,7 @@ export default function MyList() {
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => {
-                          // Scroll to top with smooth behavior
-                          window.scrollTo({ top: 0, behavior: 'smooth' });
-                          setCurrentPage(currentPage - 1);
-                        }}
+                        onClick={() => changePage(currentPage - 1)}
                         disabled={currentPage === 1}
                         className="flex items-center min-w-0"
                       >
@@ -1018,11 +1017,7 @@ export default function MyList() {
                                 key={i}
                                 variant={currentPage === pageNum ? "default" : "outline"}
                                 size="sm"
-                                onClick={() => {
-                                  // Scroll to top with smooth behavior
-                                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                                  setCurrentPage(pageNum);
-                                }}
+                                onClick={() => changePage(pageNum)}
                                 className="w-9 h-9 p-0"
                               >
                                 {pageNum}
@@ -1036,11 +1031,7 @@ export default function MyList() {
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => {
-                          // Scroll to top with smooth behavior
-                          window.scrollTo({ top: 0, behavior: 'smooth' });
-                          setCurrentPage(currentPage + 1);
-                        }}
+                        onClick={() => changePage(currentPage + 1)}
                         disabled={currentPage === Math.ceil(getFilteredAndSortedPhrases().length / itemsPerPage)}
                         className="flex items-center min-w-0"
                       >
@@ -1050,11 +1041,7 @@ export default function MyList() {
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => {
-                          // Scroll to top with smooth behavior
-                          window.scrollTo({ top: 0, behavior: 'smooth' });
-                          setCurrentPage(Math.ceil(getFilteredAndSortedPhrases().length / itemsPerPage));
-                        }}
+                        onClick={() => changePage(Math.ceil(getFilteredAndSortedPhrases().length / itemsPerPage))}
                         disabled={currentPage === Math.ceil(getFilteredAndSortedPhrases().length / itemsPerPage)}
                         className="hidden sm:flex"
                       >
