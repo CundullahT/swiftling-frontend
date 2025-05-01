@@ -1077,9 +1077,6 @@ export default function MyList() {
               <span className="text-primary">{selectedPhrase?.phrase}</span> 
               <span className="text-sm font-normal text-gray-500">({selectedPhrase?.translation})</span>
             </DialogTitle>
-            <DialogDescription>
-              Details about this phrase
-            </DialogDescription>
           </DialogHeader>
           <div className="border-t border-gray-200 pt-4">
             <div className="mb-4">
