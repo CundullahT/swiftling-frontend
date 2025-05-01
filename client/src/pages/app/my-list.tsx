@@ -23,7 +23,7 @@ import {
 import { PhraseCard } from "@/components/ui/phrase-card";
 import { SAMPLE_TAGS, LANGUAGES } from "@/lib/constants";
 import { useState } from "react";
-import { Link } from "wouter";
+import { GuardedLink } from "@/components/ui/guarded-link";
 
 
 export default function MyList() {
@@ -867,11 +867,11 @@ export default function MyList() {
     <div className="py-6 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto pb-20 md:pb-6">
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-3xl font-semibold text-secondary bg-gradient-to-r from-primary/90 to-secondary bg-clip-text text-transparent">My Phrases</h1>
-        <Link href="/add-phrase">
+        <GuardedLink href="/add-phrase">
           <Button className="bg-primary hover:bg-primary/90 text-white">
             Add Phrase
           </Button>
-        </Link>
+        </GuardedLink>
       </div>
 
       {/* Filter Bar */}
