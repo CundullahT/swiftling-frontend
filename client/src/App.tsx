@@ -23,6 +23,10 @@ import { useState, useEffect } from "react";
 // Custom Hooks
 import { useScrollTop } from "@/hooks/use-scroll-top";
 
+// Quiz Context Provider and Navigation Guard
+import { QuizProvider } from "@/context/quiz-context";
+import { QuizNavigationGuard } from "@/components/quiz/quiz-navigation-dialog";
+
 function App() {
   const [location] = useLocation();
   const [isAuthenticated] = useState(true); // Always authenticated for now
@@ -36,34 +40,39 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <div className="min-h-screen flex flex-col bg-slate-50">
-          {/* Show header only for non-auth routes when authenticated */}
-          {isAuthenticated && !isAuthRoute && <Header />}
-          
-          <main className="flex-1">
-            <Switch>
-              {/* Main Routes - No authentication pages for now */}
-              <Route path="/" component={Dashboard} />
-              
-              {/* App Routes */}
-              <Route path="/dashboard" component={Dashboard} />
-              <Route path="/my-list" component={MyList} />
-              <Route path="/add-phrase" component={AddPhrase} />
-              <Route path="/quiz" component={Quiz} />
-              <Route path="/settings" component={Settings} />
-              
-              {/* Auth Routes */}
-              <Route path="/auth/forgot-password" component={ForgotPassword} />
-              
-              {/* Fallback to 404 */}
-              <Route component={NotFound} />
-            </Switch>
-          </main>
-          
-          {/* Show mobile nav only for non-auth routes when authenticated */}
-          {isAuthenticated && !isAuthRoute && <MobileNav />}
-          <Toaster />
-        </div>
+        <QuizProvider>
+          <div className="min-h-screen flex flex-col bg-slate-50">
+            {/* Show header only for non-auth routes when authenticated */}
+            {isAuthenticated && !isAuthRoute && <Header />}
+            
+            <main className="flex-1">
+              <Switch>
+                {/* Main Routes - No authentication pages for now */}
+                <Route path="/" component={Dashboard} />
+                
+                {/* App Routes */}
+                <Route path="/dashboard" component={Dashboard} />
+                <Route path="/my-list" component={MyList} />
+                <Route path="/add-phrase" component={AddPhrase} />
+                <Route path="/quiz" component={Quiz} />
+                <Route path="/settings" component={Settings} />
+                
+                {/* Auth Routes */}
+                <Route path="/auth/forgot-password" component={ForgotPassword} />
+                
+                {/* Fallback to 404 */}
+                <Route component={NotFound} />
+              </Switch>
+            </main>
+            
+            {/* Show mobile nav only for non-auth routes when authenticated */}
+            {isAuthenticated && !isAuthRoute && <MobileNav />}
+            <Toaster />
+            
+            {/* Quiz Navigation Guard */}
+            <QuizNavigationGuard />
+          </div>
+        </QuizProvider>
       </TooltipProvider>
     </QueryClientProvider>
   );

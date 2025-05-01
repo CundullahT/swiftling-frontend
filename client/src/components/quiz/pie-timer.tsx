@@ -3,13 +3,15 @@ interface PieTimerProps {
   totalTime: number;
   size?: number;
   strokeWidth?: number;
+  className?: string;
 }
 
 export function PieTimer({ 
   timeLeft, 
   totalTime, 
   size = 60, 
-  strokeWidth = 6 
+  strokeWidth = 6,
+  className = ""
 }: PieTimerProps) {
   // Calculate percentage of time remaining (ensure between 0-100)
   // Use the current timeLeft compared to its own starting time, not the original totalTime
