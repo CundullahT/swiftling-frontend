@@ -298,19 +298,19 @@ export function QuizGame({ quizType, minTime, startTime, maxTime, onComplete, se
       {/* Super Compact Header with Counters and Timer */}
       <div className="mb-1">
         <div className="flex justify-between items-center">
-          {/* Performance Counters - Left side, horizontal on mobile */}
-          <div className="flex items-center gap-2 text-[10px] sm:text-xs">
+          {/* Performance Counters - Left side, horizontal on mobile, vertical on desktop */}
+          <div className="flex flex-col sm:gap-1 text-xs">
             <div className="flex items-center">
-              <div className="w-2 h-2 rounded-full bg-green-500 mr-1 flex-shrink-0"></div>
-              <span className="text-green-700">{correctCount}</span>
+              <div className="w-2.5 h-2.5 rounded-full bg-green-500 mr-1 flex-shrink-0"></div>
+              <span className="text-green-700">Correct: {correctCount}</span>
             </div>
             <div className="flex items-center">
-              <div className="w-2 h-2 rounded-full bg-red-500 mr-1 flex-shrink-0"></div>
-              <span className="text-red-700">{wrongCount}</span>
+              <div className="w-2.5 h-2.5 rounded-full bg-red-500 mr-1 flex-shrink-0"></div>
+              <span className="text-red-700">Wrong: {wrongCount}</span>
             </div>
             <div className="flex items-center">
-              <div className="w-2 h-2 rounded-full bg-amber-500 mr-1 flex-shrink-0"></div>
-              <span className="text-amber-700">{timeoutCount}</span>
+              <div className="w-2.5 h-2.5 rounded-full bg-amber-500 mr-1 flex-shrink-0"></div>
+              <span className="text-amber-700">Timeout: {timeoutCount}</span>
             </div>
           </div>
           
@@ -337,7 +337,7 @@ export function QuizGame({ quizType, minTime, startTime, maxTime, onComplete, se
           </span>
         </div>
         
-        <h3 className="text-base sm:text-lg font-medium break-words mt-0.5">
+        <h3 className="text-base md:text-lg font-medium break-words mt-0.5">
           {question}
         </h3>
       </div>
@@ -369,7 +369,7 @@ export function QuizGame({ quizType, minTime, startTime, maxTime, onComplete, se
               onClick={() => handleAnswerClick(option.id)}
             >
               <div className="flex justify-between items-center">
-                <span className="text-xs sm:text-sm break-words flex-grow pr-1">{option.text}</span>
+                <span className="text-sm sm:text-base break-words flex-grow pr-1">{option.text}</span>
                 {answered && (
                   <div className="flex-shrink-0 ml-1">
                     {isCorrectAnswer && (
