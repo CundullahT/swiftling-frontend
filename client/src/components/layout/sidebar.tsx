@@ -1,4 +1,4 @@
-import { Link, useLocation } from "wouter";
+import { useLocation } from "wouter";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { 
@@ -10,6 +10,7 @@ import {
   LogOut, 
   X 
 } from "lucide-react";
+import { GuardedLink } from "@/components/ui/guarded-link";
 
 interface SidebarProps {
   onClose: () => void;
@@ -81,7 +82,7 @@ export default function Sidebar({ onClose }: SidebarProps) {
           
           <div className="space-y-1">
             {navigationItems.map((item) => (
-              <Link 
+              <GuardedLink 
                 key={item.name} 
                 href={item.href}
                 className={`w-full flex items-center px-3 py-2.5 text-base font-medium rounded-md transition-all duration-200 ${
@@ -95,21 +96,21 @@ export default function Sidebar({ onClose }: SidebarProps) {
                   {item.icon}
                 </span>
                 {item.name}
-              </Link>
+              </GuardedLink>
             ))}
           </div>
         </div>
       </div>
       
       <div className="border-t border-primary/20 px-4 py-4 bg-gradient-to-r from-primary/5 to-transparent">
-        <Link 
+        <GuardedLink 
           href="/dashboard"
           className="w-full flex items-center px-3 py-2.5 text-base font-medium rounded-md text-secondary/80 hover:bg-accent/10 hover:text-accent transition-all duration-200"
           onClick={onClose}
         >
           <LogOut className="h-5 w-5 mr-3 text-accent" />
           Logout
-        </Link>
+        </GuardedLink>
       </div>
     </nav>
   );

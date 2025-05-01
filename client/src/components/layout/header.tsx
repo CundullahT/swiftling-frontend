@@ -1,6 +1,6 @@
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Link, useLocation } from "wouter";
+import { useLocation } from "wouter";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,6 +12,7 @@ import {
 import { Menu } from "lucide-react";
 import { useState } from "react";
 import Sidebar from "./sidebar";
+import { GuardedLink } from "@/components/ui/guarded-link";
 
 export default function Header() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -49,15 +50,15 @@ export default function Header() {
                 <Menu className="h-6 w-6 text-secondary" />
               </Button>
 
-              <Link href="/dashboard" className="font-bold text-xl flex items-center gap-2">
+              <GuardedLink href="/dashboard" className="font-bold text-xl flex items-center gap-2">
                 <img src="/assets/logo.png" alt="SwiftLing Logo" className="h-8 w-auto" />
                 <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">SwiftLing</span>
-              </Link>
+              </GuardedLink>
             </div>
             
             <div className="hidden md:flex items-center space-x-6">
               {navigationItems.map((item) => (
-                <Link 
+                <GuardedLink 
                   key={item.name} 
                   href={item.href} 
                   className={`text-sm font-medium ${
@@ -67,7 +68,7 @@ export default function Header() {
                   }`}
                 >
                   {item.name}
-                </Link>
+                </GuardedLink>
               ))}
             </div>
             
@@ -92,15 +93,15 @@ export default function Header() {
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
-                  <Link href="/settings" className="w-full cursor-pointer">
+                  <GuardedLink href="/settings" className="w-full cursor-pointer">
                     Settings
-                  </Link>
+                  </GuardedLink>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
-                  <Link href="/dashboard" className="w-full cursor-pointer">
+                  <GuardedLink href="/dashboard" className="w-full cursor-pointer">
                     Log out
-                  </Link>
+                  </GuardedLink>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
