@@ -154,9 +154,7 @@ export function QuizGame({ quizType, minTime, startTime, maxTime, onComplete, se
   
   // Setup a new question
   const setupNewQuestion = (index: number, currentTime: number) => {
-    // Scroll to top of the page for the new question
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    
+    // Don't force scroll on mobile as it can disrupt the user experience
     // Reset states for new question
     setSelectedAnswer(null);
     setIsCorrect(null);
@@ -296,9 +294,9 @@ export function QuizGame({ quizType, minTime, startTime, maxTime, onComplete, se
   const { question, sourceLanguage, targetLanguage } = getCurrentQuestion();
   
   return (
-    <div className="py-2 px-3 max-w-5xl mx-auto flex flex-col h-full">
+    <div className="py-2 px-3 max-w-5xl mx-auto flex flex-col min-h-screen">
       {/* Compact Header with Counters and Timer */}
-      <div className="mb-3">
+      <div className="mb-2">
         <div className="flex justify-between mb-2">
           {/* Performance Counters - Left side, stacked vertically */}
           <div className="flex flex-col gap-1 text-xs">
@@ -327,9 +325,9 @@ export function QuizGame({ quizType, minTime, startTime, maxTime, onComplete, se
       </div>
       
       {/* Streamlined Question Display */}
-      <div className="bg-gray-50 rounded-lg px-4 py-3 mb-3 shadow-sm text-center">
+      <div className="bg-gray-50 rounded-lg px-3 py-2 mb-2 shadow-sm text-center">
         {/* Current Question Language Tag */}
-        <div className="flex justify-center items-center mb-2">
+        <div className="flex justify-center items-center mb-1">
           <span className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-primary text-white">
             {questionType === 'original' ? sourceLanguage : targetLanguage}
           </span>
@@ -339,13 +337,13 @@ export function QuizGame({ quizType, minTime, startTime, maxTime, onComplete, se
           </span>
         </div>
         
-        <h3 className="text-lg font-medium break-words mt-2">
+        <h3 className="text-lg font-medium break-words mt-1">
           {question}
         </h3>
       </div>
       
-      {/* Answer Options - More Compact */}
-      <div className="space-y-2 flex-grow overflow-y-auto">
+      {/* Answer Options - Optimized for Mobile */}
+      <div className="flex flex-col space-y-2 mt-2 mb-3 flex-grow">
         {options.map((option) => {
           const isSelected = selectedAnswer === option.id;
           const isCorrectAnswer = option.id === correctAnswerId;
@@ -371,9 +369,9 @@ export function QuizGame({ quizType, minTime, startTime, maxTime, onComplete, se
               onClick={() => handleAnswerClick(option.id)}
             >
               <div className="flex justify-between items-center">
-                <span className="text-sm break-words flex-grow">{option.text}</span>
+                <span className="text-sm break-words flex-grow pr-2">{option.text}</span>
                 {answered && (
-                  <div className="flex-shrink-0 ml-2">
+                  <div className="flex-shrink-0 ml-1">
                     {isCorrectAnswer && (
                       <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-green-100">
                         <Check className="w-3 h-3 text-green-600" />
@@ -393,7 +391,7 @@ export function QuizGame({ quizType, minTime, startTime, maxTime, onComplete, se
       </div>
       
       {/* End Quiz Button - Fixed above mobile navigation bar */}
-      <div className="mt-3 pt-2 mb-2 border-t border-gray-100">
+      <div className="pt-2 border-t border-gray-100 sticky bottom-0 bg-white">
         <Button 
           variant="ghost" 
           size="sm" 
