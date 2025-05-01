@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { SAMPLE_TAGS, LANGUAGES } from "@/lib/constants";
+import { GuardedLink } from "@/components/ui/guarded-link";
 import { X, Plus } from "lucide-react";
 
 export default function AddPhrase() {
@@ -471,13 +472,14 @@ export default function AddPhrase() {
             </div>
 
             <div className="flex justify-end space-x-3">
-              <Button 
-                type="button" 
-                variant="outline" 
-                onClick={() => setLocation("/my-list")}
-              >
-                Cancel
-              </Button>
+              <GuardedLink href="/my-list">
+                <Button 
+                  type="button" 
+                  variant="outline"
+                >
+                  Cancel
+                </Button>
+              </GuardedLink>
               <Button type="submit">Save</Button>
             </div>
           </form>
@@ -501,7 +503,9 @@ export default function AddPhrase() {
               onChange={(e) => setMultiplePhrasesValue(e.target.value)}
             />
             <div className="mt-5">
-              <Button onClick={handleMultipleSubmit}>Add Phrases</Button>
+              <GuardedLink href="/my-list">
+                <Button onClick={handleMultipleSubmit}>Add Phrases</Button>
+              </GuardedLink>
             </div>
           </CardContent>
         </Card>
