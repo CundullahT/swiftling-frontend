@@ -3,6 +3,7 @@ import { useLocation } from "wouter";
 import { useAuthRedirect } from "@/hooks/use-auth-redirect";
 import { useScrollTop } from "@/hooks/use-scroll-top";
 import { useGuardedNavigation } from "@/hooks/use-guarded-navigation";
+import { GuardedLink } from "@/components/ui/guarded-link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -246,14 +247,15 @@ export default function Quiz() {
             <p className="text-gray-500 max-w-md mb-6">
               You need to add at least one phrase before you can start a quiz. Add your first phrase to begin practicing!
             </p>
-            <Button
-              onClick={() => setLocation('/add-phrase')}
-              size="lg"
-              className="gap-2"
-            >
-              <PlusCircle className="h-4 w-4" />
-              Add Your First Phrase
-            </Button>
+            <GuardedLink href="/add-phrase">
+              <Button
+                size="lg"
+                className="gap-2"
+              >
+                <PlusCircle className="h-4 w-4" />
+                Add Your First Phrase
+              </Button>
+            </GuardedLink>
           </CardContent>
         </Card>
       </div>
