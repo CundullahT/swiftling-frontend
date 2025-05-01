@@ -67,6 +67,7 @@ export function QuizGame({ quizType, minTime, startTime, maxTime, onComplete, se
   const [phrases, setPhrases] = useState(shuffleArray(MOCK_PHRASES));
   const [options, setOptions] = useState<Array<{ id: number, text: string }>>([]);
   const [correctAnswerId, setCorrectAnswerId] = useState<number | null>(null);
+  const [isPaused, setIsPaused] = useState(false); // Add state for pausing the timer
   const [questionType, setQuestionType] = useState<'original' | 'translation'>(
     Math.random() > 0.5 ? 'original' : 'translation'
   );
@@ -135,7 +136,8 @@ export function QuizGame({ quizType, minTime, startTime, maxTime, onComplete, se
   
   // Timer countdown effect
   useEffect(() => {
-    if (timeLeft > 0 && !answered) {
+    // Only run the timer if not paused, time left, and not answered
+    if (timeLeft > 0 && !answered && !isPaused) {
       const timer = setTimeout(() => {
         setTimeLeft(prev => {
           // Decrement by 1 second
@@ -150,7 +152,7 @@ export function QuizGame({ quizType, minTime, startTime, maxTime, onComplete, se
       
       return () => clearTimeout(timer);
     }
-  }, [timeLeft, answered]);
+  }, [timeLeft, answered, isPaused]);
   
   // Setup a new question
   const setupNewQuestion = (index: number, currentTime: number) => {
