@@ -37,25 +37,22 @@ export function QuizNavigationDialog({
         </AlertDialogHeader>
         <AlertDialogFooter className="flex-col sm:flex-row gap-2">
           <Button
-            variant="outline"
             onClick={onContinue}
-            className="sm:flex-1"
+            className="sm:flex-1 bg-primary hover:bg-primary/90 text-white"
           >
             Continue Quiz
           </Button>
           <Button 
-            variant="secondary"
-            onClick={onProceed}
-            className="sm:flex-1"
-          >
-            Leave Anyway
-          </Button>
-          <Button
-            variant="destructive"
             onClick={onEndQuiz}
-            className="sm:flex-1"
+            className="sm:flex-1 bg-amber-500 hover:bg-amber-500/90 text-white"
           >
             End Quiz
+          </Button>
+          <Button
+            onClick={onProceed}
+            className="sm:flex-1 bg-rose-600 hover:bg-rose-600/90 text-white"
+          >
+            Leave Anyway
           </Button>
         </AlertDialogFooter>
       </AlertDialogContent>
