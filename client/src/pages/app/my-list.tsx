@@ -35,6 +35,7 @@ export default function MyList() {
   const [isNotesDialogOpen, setIsNotesDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isPronunciationDialogOpen, setIsPronunciationDialogOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedPhrase, setSelectedPhrase] = useState<{
     id: number;
     phrase: string;
