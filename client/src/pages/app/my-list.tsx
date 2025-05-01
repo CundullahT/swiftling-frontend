@@ -54,6 +54,7 @@ export default function MyList() {
   // State for search, filter, and sort
   const [searchTerm, setSearchTerm] = useState("");
   const [tagFilter, setTagFilter] = useState<string>("all");
+  const [languageFilter, setLanguageFilter] = useState<string>("all");
   const [sortOption, setSortOption] = useState<string>("recent");
   
   // Pagination state
@@ -69,6 +70,12 @@ export default function MyList() {
   // Custom setter for tag filter that also resets pagination
   const handleTagFilterChange = (value: string) => {
     setTagFilter(value);
+    setCurrentPage(1); // Reset to page 1 when filter changes
+  };
+  
+  // Custom setter for language filter that also resets pagination
+  const handleLanguageFilterChange = (value: string) => {
+    setLanguageFilter(value);
     setCurrentPage(1); // Reset to page 1 when filter changes
   };
   
@@ -854,8 +861,13 @@ export default function MyList() {
       // Tag filter (case-insensitive)
       const matchesTag = tagFilter === "all" || 
         (phrase.tags && phrase.tags.some(tag => tag.toLowerCase() === tagFilter.toLowerCase()));
+      
+      // Language filter
+      const matchesLanguage = languageFilter === "all" || 
+        phrase.sourceLanguage === languageFilter || 
+        phrase.targetLanguage === languageFilter;
         
-      return matchesSearch && matchesTag;
+      return matchesSearch && matchesTag && matchesLanguage;
     });
     
     // Then, sort the filtered phrases
@@ -912,7 +924,29 @@ export default function MyList() {
               />
             </div>
           </div>
-          <div className="sm:w-1/4">
+
+          {/* Language Filter */}
+          <div className="sm:w-1/5">
+            <Select 
+              defaultValue="all" 
+              value={languageFilter}
+              onValueChange={handleLanguageFilterChange}
+            >
+              <SelectTrigger id="language">
+                <SelectValue placeholder="Filter by Language" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Languages</SelectItem>
+                {LANGUAGES.map((language) => (
+                  <SelectItem key={language.id} value={language.id}>
+                    {language.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          
+          <div className="sm:w-1/5">
             <Select 
               defaultValue="all" 
               value={tagFilter}
@@ -931,7 +965,7 @@ export default function MyList() {
               </SelectContent>
             </Select>
           </div>
-          <div className="sm:w-1/4">
+          <div className="sm:w-1/5">
             <div className="flex gap-2">
               <div className="flex-1">
                 <Select 
@@ -958,6 +992,7 @@ export default function MyList() {
                 onClick={() => {
                   handleSearchTermChange("");
                   handleTagFilterChange("all");
+                  handleLanguageFilterChange("all");
                   handleSortOptionChange("recent");
                 }}
               >
@@ -1080,6 +1115,7 @@ export default function MyList() {
                 onClick={() => {
                   handleSearchTermChange("");
                   handleTagFilterChange("all");
+                  handleLanguageFilterChange("all");
                   handleSortOptionChange("recent");
                 }}
                 className="mt-2"
