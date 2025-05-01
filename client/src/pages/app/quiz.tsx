@@ -1,7 +1,8 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { useLocation } from "wouter";
 import { useAuthRedirect } from "@/hooks/use-auth-redirect";
 import { useScrollTop } from "@/hooks/use-scroll-top";
+import { useGuardedNavigation } from "@/hooks/use-guarded-navigation";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -23,6 +24,14 @@ import {
 } from "@/lib/constants";
 import { QuizGame } from "@/components/quiz/quiz-game";
 import { useQuiz } from "@/context/quiz-context";
+import { 
+  AlertDialog,
+  AlertDialogContent, 
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+} from "@/components/ui/alert-dialog";
 
 export default function Quiz() {
   // Scroll to top when navigating to this page
@@ -32,7 +41,46 @@ export default function Quiz() {
   const [, setLocation] = useLocation();
   
   // Use the quiz context to set the global quiz active state
-  const { setQuizActive } = useQuiz();
+  const { setQuizActive, pauseQuiz, unpauseQuiz } = useQuiz();
+  
+  // State to track which quiz type is selected
+  const [selectedQuizType, setSelectedQuizType] = useState<string | null>(null);
+  const [minTime, setMinTime] = useState<number>(5);
+  const [startTime, setStartTime] = useState<number>(15);
+  const [maxTime, setMaxTime] = useState<number>(30);
+  const [isQuizStarted, setIsQuizStarted] = useState(false);
+  
+  // State for navigation dialog
+  const [showNavDialog, setShowNavDialog] = useState(false);
+  const [pendingNavigation, setPendingNavigation] = useState<string | null>(null);
+  
+  // Set up guarded navigation
+  const navigationBlockConfig = useMemo(() => ({
+    isBlocked: isQuizStarted,
+    onBlock: (destination: string) => {
+      pauseQuiz();
+      setPendingNavigation(destination);
+      setShowNavDialog(true);
+    }
+  }), [isQuizStarted, pauseQuiz]);
+  
+  const { navigate: guardedNavigate } = useGuardedNavigation(navigationBlockConfig);
+  
+  // Handle continue quiz (stay on page)
+  const handleContinueQuiz = () => {
+    setShowNavDialog(false);
+    setPendingNavigation(null);
+    unpauseQuiz();
+  };
+  
+  // Handle proceed with navigation
+  const handleLeaveQuiz = () => {
+    if (pendingNavigation) {
+      setIsQuizStarted(false);
+      setLocation(pendingNavigation);
+    }
+    setShowNavDialog(false);
+  };
   
   // Placeholder for auth check - would be tied to a real auth system in future
   const isAuthenticated = true;
@@ -44,13 +92,6 @@ export default function Quiz() {
     // For the prototype, you can set this to false to test the empty state
     return true; // Set to false to show the empty state message, true to show the quiz setup
   };
-  
-  // State to track which quiz type is selected
-  const [selectedQuizType, setSelectedQuizType] = useState<string | null>(null);
-  const [minTime, setMinTime] = useState<number>(5);
-  const [startTime, setStartTime] = useState<number>(15);
-  const [maxTime, setMaxTime] = useState<number>(30);
-  const [isQuizStarted, setIsQuizStarted] = useState(false);
   
   // State for language selection
   const [selectedLanguages, setSelectedLanguages] = useState<string[]>([]);
@@ -135,20 +176,57 @@ export default function Quiz() {
   // If quiz is started, show the actual quiz game
   if (isQuizStarted) {
     return (
-      <div className="container mx-auto h-[calc(100vh-8rem)] px-2 pb-16 md:pb-2">
-        <div className="h-full flex flex-col">
-          <div className="flex-1 overflow-hidden">
-            <QuizGame 
-              quizType={selectedQuizType || 'mixed'} 
-              minTime={minTime}
-              startTime={startTime}
-              maxTime={maxTime}
-              onComplete={handleEndQuiz}
-              selectedLanguages={selectedLanguages}
-            />
+      <>
+        <div className="container mx-auto h-[calc(100vh-8rem)] px-2 pb-16 md:pb-2">
+          <div className="h-full flex flex-col">
+            <div className="flex-1 overflow-hidden">
+              <QuizGame 
+                quizType={selectedQuizType || 'mixed'} 
+                minTime={minTime}
+                startTime={startTime}
+                maxTime={maxTime}
+                onComplete={handleEndQuiz}
+                selectedLanguages={selectedLanguages}
+              />
+            </div>
           </div>
         </div>
-      </div>
+        
+        {/* Navigation Guard Dialog */}
+        <AlertDialog open={showNavDialog} onOpenChange={setShowNavDialog}>
+          <AlertDialogContent className="max-w-md">
+            <AlertDialogHeader>
+              <AlertDialogTitle>Quiz in Progress</AlertDialogTitle>
+              <AlertDialogDescription>
+                Your quiz progress will be lost if you leave without ending the quiz properly.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter className="flex-col sm:flex-row gap-2">
+              <Button 
+                variant="outline" 
+                onClick={handleContinueQuiz}
+                className="sm:flex-1"
+              >
+                Continue Quiz
+              </Button>
+              <Button 
+                variant="secondary" 
+                onClick={handleLeaveQuiz}
+                className="sm:flex-1"
+              >
+                Leave Anyway
+              </Button>
+              <Button
+                variant="destructive"
+                onClick={handleEndQuiz}
+                className="sm:flex-1"
+              >
+                End Quiz
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </>
     );
   }
 

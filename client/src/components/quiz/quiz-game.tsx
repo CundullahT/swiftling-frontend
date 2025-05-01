@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Check, X } from "lucide-react";
 import { PieTimer } from "./pie-timer";
 import { LANGUAGES } from "@/lib/constants";
+import { useQuiz } from "@/context/quiz-context";
 
 // Multi-language phrases
 const MOCK_PHRASES = [
@@ -56,6 +57,9 @@ interface QuizGameProps {
 }
 
 export function QuizGame({ quizType, minTime, startTime, maxTime, onComplete, selectedLanguages = [] }: QuizGameProps) {
+  // Get quiz pause state from context
+  const { isPaused } = useQuiz();
+  
   // Main states
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [timeLeft, setTimeLeft] = useState(startTime);
@@ -67,7 +71,6 @@ export function QuizGame({ quizType, minTime, startTime, maxTime, onComplete, se
   const [phrases, setPhrases] = useState(shuffleArray(MOCK_PHRASES));
   const [options, setOptions] = useState<Array<{ id: number, text: string }>>([]);
   const [correctAnswerId, setCorrectAnswerId] = useState<number | null>(null);
-  const [isPaused, setIsPaused] = useState(false); // Add state for pausing the timer
   const [questionType, setQuestionType] = useState<'original' | 'translation'>(
     Math.random() > 0.5 ? 'original' : 'translation'
   );

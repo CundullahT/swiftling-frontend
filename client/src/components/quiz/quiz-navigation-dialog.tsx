@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useLocation } from "wouter";
 import {
   AlertDialog,
   AlertDialogContent,
@@ -64,9 +65,10 @@ export function QuizNavigationDialog({
 
 // Custom component that manages navigation context
 export function QuizNavigationGuard() {
-  const { isQuizActive } = useQuiz();
+  const { isQuizActive, pauseQuiz, unpauseQuiz, setQuizActive } = useQuiz();
   const [showDialog, setShowDialog] = useState(false);
   const [pendingUrl, setPendingUrl] = useState<string | null>(null);
+  const [, navigate] = useLocation();
 
   // Listen for navigation attempts
   useEffect(() => {
@@ -114,6 +116,7 @@ export function QuizNavigationGuard() {
         e.preventDefault();
         setPendingUrl(href);
         setShowDialog(true);
+        pauseQuiz(); // Pause the timer when showing the dialog
       }
     };
 
@@ -122,27 +125,50 @@ export function QuizNavigationGuard() {
     return () => {
       document.removeEventListener('click', handleClick);
     };
-  }, [isQuizActive]);
+  }, [isQuizActive, pauseQuiz]);
+
+  // Add history navigation interception
+  useEffect(() => {
+    if (!isQuizActive) return;
+
+    // Handle the popstate event (browser back/forward buttons)
+    const handlePopState = (e: PopStateEvent) => {
+      e.preventDefault();
+      // Store the current URL so we can go back here if needed
+      setPendingUrl(window.location.pathname);
+      setShowDialog(true);
+      pauseQuiz(); // Pause the timer when showing the dialog
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, [isQuizActive, pauseQuiz]);
 
   // Handlers for dialog actions
   const handleContinue = () => {
     setShowDialog(false);
     setPendingUrl(null);
+    unpauseQuiz(); // Resume the timer when closing the dialog
   };
 
   const handleProceed = () => {
     if (pendingUrl) {
-      // Navigate to the pending URL
-      window.location.href = pendingUrl;
+      // Navigate to the pending URL using wouter's navigate
+      navigate(pendingUrl);
     }
     setShowDialog(false);
   };
 
   const handleEndQuiz = () => {
     // End the quiz
+    setQuizActive(false); // Update global quiz state
+    
     if (pendingUrl) {
-      // Navigate to the pending URL
-      window.location.href = pendingUrl;
+      // Navigate to the pending URL using wouter's navigate
+      navigate(pendingUrl);
     }
     setShowDialog(false);
   };

@@ -18,7 +18,7 @@ import ForgotPassword from "@/pages/auth/forgot-password";
 // Layout Components
 import Header from "@/components/layout/header";
 import MobileNav from "@/components/layout/mobile-nav";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 // Custom Hooks
 import { useScrollTop } from "@/hooks/use-scroll-top";
