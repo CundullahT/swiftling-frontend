@@ -294,23 +294,23 @@ export function QuizGame({ quizType, minTime, startTime, maxTime, onComplete, se
   const { question, sourceLanguage, targetLanguage } = getCurrentQuestion();
   
   return (
-    <div className="py-2 px-3 max-w-5xl mx-auto flex flex-col min-h-screen">
-      {/* Compact Header with Counters and Timer */}
-      <div className="mb-2">
-        <div className="flex justify-between mb-2">
-          {/* Performance Counters - Left side, stacked vertically */}
-          <div className="flex flex-col gap-1 text-xs">
+    <div className="py-1 px-2 max-w-5xl mx-auto flex flex-col h-[100vh]">
+      {/* Super Compact Header with Counters and Timer */}
+      <div className="mb-1">
+        <div className="flex justify-between items-center">
+          {/* Performance Counters - Left side, horizontal on mobile */}
+          <div className="flex items-center gap-2 text-[10px] sm:text-xs">
             <div className="flex items-center">
-              <div className="w-3 h-3 rounded-full bg-green-500 mr-1 flex-shrink-0"></div>
-              <span className="text-green-700">Correct: {correctCount}</span>
+              <div className="w-2 h-2 rounded-full bg-green-500 mr-1 flex-shrink-0"></div>
+              <span className="text-green-700">{correctCount}</span>
             </div>
             <div className="flex items-center">
-              <div className="w-3 h-3 rounded-full bg-red-500 mr-1 flex-shrink-0"></div>
-              <span className="text-red-700">Wrong: {wrongCount}</span>
+              <div className="w-2 h-2 rounded-full bg-red-500 mr-1 flex-shrink-0"></div>
+              <span className="text-red-700">{wrongCount}</span>
             </div>
             <div className="flex items-center">
-              <div className="w-3 h-3 rounded-full bg-amber-500 mr-1 flex-shrink-0"></div>
-              <span className="text-amber-700">Timeout: {timeoutCount}</span>
+              <div className="w-2 h-2 rounded-full bg-amber-500 mr-1 flex-shrink-0"></div>
+              <span className="text-amber-700">{timeoutCount}</span>
             </div>
           </div>
           
@@ -318,48 +318,48 @@ export function QuizGame({ quizType, minTime, startTime, maxTime, onComplete, se
           <PieTimer
             timeLeft={timeLeft}
             totalTime={currentQuestionStartTime}
-            size={50}
-            strokeWidth={4}
+            size={40}
+            strokeWidth={3}
           />
         </div>
       </div>
       
-      {/* Streamlined Question Display */}
-      <div className="bg-gray-50 rounded-lg px-3 py-2 mb-2 shadow-sm text-center">
+      {/* Smaller Question Display */}
+      <div className="bg-gray-50 rounded-lg px-2 py-1 mb-1 shadow-sm text-center">
         {/* Current Question Language Tag */}
-        <div className="flex justify-center items-center mb-1">
-          <span className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-primary text-white">
+        <div className="flex justify-center items-center">
+          <span className="inline-flex items-center px-1.5 py-0.5 rounded-md text-[10px] font-medium bg-primary text-white">
             {questionType === 'original' ? sourceLanguage : targetLanguage}
           </span>
-          <span className="mx-2 text-gray-400 text-xs">→</span>
-          <span className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-gray-200 text-gray-800">
+          <span className="mx-1 text-gray-400 text-[10px]">→</span>
+          <span className="inline-flex items-center px-1.5 py-0.5 rounded-md text-[10px] font-medium bg-gray-200 text-gray-800">
             {questionType === 'original' ? targetLanguage : sourceLanguage}
           </span>
         </div>
         
-        <h3 className="text-lg font-medium break-words mt-1">
+        <h3 className="text-base sm:text-lg font-medium break-words mt-0.5">
           {question}
         </h3>
       </div>
       
-      {/* Answer Options - Optimized for Mobile */}
-      <div className="flex flex-col space-y-2 mt-2 mb-3 flex-grow">
+      {/* Answer Options - Ultra Compact for Mobile */}
+      <div className="grid grid-cols-1 gap-1.5 mt-1 mb-1">
         {options.map((option) => {
           const isSelected = selectedAnswer === option.id;
           const isCorrectAnswer = option.id === correctAnswerId;
           
-          let optionClassName = "relative py-2 px-3 border rounded-lg transition-all cursor-pointer";
+          let optionClassName = "relative py-1.5 px-2 border rounded-lg transition-all cursor-pointer";
           
           if (answered) {
             if (isCorrectAnswer) {
-              optionClassName = "relative py-2 px-3 border border-green-500 bg-green-50 rounded-lg";
+              optionClassName = "relative py-1.5 px-2 border border-green-500 bg-green-50 rounded-lg";
             } else if (isSelected && !isCorrectAnswer) {
-              optionClassName = "relative py-2 px-3 border border-red-500 bg-red-50 rounded-lg";
+              optionClassName = "relative py-1.5 px-2 border border-red-500 bg-red-50 rounded-lg";
             } else {
-              optionClassName = "relative py-2 px-3 border border-gray-200 rounded-lg opacity-70";
+              optionClassName = "relative py-1.5 px-2 border border-gray-200 rounded-lg opacity-70";
             }
           } else {
-            optionClassName = "relative py-2 px-3 border border-gray-200 rounded-lg hover:border-primary/50 hover:bg-primary/5 cursor-pointer";
+            optionClassName = "relative py-1.5 px-2 border border-gray-200 rounded-lg hover:border-primary/50 hover:bg-primary/5 cursor-pointer";
           }
           
           return (
@@ -369,17 +369,17 @@ export function QuizGame({ quizType, minTime, startTime, maxTime, onComplete, se
               onClick={() => handleAnswerClick(option.id)}
             >
               <div className="flex justify-between items-center">
-                <span className="text-sm break-words flex-grow pr-2">{option.text}</span>
+                <span className="text-xs sm:text-sm break-words flex-grow pr-1">{option.text}</span>
                 {answered && (
                   <div className="flex-shrink-0 ml-1">
                     {isCorrectAnswer && (
-                      <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-green-100">
-                        <Check className="w-3 h-3 text-green-600" />
+                      <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-green-100">
+                        <Check className="w-2.5 h-2.5 text-green-600" />
                       </span>
                     )}
                     {isSelected && !isCorrectAnswer && (
-                      <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-red-100">
-                        <X className="w-3 h-3 text-red-600" />
+                      <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-red-100">
+                        <X className="w-2.5 h-2.5 text-red-600" />
                       </span>
                     )}
                   </div>
@@ -391,12 +391,12 @@ export function QuizGame({ quizType, minTime, startTime, maxTime, onComplete, se
       </div>
       
       {/* End Quiz Button - Fixed above mobile navigation bar */}
-      <div className="pt-2 border-t border-gray-100 sticky bottom-0 bg-white">
+      <div className="pt-1 border-t border-gray-100 sticky bottom-0 bg-white mt-auto">
         <Button 
           variant="ghost" 
           size="sm" 
           onClick={onComplete}
-          className="w-full text-gray-500 hover:text-gray-700"
+          className="w-full text-gray-500 hover:text-gray-700 text-xs py-1"
         >
           End Quiz
         </Button>
