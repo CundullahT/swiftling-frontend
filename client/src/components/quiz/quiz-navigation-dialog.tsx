@@ -156,7 +156,9 @@ export function QuizNavigationGuard() {
 
   const handleProceed = () => {
     if (pendingUrl) {
-      // Navigate to the pending URL using wouter's navigate
+      // End the quiz first by resetting the global state
+      setQuizActive(false);
+      // Then navigate to the pending URL using wouter's navigate
       navigate(pendingUrl);
     }
     setShowDialog(false);

@@ -77,7 +77,9 @@ export default function Quiz() {
   // Handle proceed with navigation
   const handleLeaveQuiz = () => {
     if (pendingNavigation) {
+      // Reset both local and global quiz states
       setIsQuizStarted(false);
+      setQuizActive(false); // This is the critical line that was missing
       setLocation(pendingNavigation);
     }
     setShowNavDialog(false);
