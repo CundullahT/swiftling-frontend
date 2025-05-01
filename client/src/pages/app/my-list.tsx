@@ -684,19 +684,15 @@ export default function MyList() {
   const handleDelete = () => {
     if (!selectedPhrase) return;
     
-    // In a real app, this would make an API call to delete from the database
-    // For this demo app, we're just removing from our local state
-    const updatedPhrases = phrases.filter(p => p.id !== selectedPhrase.id);
-    setPhrases(updatedPhrases);
+    // This is a placeholder for future implementation
+    // No actual deletion happens in this version
+    // Will be connected to backend API in the future
     
-    // Close the dialog
+    // Just close the dialog
     setIsDeleteDialogOpen(false);
     
-    // Adjust current page if we've deleted all phrases on the current page
-    const totalPages = Math.ceil(updatedPhrases.length / itemsPerPage);
-    if (currentPage > totalPages && totalPages > 0) {
-      setCurrentPage(totalPages);
-    }
+    // Placeholder for future implementation
+    console.log(`Delete requested for phrase ID: ${selectedPhrase.id}`);
   };
 
   // Language management functions
