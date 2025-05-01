@@ -31,7 +31,7 @@ export function PieTimer({
   };
 
   return (
-    <div className="relative flex items-center justify-center" style={{ width: size, height: size }}>
+    <div className={`relative flex items-center justify-center ${className}`} style={{ width: size, height: size }}>
       {/* Background circle */}
       <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="absolute">
         <circle

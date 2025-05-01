@@ -22,6 +22,7 @@ import {
   LANGUAGES
 } from "@/lib/constants";
 import { QuizGame } from "@/components/quiz/quiz-game";
+import { useQuiz } from "@/context/quiz-context";
 
 export default function Quiz() {
   // Scroll to top when navigating to this page
@@ -29,6 +30,9 @@ export default function Quiz() {
   
   // For navigating to Add Phrase page
   const [, setLocation] = useLocation();
+  
+  // Use the quiz context to set the global quiz active state
+  const { setQuizActive } = useQuiz();
   
   // Placeholder for auth check - would be tied to a real auth system in future
   const isAuthenticated = true;
@@ -114,13 +118,18 @@ export default function Quiz() {
     if (selectedQuizType) {
       // Scroll to top before starting the quiz
       window.scrollTo({ top: 0, behavior: 'smooth' });
+      
+      // Set both local and global quiz state to active
       setIsQuizStarted(true);
+      setQuizActive(true);
     }
   };
 
   // End quiz
   const handleEndQuiz = () => {
+    // Reset both local and global quiz state
     setIsQuizStarted(false);
+    setQuizActive(false);
   };
 
   // If quiz is started, show the actual quiz game
