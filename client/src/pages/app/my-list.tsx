@@ -1114,6 +1114,25 @@ export default function MyList() {
                 )}
               </div>
             </div>
+            
+            {/* Tags section */}
+            {selectedPhrase?.tags && selectedPhrase.tags.length > 0 && (
+              <div className="mb-4">
+                <h3 className="text-sm font-medium mb-2">Tags:</h3>
+                <div className="flex flex-wrap gap-1.5">
+                  {selectedPhrase.tags.map((tag, index) => (
+                    <Badge 
+                      key={index}
+                      variant="outline" 
+                      className="bg-accent/10 hover:bg-accent/20 text-xs text-center px-2 py-0.5 text-accent-foreground border-accent/20"
+                    >
+                      {tag}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+            )}
+            
             <h3 className="text-sm font-medium mb-2">Notes:</h3>
             <p className="text-gray-700">{selectedPhrase?.notes}</p>
           </div>
