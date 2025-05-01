@@ -97,7 +97,7 @@ export default function MyList() {
   const [filteredTargetLanguages, setFilteredTargetLanguages] = useState<typeof LANGUAGES>([]);
 
   // Example phrases data with notes - 50 phrases total
-  const [phrases] = useState([
+  const [phrases, setPhrases] = useState([
     // Spanish phrases
     { 
       id: 1, 
@@ -673,6 +673,31 @@ export default function MyList() {
     setTargetLanguage(phrase.targetLanguage || "");
     setIsEditDialogOpen(true);
   };
+  
+  // Handle delete confirmation dialog
+  const handleDeleteConfirmation = (phrase: any) => {
+    setSelectedPhrase(phrase);
+    setIsDeleteDialogOpen(true);
+  };
+  
+  // Handle actual phrase deletion
+  const handleDelete = () => {
+    if (!selectedPhrase) return;
+    
+    // In a real app, this would make an API call to delete from the database
+    // For this demo app, we're just removing from our local state
+    const updatedPhrases = phrases.filter(p => p.id !== selectedPhrase.id);
+    setPhrases(updatedPhrases);
+    
+    // Close the dialog
+    setIsDeleteDialogOpen(false);
+    
+    // Adjust current page if we've deleted all phrases on the current page
+    const totalPages = Math.ceil(updatedPhrases.length / itemsPerPage);
+    if (currentPage > totalPages && totalPages > 0) {
+      setCurrentPage(totalPages);
+    }
+  };
 
   // Language management functions
   const handleSourceLanguageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -965,7 +990,7 @@ export default function MyList() {
                     sourceLanguage={phrase.sourceLanguage}
                     targetLanguage={phrase.targetLanguage}
                     onEdit={() => handleEdit(phrase)}
-                    onDelete={() => {}}
+                    onDelete={() => handleDeleteConfirmation(phrase)}
                     onSpeak={() => handlePronunciation(phrase)}
                     onViewNotes={() => handleViewNotes(phrase)}
                   />
@@ -1527,6 +1552,61 @@ export default function MyList() {
               </Button>
             </div>
           </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <DialogContent className="sm:max-w-md rounded-xl overflow-hidden">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-semibold">
+              Delete Phrase
+            </DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete this phrase? This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="border-t border-gray-200 pt-4">
+            <div className="mb-4">
+              <div className="p-3 bg-destructive/10 rounded-md mb-4">
+                <div className="flex gap-2 mb-2">
+                  <span className="font-medium">{selectedPhrase?.phrase}</span>
+                  <span className="text-gray-500">({selectedPhrase?.translation})</span>
+                </div>
+                {selectedPhrase?.tags && selectedPhrase.tags.length > 0 && (
+                  <div className="flex flex-wrap gap-1.5">
+                    {selectedPhrase.tags.map((tag, index) => (
+                      <Badge 
+                        key={index}
+                        variant="outline" 
+                        className="bg-accent/10 hover:bg-accent/20 text-xs text-center px-2 py-0.5 text-accent-foreground border-accent/20"
+                      >
+                        {tag}
+                      </Badge>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+            <div className="flex flex-col sm:flex-row sm:justify-end gap-3 pt-2">
+              <Button 
+                type="button" 
+                variant="outline" 
+                onClick={() => setIsDeleteDialogOpen(false)}
+                className="w-full sm:w-auto"
+              >
+                Cancel
+              </Button>
+              <Button 
+                type="button"
+                variant="destructive"
+                onClick={handleDelete}
+                className="w-full sm:w-auto"
+              >
+                Delete Phrase
+              </Button>
+            </div>
+          </div>
         </DialogContent>
       </Dialog>
     </div>
