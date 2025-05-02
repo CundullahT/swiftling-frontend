@@ -237,7 +237,15 @@ export default function Quiz() {
   if (!hasPhrases()) {
     return (
       <div className="py-6 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto pb-20 md:pb-6">
-        <h1 className="text-3xl font-semibold text-secondary bg-gradient-to-r from-primary/90 to-secondary bg-clip-text text-transparent mb-6">Quiz</h1>
+        <div className="flex items-center justify-between mb-6">
+          <h1 className="text-3xl font-semibold text-secondary bg-gradient-to-r from-primary/90 to-secondary bg-clip-text text-transparent">Quiz</h1>
+          <GuardedLink href="/quiz-history">
+            <Button variant="outline" className="flex items-center gap-2">
+              <BookOpen className="h-4 w-4" />
+              <span>View Quiz History</span>
+            </Button>
+          </GuardedLink>
+        </div>
         
         {/* No phrases yet message */}
         <Card className="mb-6 border-2 border-dashed border-gray-200">
@@ -267,7 +275,15 @@ export default function Quiz() {
   // Otherwise show the quiz setup screen
   return (
     <div className="py-6 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto pb-20 md:pb-6">
-      <h1 className="text-3xl font-semibold text-secondary bg-gradient-to-r from-primary/90 to-secondary bg-clip-text text-transparent mb-6">Quiz</h1>
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-3xl font-semibold text-secondary bg-gradient-to-r from-primary/90 to-secondary bg-clip-text text-transparent">Quiz</h1>
+        <GuardedLink href="/quiz-history">
+          <Button variant="outline" className="flex items-center gap-2">
+            <BookOpen className="h-4 w-4" />
+            <span>View Quiz History</span>
+          </Button>
+        </GuardedLink>
+      </div>
       
       {/* Quiz Type Selection */}
       <Card className="mb-6">
