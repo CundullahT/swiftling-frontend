@@ -267,65 +267,63 @@ export default function Dashboard() {
       {/* Stats Card with Daily Streak, Best Time, and Latest Quiz Results */}
       <Card className="mb-6">
         <CardContent className="pt-6">
-          <div className="flex flex-col">
-            <div className="flex flex-col sm:flex-row">
-              {/* Daily Streak */}
-              <div className="flex items-center flex-1">
-                <div className="h-12 w-12 rounded-full bg-accent/20 flex items-center justify-center">
-                  <Star className="h-6 w-6 text-accent" />
-                </div>
-                <div className="ml-4">
-                  <h2 className="text-xl font-semibold text-secondary">Daily Streak</h2>
-                  <p className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">{user.streakDays} days</p>
-                </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {/* Daily Streak */}
+            <div className="flex items-center">
+              <div className="h-12 w-12 rounded-full bg-accent/20 flex items-center justify-center">
+                <Star className="h-6 w-6 text-accent" />
               </div>
-              
-              {/* Best Time */}
-              <div className="flex items-center flex-1 mt-4 sm:mt-0">
-                <div className="h-12 w-12 rounded-full bg-primary/20 flex items-center justify-center">
-                  <Clock className="h-6 w-6 text-primary" />
-                </div>
-                <div className="ml-4">
-                  <h2 className="text-xl font-semibold text-secondary">Best Time</h2>
-                  <p className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">{user.bestTime}s</p>
-                </div>
+              <div className="ml-4">
+                <h2 className="text-xl font-semibold text-secondary">Daily Streak</h2>
+                <p className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">{user.streakDays} days</p>
+              </div>
+            </div>
+            
+            {/* Best Time */}
+            <div className="flex items-center">
+              <div className="h-12 w-12 rounded-full bg-primary/20 flex items-center justify-center">
+                <Clock className="h-6 w-6 text-primary" />
+              </div>
+              <div className="ml-4">
+                <h2 className="text-xl font-semibold text-secondary">Best Time</h2>
+                <p className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">{user.bestTime}s</p>
               </div>
             </div>
             
             {/* Latest Quiz Results */}
-            <div className="mt-6 pt-6 border-t border-primary/10">
-              <h2 className="text-xl font-semibold text-secondary mb-3">Latest Quiz Results</h2>
-              <div className="flex flex-col sm:flex-row gap-4">
+            <div>
+              <h2 className="text-xl font-semibold text-secondary mb-2">Latest Quiz</h2>
+              <div className="flex gap-2">
                 {/* Correct */}
-                <div className="flex items-center flex-1 bg-green-50 dark:bg-green-950/20 p-3 rounded-lg">
-                  <div className="h-10 w-10 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
-                    <Check className="h-5 w-5 text-green-600 dark:text-green-400" />
+                <div className="flex items-center flex-1 bg-green-50 dark:bg-green-950/20 p-2 rounded-lg">
+                  <div className="h-8 w-8 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
+                    <Check className="h-4 w-4 text-green-600 dark:text-green-400" />
                   </div>
-                  <div className="ml-3">
-                    <p className="text-sm font-medium text-green-800 dark:text-green-300">Correct</p>
-                    <p className="text-xl font-bold text-green-700 dark:text-green-400">{user.latestQuiz.correct}</p>
+                  <div className="ml-2">
+                    <p className="text-xs font-medium text-green-800 dark:text-green-300">Correct</p>
+                    <p className="text-lg font-bold text-green-700 dark:text-green-400">{user.latestQuiz.correct}</p>
                   </div>
                 </div>
                 
                 {/* Wrong */}
-                <div className="flex items-center flex-1 bg-rose-50 dark:bg-rose-950/20 p-3 rounded-lg">
-                  <div className="h-10 w-10 rounded-full bg-rose-100 dark:bg-rose-900/30 flex items-center justify-center">
-                    <X className="h-5 w-5 text-rose-600 dark:text-rose-400" />
+                <div className="flex items-center flex-1 bg-rose-50 dark:bg-rose-950/20 p-2 rounded-lg">
+                  <div className="h-8 w-8 rounded-full bg-rose-100 dark:bg-rose-900/30 flex items-center justify-center">
+                    <X className="h-4 w-4 text-rose-600 dark:text-rose-400" />
                   </div>
-                  <div className="ml-3">
-                    <p className="text-sm font-medium text-rose-800 dark:text-rose-300">Wrong</p>
-                    <p className="text-xl font-bold text-rose-700 dark:text-rose-400">{user.latestQuiz.wrong}</p>
+                  <div className="ml-2">
+                    <p className="text-xs font-medium text-rose-800 dark:text-rose-300">Wrong</p>
+                    <p className="text-lg font-bold text-rose-700 dark:text-rose-400">{user.latestQuiz.wrong}</p>
                   </div>
                 </div>
                 
                 {/* Timed Out */}
-                <div className="flex items-center flex-1 bg-amber-50 dark:bg-amber-950/20 p-3 rounded-lg">
-                  <div className="h-10 w-10 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center">
-                    <AlertCircle className="h-5 w-5 text-amber-600 dark:text-amber-400" />
+                <div className="flex items-center flex-1 bg-amber-50 dark:bg-amber-950/20 p-2 rounded-lg">
+                  <div className="h-8 w-8 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center">
+                    <AlertCircle className="h-4 w-4 text-amber-600 dark:text-amber-400" />
                   </div>
-                  <div className="ml-3">
-                    <p className="text-sm font-medium text-amber-800 dark:text-amber-300">Timed Out</p>
-                    <p className="text-xl font-bold text-amber-700 dark:text-amber-400">{user.latestQuiz.timedOut}</p>
+                  <div className="ml-2">
+                    <p className="text-xs font-medium text-amber-800 dark:text-amber-300">Timed Out</p>
+                    <p className="text-lg font-bold text-amber-700 dark:text-amber-400">{user.latestQuiz.timedOut}</p>
                   </div>
                 </div>
               </div>
