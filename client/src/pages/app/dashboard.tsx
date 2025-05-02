@@ -1,7 +1,7 @@
 import { useAuthRedirect } from "@/hooks/use-auth-redirect";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { BookOpen, Star, Clock } from "lucide-react";
+import { BookOpen, Star, Clock, Check, X, AlertCircle } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useState } from "react";
 import { GuardedLink } from "@/components/ui/guarded-link";
@@ -134,6 +134,11 @@ export default function Dashboard() {
   const user = {
     streakDays: 7,
     bestTime: 3.8, // Best time in seconds
+    latestQuiz: {
+      correct: 12,
+      wrong: 5,
+      timedOut: 3
+    }
   };
 
   // Dummy data for progress metrics
@@ -259,29 +264,70 @@ export default function Dashboard() {
         </GuardedLink>
       </div>
       
-      {/* Stats Card with Daily Streak and Best Time */}
+      {/* Stats Card with Daily Streak, Best Time, and Latest Quiz Results */}
       <Card className="mb-6">
         <CardContent className="pt-6">
-          <div className="flex flex-col sm:flex-row">
-            {/* Daily Streak */}
-            <div className="flex items-center flex-1">
-              <div className="h-12 w-12 rounded-full bg-accent/20 flex items-center justify-center">
-                <Star className="h-6 w-6 text-accent" />
+          <div className="flex flex-col">
+            <div className="flex flex-col sm:flex-row">
+              {/* Daily Streak */}
+              <div className="flex items-center flex-1">
+                <div className="h-12 w-12 rounded-full bg-accent/20 flex items-center justify-center">
+                  <Star className="h-6 w-6 text-accent" />
+                </div>
+                <div className="ml-4">
+                  <h2 className="text-xl font-semibold text-secondary">Daily Streak</h2>
+                  <p className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">{user.streakDays} days</p>
+                </div>
               </div>
-              <div className="ml-4">
-                <h2 className="text-xl font-semibold text-secondary">Daily Streak</h2>
-                <p className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">{user.streakDays} days</p>
+              
+              {/* Best Time */}
+              <div className="flex items-center flex-1 mt-4 sm:mt-0">
+                <div className="h-12 w-12 rounded-full bg-primary/20 flex items-center justify-center">
+                  <Clock className="h-6 w-6 text-primary" />
+                </div>
+                <div className="ml-4">
+                  <h2 className="text-xl font-semibold text-secondary">Best Time</h2>
+                  <p className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">{user.bestTime}s</p>
+                </div>
               </div>
             </div>
             
-            {/* Best Time */}
-            <div className="flex items-center flex-1 mt-4 sm:mt-0">
-              <div className="h-12 w-12 rounded-full bg-primary/20 flex items-center justify-center">
-                <Clock className="h-6 w-6 text-primary" />
-              </div>
-              <div className="ml-4">
-                <h2 className="text-xl font-semibold text-secondary">Best Time</h2>
-                <p className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">{user.bestTime}s</p>
+            {/* Latest Quiz Results */}
+            <div className="mt-6 pt-6 border-t border-primary/10">
+              <h2 className="text-xl font-semibold text-secondary mb-3">Latest Quiz Results</h2>
+              <div className="flex flex-col sm:flex-row gap-4">
+                {/* Correct */}
+                <div className="flex items-center flex-1 bg-green-50 dark:bg-green-950/20 p-3 rounded-lg">
+                  <div className="h-10 w-10 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
+                    <Check className="h-5 w-5 text-green-600 dark:text-green-400" />
+                  </div>
+                  <div className="ml-3">
+                    <p className="text-sm font-medium text-green-800 dark:text-green-300">Correct</p>
+                    <p className="text-xl font-bold text-green-700 dark:text-green-400">{user.latestQuiz.correct}</p>
+                  </div>
+                </div>
+                
+                {/* Wrong */}
+                <div className="flex items-center flex-1 bg-rose-50 dark:bg-rose-950/20 p-3 rounded-lg">
+                  <div className="h-10 w-10 rounded-full bg-rose-100 dark:bg-rose-900/30 flex items-center justify-center">
+                    <X className="h-5 w-5 text-rose-600 dark:text-rose-400" />
+                  </div>
+                  <div className="ml-3">
+                    <p className="text-sm font-medium text-rose-800 dark:text-rose-300">Wrong</p>
+                    <p className="text-xl font-bold text-rose-700 dark:text-rose-400">{user.latestQuiz.wrong}</p>
+                  </div>
+                </div>
+                
+                {/* Timed Out */}
+                <div className="flex items-center flex-1 bg-amber-50 dark:bg-amber-950/20 p-3 rounded-lg">
+                  <div className="h-10 w-10 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center">
+                    <AlertCircle className="h-5 w-5 text-amber-600 dark:text-amber-400" />
+                  </div>
+                  <div className="ml-3">
+                    <p className="text-sm font-medium text-amber-800 dark:text-amber-300">Timed Out</p>
+                    <p className="text-xl font-bold text-amber-700 dark:text-amber-400">{user.latestQuiz.timedOut}</p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
