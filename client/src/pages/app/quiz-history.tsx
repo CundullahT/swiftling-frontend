@@ -107,8 +107,8 @@ export default function QuizHistory() {
                 <TableHeader>
                   <TableRow className="border-b border-primary/10">
                     <TableHead className="text-secondary">Date</TableHead>
-                    <TableHead className="text-secondary">Quiz Type</TableHead>
-                    <TableHead className="text-secondary">Language</TableHead>
+                    <TableHead className="text-center text-secondary">Quiz Type</TableHead>
+                    <TableHead className="text-center text-secondary">Language</TableHead>
                     <TableHead className="text-center text-secondary">Score</TableHead>
                     <TableHead className="text-secondary">
                       <div className="flex items-center justify-center">
@@ -151,11 +151,13 @@ export default function QuizHistory() {
                           <span>{format(quiz.date, "MMM d, yyyy")}</span>
                         </div>
                       </TableCell>
-                      <TableCell>{quiz.type}</TableCell>
-                      <TableCell>
-                        <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20 px-2">
-                          {quiz.language}
-                        </Badge>
+                      <TableCell className="text-center">{quiz.type}</TableCell>
+                      <TableCell className="text-center">
+                        <div className="flex justify-center">
+                          <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20 px-2">
+                            {quiz.language}
+                          </Badge>
+                        </div>
                       </TableCell>
                       <TableCell className="text-center">
                         <div className="inline-flex items-center justify-center h-8 w-8 rounded-full bg-secondary/10">
