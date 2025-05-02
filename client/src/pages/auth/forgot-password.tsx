@@ -1,15 +1,47 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Link } from "wouter";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { useToast } from "@/hooks/use-toast";
+
+// Validation schema for the forgot password form
+const forgotPasswordSchema = z.object({
+  email: z.string().email({
+    message: "Please enter a valid email address.",
+  }),
+});
+
+type ForgotPasswordFormValues = z.infer<typeof forgotPasswordSchema>;
 
 export default function ForgotPassword() {
-  // Placeholder function for password reset
-  const handleResetPassword = (e: React.FormEvent) => {
-    e.preventDefault();
+  const { toast } = useToast();
+  
+  // Setup form with validation
+  const form = useForm<ForgotPasswordFormValues>({
+    resolver: zodResolver(forgotPasswordSchema),
+    defaultValues: {
+      email: "",
+    },
+  });
+
+  // Placeholder function for password reset - validation only, no actual functionality
+  const onSubmit = (data: ForgotPasswordFormValues) => {
     // This would trigger the password reset email in a real implementation
-    alert("If your email is in our system, you will receive a reset link shortly.");
+    toast({
+      title: "Reset Link Sent",
+      description: "If your email is in our system, you will receive a reset link shortly.",
+    });
   };
 
   return (
@@ -27,22 +59,31 @@ export default function ForgotPassword() {
         
         <Card>
           <CardContent className="pt-6">
-            <form className="space-y-6" onSubmit={handleResetPassword}>
-              <div>
-                <Label htmlFor="email">Email address</Label>
-                <Input 
-                  id="email" 
-                  name="email" 
-                  type="email" 
-                  autoComplete="email" 
-                  required 
+            <Form {...form}>
+              <form className="space-y-6" onSubmit={form.handleSubmit(onSubmit)} noValidate>
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Email address</FormLabel>
+                      <FormControl>
+                        <Input 
+                          {...field} 
+                          type="text"
+                          autoComplete="email"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
-              </div>
 
-              <Button type="submit" className="w-full">
-                Send reset link
-              </Button>
-            </form>
+                <Button type="submit" className="w-full">
+                  Send reset link
+                </Button>
+              </form>
+            </Form>
 
             <div className="mt-6 text-center">
               <p className="text-sm text-gray-600">
