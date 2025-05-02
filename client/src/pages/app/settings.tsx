@@ -189,7 +189,6 @@ export default function Settings() {
               Cancel
             </Button>
             <Button 
-              onClick={handleDeleteAccount}
               className="sm:flex-1 bg-rose-600 hover:bg-rose-600/90 text-white"
               variant="destructive"
             >
