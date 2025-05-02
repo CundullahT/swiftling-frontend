@@ -1,4 +1,4 @@
-import { ReactNode, MouseEvent } from 'react';
+import { ReactNode, MouseEvent, forwardRef, Ref } from 'react';
 import { Link, useLocation } from 'wouter';
 import { useQuiz } from '@/context/quiz-context';
 
@@ -12,7 +12,10 @@ type GuardedLinkProps = {
 /**
  * Component that wraps wouter's Link with quiz navigation protection
  */
-export function GuardedLink({ href, children, className, onClick }: GuardedLinkProps) {
+export const GuardedLink = forwardRef(function GuardedLink(
+  { href, children, className, onClick }: GuardedLinkProps, 
+  ref: Ref<HTMLAnchorElement>
+) {
   const { isQuizActive, pauseQuiz } = useQuiz();
   const [, navigate] = useLocation();
   
@@ -37,8 +40,8 @@ export function GuardedLink({ href, children, className, onClick }: GuardedLinkP
   };
   
   return (
-    <Link href={href} onClick={handleClick} className={className}>
+    <Link href={href} onClick={handleClick} className={className} ref={ref}>
       {children}
     </Link>
   );
-}
+});
