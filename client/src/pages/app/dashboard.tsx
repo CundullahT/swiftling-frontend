@@ -290,13 +290,13 @@ export default function Dashboard() {
               </div>
             </div>
             
-            {/* Latest Quiz Results */}
+            {/* Latest Result */}
             <div className="flex items-center">
               <div className="h-12 w-12 rounded-full bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center">
                 <BookOpen className="h-6 w-6 text-blue-600 dark:text-blue-400" />
               </div>
               <div className="ml-4">
-                <h2 className="text-xl font-semibold text-secondary">Latest Quiz</h2>
+                <h2 className="text-xl font-semibold text-secondary">Latest Result</h2>
                 <div className="flex items-center gap-3 mt-1">
                   {/* Correct */}
                   <div className="flex items-center">
