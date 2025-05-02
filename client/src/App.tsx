@@ -53,7 +53,7 @@ function App() {
                 
                 {/* App Routes */}
                 <Route path="/dashboard" component={Dashboard} />
-                <Route path="/my-list" component={MyList} />
+                <Route path="/my-phrases" component={MyList} />
                 <Route path="/add-phrase" component={AddPhrase} />
                 <Route path="/quiz" component={Quiz} />
                 <Route path="/quiz-history" component={QuizHistory} />

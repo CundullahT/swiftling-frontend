@@ -12,8 +12,8 @@ export default function MobileNav() {
       icon: <Home className="h-6 w-6" /> 
     },
     { 
-      name: "My List", 
-      href: "/my-list", 
+      name: "Phrases", 
+      href: "/my-phrases", 
       icon: <ClipboardList className="h-6 w-6" /> 
     },
     { 

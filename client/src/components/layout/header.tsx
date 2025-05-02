@@ -25,7 +25,7 @@ export default function Header() {
 
   const navigationItems = [
     { name: "Dashboard", href: "/dashboard" },
-    { name: "My List", href: "/my-list" },
+    { name: "My Phrases", href: "/my-phrases" },
     { name: "Add Phrase", href: "/add-phrase" },
     { name: "Quiz", href: "/quiz" },
   ];

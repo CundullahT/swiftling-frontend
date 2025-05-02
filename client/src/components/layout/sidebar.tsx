@@ -31,8 +31,8 @@ export default function Sidebar({ onClose }: SidebarProps) {
       icon: <Home className="h-5 w-5 mr-3" /> 
     },
     { 
-      name: "My List", 
-      href: "/my-list", 
+      name: "My Phrases", 
+      href: "/my-phrases", 
       icon: <ClipboardList className="h-5 w-5 mr-3" /> 
     },
     { 
