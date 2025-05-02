@@ -1,7 +1,7 @@
 import { useAuthRedirect } from "@/hooks/use-auth-redirect";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { BookOpen, Star } from "lucide-react";
+import { BookOpen, Star, Clock } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useState } from "react";
 import { GuardedLink } from "@/components/ui/guarded-link";
@@ -133,6 +133,7 @@ export default function Dashboard() {
   // Dummy user data for UI display
   const user = {
     streakDays: 7,
+    bestTime: 3.8, // Best time in seconds
   };
 
   // Dummy data for progress metrics
@@ -258,16 +259,30 @@ export default function Dashboard() {
         </GuardedLink>
       </div>
       
-      {/* Daily Streak */}
+      {/* Stats Card with Daily Streak and Best Time */}
       <Card className="mb-6">
         <CardContent className="pt-6">
-          <div className="flex items-center">
-            <div className="h-12 w-12 rounded-full bg-accent/20 flex items-center justify-center">
-              <Star className="h-6 w-6 text-accent" />
+          <div className="flex flex-col sm:flex-row">
+            {/* Daily Streak */}
+            <div className="flex items-center flex-1">
+              <div className="h-12 w-12 rounded-full bg-accent/20 flex items-center justify-center">
+                <Star className="h-6 w-6 text-accent" />
+              </div>
+              <div className="ml-4">
+                <h2 className="text-xl font-semibold text-secondary">Daily Streak</h2>
+                <p className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">{user.streakDays} days</p>
+              </div>
             </div>
-            <div className="ml-4">
-              <h2 className="text-xl font-semibold text-secondary">Daily Streak</h2>
-              <p className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">{user.streakDays} days</p>
+            
+            {/* Best Time */}
+            <div className="flex items-center flex-1 mt-4 sm:mt-0">
+              <div className="h-12 w-12 rounded-full bg-primary/20 flex items-center justify-center">
+                <Clock className="h-6 w-6 text-primary" />
+              </div>
+              <div className="ml-4">
+                <h2 className="text-xl font-semibold text-secondary">Best Time</h2>
+                <p className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">{user.bestTime}s</p>
+              </div>
             </div>
           </div>
         </CardContent>
