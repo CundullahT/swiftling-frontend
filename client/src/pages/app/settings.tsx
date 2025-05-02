@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useAuthRedirect } from "@/hooks/use-auth-redirect";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -5,11 +6,22 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { GuardedLink } from "@/components/ui/guarded-link";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+} from "@/components/ui/alert-dialog";
 
 export default function Settings() {
   // Placeholder for auth check - would be tied to a real auth system in future
   const isAuthenticated = true;
   useAuthRedirect(!isAuthenticated, "/login");
+  
+  // State for delete account confirmation dialog
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   
   // Handle account form submission - would connect to API in real implementation
   const handleAccountSubmit = (e: React.FormEvent) => {
@@ -23,6 +35,13 @@ export default function Settings() {
     e.preventDefault();
     // Save password settings logic would go here
     alert("Password updated successfully!");
+  };
+  
+  // Handle delete account action
+  const handleDeleteAccount = () => {
+    // Account deletion logic would go here
+    alert("Account deleted successfully!");
+    setDeleteDialogOpen(false);
   };
 
   return (
@@ -134,7 +153,7 @@ export default function Settings() {
         <h3 className="text-lg font-medium text-red-600 mb-4">Danger Zone</h3>
         <Card>
           <CardContent className="pt-6">
-            <h3 className="text-lg leading-6 font-medium text-red-600">Delete account</h3>
+            <h3 className="text-lg leading-6 font-medium text-red-600">Delete Account</h3>
             <div className="mt-2 max-w-xl text-sm text-gray-500">
               <p>
                 Once you delete your account, all of your data will be permanently removed. 
@@ -142,13 +161,44 @@ export default function Settings() {
               </p>
             </div>
             <div className="mt-5">
-              <Button variant="destructive">
-                Delete account
+              <Button 
+                variant="destructive" 
+                onClick={() => setDeleteDialogOpen(true)}
+              >
+                Delete Account
               </Button>
             </div>
           </CardContent>
         </Card>
       </div>
+      
+      {/* Delete Account Confirmation Dialog */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent className="max-w-md">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Account</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete your account? This action cannot be undone and all your data, including phrases, quiz history, and settings will be permanently lost.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="flex-col sm:flex-row gap-2">
+            <Button
+              onClick={() => setDeleteDialogOpen(false)}
+              className="sm:flex-1"
+              variant="outline"
+            >
+              Cancel
+            </Button>
+            <Button 
+              onClick={handleDeleteAccount}
+              className="sm:flex-1 bg-rose-600 hover:bg-rose-600/90 text-white"
+              variant="destructive"
+            >
+              Delete My Account
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
