@@ -1,10 +1,11 @@
+import { useState } from "react";
 import { useAuthRedirect } from "@/hooks/use-auth-redirect";
 import { useScrollTop } from "@/hooks/use-scroll-top";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { GuardedLink } from "@/components/ui/guarded-link";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Calendar, Clock, Check, X, AlertCircle, Trophy, Timer, ChevronLeft } from "lucide-react";
+import { Calendar, Clock, Check, X, AlertCircle, Trophy, Timer, ChevronLeft, ChevronRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 
@@ -16,7 +17,11 @@ export default function QuizHistory() {
   // Scroll to top on page load
   useScrollTop();
   
-  // Sample quiz history data
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+  
+  // Sample quiz history data with 25 entries for pagination testing
   const quizHistory = [
     {
       id: 1,
@@ -78,6 +83,246 @@ export default function QuizHistory() {
       worstTime: 8.1,
       averageTime: 5.2
     },
+    {
+      id: 6,
+      date: new Date(2025, 3, 24), // April 24, 2025
+      type: "Multiple Choice",
+      language: "French",
+      correct: 17,
+      wrong: 3,
+      timedOut: 0,
+      bestTime: 2.7,
+      worstTime: 6.9,
+      averageTime: 4.3
+    },
+    {
+      id: 7,
+      date: new Date(2025, 3, 23), // April 23, 2025
+      type: "Spelling",
+      language: "Japanese",
+      correct: 10,
+      wrong: 8,
+      timedOut: 2,
+      bestTime: 4.5,
+      worstTime: 9.8,
+      averageTime: 6.7
+    },
+    {
+      id: 8,
+      date: new Date(2025, 3, 22), // April 22, 2025
+      type: "Flash Cards",
+      language: "German",
+      correct: 22,
+      wrong: 3,
+      timedOut: 0,
+      bestTime: 2.1,
+      worstTime: 5.6,
+      averageTime: 3.7
+    },
+    {
+      id: 9,
+      date: new Date(2025, 3, 21), // April 21, 2025
+      type: "Multiple Choice",
+      language: "All Languages",
+      correct: 30,
+      wrong: 10,
+      timedOut: 5,
+      bestTime: 3.0,
+      worstTime: 8.5,
+      averageTime: 5.9
+    },
+    {
+      id: 10,
+      date: new Date(2025, 3, 20), // April 20, 2025
+      type: "Spelling",
+      language: "French",
+      correct: 19,
+      wrong: 6,
+      timedOut: 0,
+      bestTime: 2.9,
+      worstTime: 7.3,
+      averageTime: 4.8
+    },
+    {
+      id: 11,
+      date: new Date(2025, 3, 19), // April 19, 2025
+      type: "Multiple Choice",
+      language: "Italian",
+      correct: 16,
+      wrong: 9,
+      timedOut: 5,
+      bestTime: 3.1,
+      worstTime: 8.5,
+      averageTime: 5.9
+    },
+    {
+      id: 12,
+      date: new Date(2025, 3, 18), // April 18, 2025
+      type: "Flash Cards",
+      language: "Spanish",
+      correct: 27,
+      wrong: 3,
+      timedOut: 0,
+      bestTime: 2.5,
+      worstTime: 6.0,
+      averageTime: 4.2
+    },
+    {
+      id: 13,
+      date: new Date(2025, 3, 17), // April 17, 2025
+      type: "Spelling",
+      language: "Korean",
+      correct: 14,
+      wrong: 11,
+      timedOut: 5,
+      bestTime: 3.7,
+      worstTime: 9.1,
+      averageTime: 6.5
+    },
+    {
+      id: 14,
+      date: new Date(2025, 3, 16), // April 16, 2025
+      type: "Multiple Choice",
+      language: "Russian",
+      correct: 20,
+      wrong: 0,
+      timedOut: 0,
+      bestTime: 2.3,
+      worstTime: 5.7,
+      averageTime: 3.9
+    },
+    {
+      id: 15,
+      date: new Date(2025, 3, 15), // April 15, 2025
+      type: "Flash Cards",
+      language: "Japanese",
+      correct: 18,
+      wrong: 7,
+      timedOut: 5,
+      bestTime: 3.4,
+      worstTime: 8.9,
+      averageTime: 6.2
+    },
+    {
+      id: 16,
+      date: new Date(2025, 3, 14), // April 14, 2025
+      type: "Spelling",
+      language: "All Languages",
+      correct: 25,
+      wrong: 15,
+      timedOut: 10,
+      bestTime: 3.9,
+      worstTime: 10.2,
+      averageTime: 7.3
+    },
+    {
+      id: 17,
+      date: new Date(2025, 3, 13), // April 13, 2025
+      type: "Multiple Choice",
+      language: "German",
+      correct: 22,
+      wrong: 8,
+      timedOut: 0,
+      bestTime: 2.6,
+      worstTime: 7.1,
+      averageTime: 4.7
+    },
+    {
+      id: 18,
+      date: new Date(2025, 3, 12), // April 12, 2025
+      type: "Flash Cards",
+      language: "French",
+      correct: 20,
+      wrong: 5,
+      timedOut: 0,
+      bestTime: 2.2,
+      worstTime: 6.3,
+      averageTime: 4.1
+    },
+    {
+      id: 19,
+      date: new Date(2025, 3, 11), // April 11, 2025
+      type: "Spelling",
+      language: "Spanish",
+      correct: 17,
+      wrong: 3,
+      timedOut: 0,
+      bestTime: 2.4,
+      worstTime: 6.0,
+      averageTime: 4.0
+    },
+    {
+      id: 20,
+      date: new Date(2025, 3, 10), // April 10, 2025
+      type: "Multiple Choice",
+      language: "Italian",
+      correct: 19,
+      wrong: 6,
+      timedOut: 5,
+      bestTime: 3.2,
+      worstTime: 8.6,
+      averageTime: 5.8
+    },
+    {
+      id: 21,
+      date: new Date(2025, 3, 9), // April 9, 2025
+      type: "Flash Cards",
+      language: "All Languages",
+      correct: 32,
+      wrong: 8,
+      timedOut: 0,
+      bestTime: 2.0,
+      worstTime: 5.5,
+      averageTime: 3.6
+    },
+    {
+      id: 22,
+      date: new Date(2025, 3, 8), // April 8, 2025
+      type: "Spelling",
+      language: "Korean",
+      correct: 13,
+      wrong: 7,
+      timedOut: 0,
+      bestTime: 3.0,
+      worstTime: 7.8,
+      averageTime: 5.2
+    },
+    {
+      id: 23,
+      date: new Date(2025, 3, 7), // April 7, 2025
+      type: "Multiple Choice",
+      language: "Japanese",
+      correct: 16,
+      wrong: 4,
+      timedOut: 0,
+      bestTime: 2.5,
+      worstTime: 6.7,
+      averageTime: 4.3
+    },
+    {
+      id: 24,
+      date: new Date(2025, 3, 6), // April 6, 2025
+      type: "Flash Cards",
+      language: "Russian",
+      correct: 21,
+      wrong: 9,
+      timedOut: 0,
+      bestTime: 2.8,
+      worstTime: 7.9,
+      averageTime: 5.3
+    },
+    {
+      id: 25,
+      date: new Date(2025, 3, 5), // April 5, 2025
+      type: "Spelling",
+      language: "German",
+      correct: 18,
+      wrong: 2,
+      timedOut: 0,
+      bestTime: 2.1,
+      worstTime: 5.9,
+      averageTime: 3.9
+    }
   ];
 
   // Calculate success rate percentage
