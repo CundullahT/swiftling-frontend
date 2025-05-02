@@ -114,7 +114,7 @@ export default function Settings() {
       
       {/* Account Settings */}
       <Form {...accountForm}>
-        <form onSubmit={accountForm.handleSubmit(onAccountSubmit)} className="mb-6">
+        <form onSubmit={accountForm.handleSubmit(onAccountSubmit)} className="mb-6" noValidate>
           <Card>
             <CardContent className="pt-6">
               <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">Account Settings</h3>
@@ -159,7 +159,7 @@ export default function Settings() {
                       <FormItem>
                         <FormLabel>Email address</FormLabel>
                         <FormControl>
-                          <Input {...field} type="email" />
+                          <Input {...field} type="text" />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -188,7 +188,7 @@ export default function Settings() {
       
       {/* Password Settings */}
       <Form {...passwordForm}>
-        <form onSubmit={passwordForm.handleSubmit(onPasswordSubmit)} className="mb-6">
+        <form onSubmit={passwordForm.handleSubmit(onPasswordSubmit)} className="mb-6" noValidate>
           <Card>
             <CardContent className="pt-6">
               <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">Password Settings</h3>
