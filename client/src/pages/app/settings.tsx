@@ -37,10 +37,9 @@ export default function Settings() {
     alert("Password updated successfully!");
   };
   
-  // Handle delete account action
+  // This is a placeholder for future account deletion functionality
+  // Currently disabled as requested - just close the dialog
   const handleDeleteAccount = () => {
-    // Account deletion logic would go here
-    alert("Account deleted successfully!");
     setDeleteDialogOpen(false);
   };
 
