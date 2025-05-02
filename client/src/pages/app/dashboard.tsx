@@ -291,39 +291,29 @@ export default function Dashboard() {
             </div>
             
             {/* Latest Quiz Results */}
-            <div>
-              <h2 className="text-xl font-semibold text-secondary mb-2">Latest Quiz</h2>
-              <div className="flex gap-2">
-                {/* Correct */}
-                <div className="flex items-center flex-1 bg-green-50 dark:bg-green-950/20 p-2 rounded-lg">
-                  <div className="h-8 w-8 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
-                    <Check className="h-4 w-4 text-green-600 dark:text-green-400" />
+            <div className="flex items-center">
+              <div className="h-12 w-12 rounded-full bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center">
+                <BookOpen className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+              </div>
+              <div className="ml-4">
+                <h2 className="text-xl font-semibold text-secondary">Latest Quiz</h2>
+                <div className="flex items-center gap-3 mt-1">
+                  {/* Correct */}
+                  <div className="flex items-center">
+                    <Check className="h-4 w-4 text-green-600 mr-1" />
+                    <span className="text-lg font-bold text-green-600">{user.latestQuiz.correct}</span>
                   </div>
-                  <div className="ml-2">
-                    <p className="text-xs font-medium text-green-800 dark:text-green-300">Correct</p>
-                    <p className="text-lg font-bold text-green-700 dark:text-green-400">{user.latestQuiz.correct}</p>
+                  
+                  {/* Wrong */}
+                  <div className="flex items-center">
+                    <X className="h-4 w-4 text-rose-600 mr-1" />
+                    <span className="text-lg font-bold text-rose-600">{user.latestQuiz.wrong}</span>
                   </div>
-                </div>
-                
-                {/* Wrong */}
-                <div className="flex items-center flex-1 bg-rose-50 dark:bg-rose-950/20 p-2 rounded-lg">
-                  <div className="h-8 w-8 rounded-full bg-rose-100 dark:bg-rose-900/30 flex items-center justify-center">
-                    <X className="h-4 w-4 text-rose-600 dark:text-rose-400" />
-                  </div>
-                  <div className="ml-2">
-                    <p className="text-xs font-medium text-rose-800 dark:text-rose-300">Wrong</p>
-                    <p className="text-lg font-bold text-rose-700 dark:text-rose-400">{user.latestQuiz.wrong}</p>
-                  </div>
-                </div>
-                
-                {/* Timed Out */}
-                <div className="flex items-center flex-1 bg-amber-50 dark:bg-amber-950/20 p-2 rounded-lg">
-                  <div className="h-8 w-8 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center">
-                    <AlertCircle className="h-4 w-4 text-amber-600 dark:text-amber-400" />
-                  </div>
-                  <div className="ml-2">
-                    <p className="text-xs font-medium text-amber-800 dark:text-amber-300">Timed Out</p>
-                    <p className="text-lg font-bold text-amber-700 dark:text-amber-400">{user.latestQuiz.timedOut}</p>
+                  
+                  {/* Timed Out */}
+                  <div className="flex items-center">
+                    <AlertCircle className="h-4 w-4 text-amber-600 mr-1" />
+                    <span className="text-lg font-bold text-amber-600">{user.latestQuiz.timedOut}</span>
                   </div>
                 </div>
               </div>
