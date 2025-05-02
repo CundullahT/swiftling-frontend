@@ -273,10 +273,9 @@ export default function Settings() {
         <Card>
           <CardContent className="pt-6">
             <h3 className="text-lg leading-6 font-medium text-red-600">Delete Account</h3>
-            <div className="mt-2 max-w-xl text-sm text-gray-500">
-              <p>
-                Once you delete your account, all of your data will be permanently removed. 
-                This action cannot be undone.
+            <div className="mt-2 w-full text-sm text-gray-500">
+              <p className="whitespace-normal">
+                Once you delete your account, all of your data will be permanently removed. This action cannot be undone.
               </p>
             </div>
             <div className="mt-5">
@@ -296,7 +295,7 @@ export default function Settings() {
         <AlertDialogContent className="max-w-md">
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Account</AlertDialogTitle>
-            <AlertDialogDescription>
+            <AlertDialogDescription className="whitespace-normal">
               Are you sure you want to delete your account? This action cannot be undone and all your data, including phrases, quiz history, and settings will be permanently lost.
             </AlertDialogDescription>
           </AlertDialogHeader>
