@@ -285,7 +285,7 @@ export default function Dashboard() {
                 <Clock className="h-6 w-6 text-primary" />
               </div>
               <div className="ml-4">
-                <h2 className="text-xl font-semibold text-secondary">Best Time</h2>
+                <h2 className="text-xl font-semibold text-secondary">Latest Best Time</h2>
                 <p className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">{user.bestTime}s</p>
               </div>
             </div>
