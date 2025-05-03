@@ -84,13 +84,15 @@ export default function SignUpVerification() {
             </p>
             
             <div className="space-y-3 w-full">
-              <Button
-                variant="outline"
-                className="w-full"
-                onClick={() => window.location.reload()}
-              >
-                Try Again
-              </Button>
+              {verificationState === "timeout" && (
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  onClick={() => window.location.reload()}
+                >
+                  Try Again
+                </Button>
+              )}
               
               <Button asChild className="w-full">
                 <Link href="/login">
