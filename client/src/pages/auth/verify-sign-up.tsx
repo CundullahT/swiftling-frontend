@@ -87,7 +87,7 @@ export default function SignUpVerification() {
               <Button
                 variant="outline"
                 className="w-full"
-                onClick={() => setVerificationState("loading")}
+                onClick={() => window.location.reload()}
               >
                 Try Again
               </Button>
