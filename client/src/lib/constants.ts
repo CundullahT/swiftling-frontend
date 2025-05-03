@@ -180,6 +180,8 @@ export const QUIZ_TYPES = [
 
 export const ADAPTIVE_TIME_PRESETS = [
   // Minimum time options
+  { id: '1', name: '1 second', description: 'Minimum time per question' },
+  { id: '2', name: '2 seconds', description: 'Minimum time per question' },
   { id: '3', name: '3 seconds', description: 'Minimum time per question' },
   { id: '4', name: '4 seconds', description: 'Minimum time per question' },
   { id: '5', name: '5 seconds', description: 'Minimum time per question' },

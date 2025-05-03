@@ -502,7 +502,7 @@ export default function Quiz() {
                   <SelectValue placeholder="Select minimum time" />
                 </SelectTrigger>
                 <SelectContent>
-                  {ADAPTIVE_TIME_PRESETS.filter(t => ['3', '4', '5', '6', '7', '8', '9', '10'].includes(t.id)).map((time) => (
+                  {ADAPTIVE_TIME_PRESETS.filter(t => ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'].includes(t.id)).map((time) => (
                     <SelectItem key={time.id} value={time.id}>
                       {time.name}
                     </SelectItem>
