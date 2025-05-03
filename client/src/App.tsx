@@ -15,6 +15,8 @@ import Settings from "@/pages/app/settings";
 
 // Auth Pages
 import ForgotPassword from "@/pages/auth/forgot-password";
+import PasswordChangeVerification from "@/pages/auth/verify-pass-change";
+import SignUpVerification from "@/pages/auth/verify-sign-up";
 
 // Layout Components
 import Header from "@/components/layout/header";
@@ -61,6 +63,8 @@ function App() {
                 
                 {/* Auth Routes */}
                 <Route path="/auth/forgot-password" component={ForgotPassword} />
+                <Route path="/auth/verify-pass-change" component={PasswordChangeVerification} />
+                <Route path="/auth/verify-sign-up" component={SignUpVerification} />
                 
                 {/* Fallback to 404 */}
                 <Route component={NotFound} />
