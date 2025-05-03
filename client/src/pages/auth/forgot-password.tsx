@@ -14,6 +14,15 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
+import { useState } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 // Validation schema for the forgot password form
 const forgotPasswordSchema = z.object({
@@ -26,6 +35,8 @@ type ForgotPasswordFormValues = z.infer<typeof forgotPasswordSchema>;
 
 export default function ForgotPassword() {
   const { toast } = useToast();
+  const [showDialog, setShowDialog] = useState(false);
+  const [userEmail, setUserEmail] = useState("");
   
   // Setup form with validation
   const form = useForm<ForgotPasswordFormValues>({
@@ -37,11 +48,23 @@ export default function ForgotPassword() {
 
   // Placeholder function for password reset - validation only, no actual functionality
   const onSubmit = (data: ForgotPasswordFormValues) => {
+    // Store the email to display in the dialog
+    setUserEmail(data.email);
+    // Show the confirmation dialog
+    setShowDialog(true);
+    
     // This would trigger the password reset email in a real implementation
+    // The toast is now shown when the dialog is closed
+  };
+
+  // Handle dialog close
+  const handleDialogClose = () => {
+    setShowDialog(false);
     toast({
-      title: "Reset Link Sent",
-      description: "If your email is in our system, you will receive a reset link shortly.",
+      title: "Email Sent",
+      description: "Check your inbox for the reset link",
     });
+    form.reset();
   };
 
   return (
@@ -80,7 +103,7 @@ export default function ForgotPassword() {
                 />
 
                 <Button type="submit" className="w-full">
-                  Send reset link
+                  Send Reset Link
                 </Button>
               </form>
             </Form>
@@ -96,6 +119,24 @@ export default function ForgotPassword() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Reset Password Confirmation Dialog */}
+      <Dialog open={showDialog} onOpenChange={setShowDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Reset Link Sent</DialogTitle>
+            <DialogDescription>
+              A password reset link has been sent to <span className="font-semibold">{userEmail}</span>.
+              Please check both your inbox and spam folders for the email.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="sm:justify-center">
+            <Button onClick={handleDialogClose}>
+              Got It
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
