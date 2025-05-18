@@ -81,7 +81,8 @@ export default function PasswordChangeVerification() {
       }
     }, 10000);
     
-    return () => clearTimeout(timeoutTimer);
+    // The timeout will not clear automatically, so we need to keep it active
+    // This will properly trigger the timeout if the loading state persists
   };
   
   // Content to display based on the verification state
