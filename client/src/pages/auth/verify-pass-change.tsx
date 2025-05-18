@@ -154,7 +154,11 @@ export default function PasswordChangeVerification() {
                   )}
                 />
                 
-                <Button type="submit" className="w-full">
+                <Button 
+                  type="submit" 
+                  className="w-full" 
+                  disabled={!form.formState.isValid || form.formState.isSubmitting}
+                >
                   Set New Password
                 </Button>
               </form>

@@ -263,7 +263,10 @@ export default function Settings() {
               >
                 Cancel
               </Button>
-              <Button type="submit">
+              <Button 
+                type="submit"
+                disabled={!passwordForm.formState.isValid || passwordForm.formState.isSubmitting}
+              >
                 Save Changes
               </Button>
             </div>
