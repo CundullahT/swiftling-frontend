@@ -73,16 +73,10 @@ export default function PasswordChangeVerification() {
     console.log(`Submitting new password with token: ${token}`);
     console.log(`New password: ${data.password}`);
     
-    // Simulate timeout after 10 seconds (for demonstration only)
-    // In real implementation, this would be a timeout on API call or response handler
-    const timeoutTimer = setTimeout(() => {
-      if (verificationState === "loading") {
-        setVerificationState("timeout");
-      }
+    // Use setTimeout directly to change state after 10 seconds
+    setTimeout(() => {
+      setVerificationState("timeout");
     }, 10000);
-    
-    // The timeout will not clear automatically, so we need to keep it active
-    // This will properly trigger the timeout if the loading state persists
   };
   
   // Content to display based on the verification state
