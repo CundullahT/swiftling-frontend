@@ -47,6 +47,7 @@ export default function PasswordChangeVerification() {
       password: "",
       confirmPassword: "",
     },
+    mode: "onChange", // Show errors while typing
   });
 
   // Check for token in URL on page load

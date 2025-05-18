@@ -91,6 +91,7 @@ export default function Settings() {
       newPassword: "",
       confirmPassword: "",
     },
+    mode: "onChange", // Show errors while typing
   });
   
   // Handle account form submission - validation only, no actual functionality
