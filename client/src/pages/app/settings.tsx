@@ -229,7 +229,14 @@ export default function Settings() {
                       <FormItem>
                         <FormLabel>New password</FormLabel>
                         <FormControl>
-                          <PasswordInput {...field} />
+                          <PasswordInput 
+                            {...field} 
+                            onChange={(e) => {
+                              field.onChange(e);
+                              // Trigger validation for confirmPassword when newPassword changes
+                              passwordForm.trigger("confirmPassword");
+                            }}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>

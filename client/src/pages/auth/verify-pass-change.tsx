@@ -134,7 +134,14 @@ export default function PasswordChangeVerification() {
                     <FormItem>
                       <FormLabel>New Password</FormLabel>
                       <FormControl>
-                        <PasswordInput {...field} />
+                        <PasswordInput 
+                          {...field} 
+                          onChange={(e) => {
+                            field.onChange(e);
+                            // Trigger validation for confirmPassword when password changes
+                            form.trigger("confirmPassword");
+                          }}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
