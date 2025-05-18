@@ -1,0 +1,65 @@
+Terms of Service
+
+Effective Date: May 18, 2025
+
+Acceptance of TermsBy accessing or using SwiftLing, you agree to these Terms of Service, which form a binding agreement between you and the individual developer of SwiftLing.
+
+Developer Account & DistributionSwiftLing is published under a personal developer account on Google Play and Apple’s App Store. You must comply with both platforms’ distribution and content guidelines.
+
+Account Registration & AuthenticationYou register by providing your first name, last name, email address, and password. SwiftLing uses session cookies to maintain authentication state, CSRF tokens to secure requests, and localStorage/sessionStorage to store user preferences (e.g., theme, language).
+
+User ConductYou agree not to:
+
+Violate applicable laws or third‑party rights.
+
+Interfere with SwiftLing’s security or operation.
+
+Attempt unauthorized access to any account.
+
+Intellectual PropertyAll code, graphics, UI elements, and content are owned or licensed by the individual developer. You may not reproduce, distribute, or create derivative works without express written permission.
+
+Disclaimers & Limitation of LiabilitySwiftLing is provided “as is” and “as available.” To the fullest extent permitted by law, the developer disclaims all warranties and shall not be liable for any indirect, incidental, or consequential damages arising from your use of SwiftLing.
+
+Governing Law & Dispute ResolutionThese Terms are governed by the laws of your country of residence. Any disputes will be resolved by binding arbitration in your jurisdiction, unless prohibited by local law.
+
+Changes to TermsThese Terms may be updated at any time. The “Effective Date” header reflects the most recent revision. Continued use constitutes acceptance of the updated Terms.
+
+Contact InformationFor any questions regarding these Terms, contact:SwiftLing SupportEmail: support@swiftling.com
+
+Privacy Policy
+
+Effective Date: May 18, 2025
+
+Information We Collect
+
+User‑Provided: First name, last name, email address, password.
+
+Automatically: Session cookies, CSRF tokens, localStorage/sessionStorage for interface preferences.
+
+Purpose of ProcessingYour data is processed to:
+
+Authenticate and manage your account.
+
+Provide, maintain, and improve SwiftLing services.
+
+Communicate updates and support information.
+
+Comply with legal obligations.
+
+Cookies & Tracking TechnologiesSwiftLing sets session cookies to maintain your login state and CSRF tokens to secure form submissions. LocalStorage/sessionStorage retain user preferences, such as theme and language.
+
+Data SecurityIndustry‑standard measures are in place—encryption in transit and at rest, access controls, and regular security assessments—to protect your personal data.
+
+Third‑Party ServicesSwiftLing integrates with select third‑party services (e.g., analytics, email providers). All partners adhere to equivalent data protection standards.
+
+Data RetentionPersonal data is retained only as long as necessary to provide services, comply with legal obligations, or resolve disputes.
+
+Your RightsSubject to local law, you may: access, correct, or delete your data; restrict or object to processing; and receive a portable copy of your data. You may withdraw consent where processing is based on consent.
+
+Children’s PrivacySwiftLing is not directed to children under 13. The developer does not knowingly collect data from minors, and any such data discovered is promptly deleted.
+
+International TransfersYour data may be processed in countries outside your residence. Appropriate safeguards—such as standard contractual clauses—ensure adequate protection.
+
+Changes to This PolicyThis Privacy Policy may be updated periodically. The “Effective Date” header indicates the latest version. Continued use implies acceptance of any updates.
+
+Contact InformationFor privacy inquiries, contact:SwiftLing Privacy TeamEmail: privacy@swiftling.com

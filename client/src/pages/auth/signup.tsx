@@ -211,7 +211,7 @@ export default function Signup() {
         
         <div className="mt-4 text-center">
           <p className="text-xs text-gray-500">
-            By signing up, you agree to our Terms of Service and Privacy Policy
+            By signing up, you agree to our <Link href="/legal/terms-of-service" className="text-primary hover:underline">Terms of Service</Link> and <Link href="/legal/privacy-policy" className="text-primary hover:underline">Privacy Policy</Link>
           </p>
         </div>
       </div>

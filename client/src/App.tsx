@@ -17,8 +17,11 @@ import Settings from "@/pages/app/settings";
 import ForgotPassword from "@/pages/auth/forgot-password";
 import PasswordChangeVerification from "@/pages/auth/verify-pass-change";
 import SignUpVerification from "@/pages/auth/verify-sign-up";
-// Import the Signup page directly using the full relative path
 import Signup from "./pages/auth/signup";
+
+// Legal Pages
+import TermsOfService from "./pages/legal/terms-of-service";
+import PrivacyPolicy from "./pages/legal/privacy-policy";
 
 // Layout Components
 import Header from "@/components/layout/header";
@@ -68,6 +71,10 @@ function App() {
                 <Route path="/auth/verify-pass-change" component={PasswordChangeVerification} />
                 <Route path="/auth/verify-sign-up" component={SignUpVerification} />
                 <Route path="/signup" component={Signup} />
+                
+                {/* Legal Routes */}
+                <Route path="/legal/terms-of-service" component={TermsOfService} />
+                <Route path="/legal/privacy-policy" component={PrivacyPolicy} />
                 
                 {/* Fallback to 404 */}
                 <Route component={NotFound} />
