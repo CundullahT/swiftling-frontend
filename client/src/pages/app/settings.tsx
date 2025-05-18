@@ -29,14 +29,14 @@ import { useToast } from "@/hooks/use-toast";
 
 // Validation schema for account form
 const accountFormSchema = z.object({
-  firstName: z.string().min(2, {
-    message: "First name must be at least 2 characters.",
-  }),
-  lastName: z.string().min(2, {
-    message: "Last name must be at least 2 characters.",
-  }),
+  firstName: z.string()
+    .min(2, { message: "First name must be at least 2 characters" })
+    .max(24, { message: "First name must be less than 24 characters" }),
+  lastName: z.string()
+    .min(2, { message: "Last name must be at least 2 characters" })
+    .max(24, { message: "Last name must be less than 24 characters" }),
   email: z.string().email({
-    message: "Please enter a valid email address.",
+    message: "Please enter a valid email address",
   }),
 });
 
@@ -73,15 +73,29 @@ export default function Settings() {
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   
+  // Default account values
+  const defaultAccountValues = {
+    firstName: "Alex",
+    lastName: "Johnson",
+    email: "alex@example.com",
+  };
+
   // Account form setup
   const accountForm = useForm<AccountFormValues>({
     resolver: zodResolver(accountFormSchema),
-    defaultValues: {
-      firstName: "Alex",
-      lastName: "Johnson",
-      email: "alex@example.com",
-    },
+    defaultValues: defaultAccountValues,
+    mode: "onChange", // Enable real-time validation
   });
+  
+  // Check if form values are different from defaults
+  const isAccountFormChanged = () => {
+    const values = accountForm.getValues();
+    return (
+      values.firstName !== defaultAccountValues.firstName ||
+      values.lastName !== defaultAccountValues.lastName ||
+      values.email !== defaultAccountValues.email
+    );
+  };
   
   // Password form setup
   const passwordForm = useForm<PasswordFormValues>({
@@ -183,7 +197,10 @@ export default function Settings() {
               >
                 Cancel
               </Button>
-              <Button type="submit">
+              <Button 
+                type="submit"
+                disabled={!accountForm.formState.isValid || accountForm.formState.isSubmitting}
+              >
                 Save Changes
               </Button>
             </div>
