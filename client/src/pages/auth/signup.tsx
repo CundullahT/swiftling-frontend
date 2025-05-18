@@ -221,12 +221,10 @@ export default function Signup() {
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Verification Email Sent</AlertDialogTitle>
-            <AlertDialogDescription>
-              We've sent a verification email to your inbox. Please check your email and follow the instructions to verify your account before logging in.
+            <AlertDialogDescription className="space-y-4">
+              <span>We've sent a verification email to your inbox. Please check your email and follow the instructions to verify your account before logging in.</span>
               
-              <div className="mt-2">
-                <p className="text-sm">If you don't see the email in your inbox, please check your spam or junk folder.</p>
-              </div>
+              <span className="block text-sm">If you don't see the email in your inbox, please check your spam or junk folder.</span>
             </AlertDialogDescription>
           </AlertDialogHeader>
           <div className="flex justify-center">
