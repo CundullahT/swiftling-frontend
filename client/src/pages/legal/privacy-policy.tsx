@@ -13,12 +13,18 @@ export default function PrivacyPolicy() {
             Privacy Policy
           </h2>
           <div className="mt-4 flex justify-center space-x-4">
-            <Button variant="outline" asChild>
+            <Button 
+              className="bg-[#1dccbe] hover:bg-[#19b8ab] text-white border-0"
+              asChild
+            >
               <Link href="/signup">
                 Sign Up
               </Link>
             </Button>
-            <Button variant="secondary" asChild>
+            <Button 
+              className="bg-white border-[#1dccbe] border text-[#1dccbe] hover:bg-[#f0f9f8]"
+              asChild
+            >
               <Link href="/login">
                 Log In
               </Link>
