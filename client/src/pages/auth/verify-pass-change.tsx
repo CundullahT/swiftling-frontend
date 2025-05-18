@@ -7,20 +7,21 @@ import { useState, useEffect } from "react";
 type VerificationState = "loading" | "success" | "error" | "timeout";
 
 export default function PasswordChangeVerification() {
-  const [verificationState, setVerificationState] = useState<VerificationState>("loading");
+  // Set initial state to success for demonstration
+  const [verificationState, setVerificationState] = useState<VerificationState>("success");
   
-  // Simulate a timeout after 10 seconds
+  // Comment out the timeout for now to keep showing success state
+  /*
   useEffect(() => {
-    // This timer simulates a timeout after 10 seconds
     const timeoutTimer = setTimeout(() => {
       if (verificationState === "loading") {
         setVerificationState("timeout");
       }
     }, 10000);
     
-    // Clean up the timer when the component unmounts
     return () => clearTimeout(timeoutTimer);
   }, [verificationState]);
+  */
   
   // Content to display based on the verification state
   const renderContent = () => {
