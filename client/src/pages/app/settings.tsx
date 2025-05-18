@@ -109,15 +109,16 @@ export default function Settings() {
       title: "Password Updated",
       description: "Password validated successfully. (Functionality disabled)",
     });
+    passwordForm.reset();
   };
 
   return (
-    <div className="py-6 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto pb-20 md:pb-6">
-      <h1 className="text-3xl font-semibold text-secondary bg-gradient-to-r from-primary/90 to-secondary bg-clip-text text-transparent mb-6">Settings</h1>
+    <div className="container mx-auto px-4 py-8 max-w-4xl">
+      <h1 className="text-3xl font-bold mb-8">Settings</h1>
       
       {/* Account Settings */}
       <Form {...accountForm}>
-        <form onSubmit={accountForm.handleSubmit(onAccountSubmit)} className="mb-6" noValidate>
+        <form onSubmit={accountForm.handleSubmit(onAccountSubmit)} className="mb-8" noValidate>
           <Card>
             <CardContent className="pt-6">
               <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">Account Settings</h3>
@@ -162,7 +163,7 @@ export default function Settings() {
                       <FormItem>
                         <FormLabel>Email address</FormLabel>
                         <FormControl>
-                          <Input {...field} type="text" />
+                          <Input {...field} type="email" />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -211,7 +212,7 @@ export default function Settings() {
                           </GuardedLink>
                         </div>
                         <FormControl>
-                          <Input {...field} type="password" />
+                          <PasswordInput {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -227,7 +228,7 @@ export default function Settings() {
                       <FormItem>
                         <FormLabel>New password</FormLabel>
                         <FormControl>
-                          <Input {...field} type="password" />
+                          <PasswordInput {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -243,7 +244,7 @@ export default function Settings() {
                       <FormItem>
                         <FormLabel>Confirm password</FormLabel>
                         <FormControl>
-                          <Input {...field} type="password" />
+                          <PasswordInput {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
