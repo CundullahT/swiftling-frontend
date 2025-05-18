@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { GuardedLink } from "@/components/ui/guarded-link";
 import { Eye, EyeOff } from "lucide-react";
+import { PasswordInput } from "@/components/ui/password-input";
 import {
   Form,
   FormControl,
