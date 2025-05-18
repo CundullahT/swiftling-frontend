@@ -84,7 +84,7 @@ export default function TermsOfService() {
             <section className="space-y-3">
               <h3 className="text-xl font-semibold text-gray-800">Contact Information</h3>
               <p>For any questions regarding these Terms, contact:</p>
-              <p>SwiftLing Support<br />Email: support@swiftling.com</p>
+              <p>SwiftLing Support<br />Email: support@swiftlingapp.com</p>
             </section>
           </CardContent>
         </Card>

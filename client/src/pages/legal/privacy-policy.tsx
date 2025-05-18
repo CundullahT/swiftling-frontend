@@ -96,7 +96,7 @@ export default function PrivacyPolicy() {
             <section className="space-y-3">
               <h3 className="text-xl font-semibold text-gray-800">Contact Information</h3>
               <p>For privacy inquiries, contact:</p>
-              <p>SwiftLing Privacy Team<br />Email: privacy@swiftling.com</p>
+              <p>SwiftLing Support<br />Email: support@swiftlingapp.com</p>
             </section>
           </CardContent>
         </Card>
