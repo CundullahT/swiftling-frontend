@@ -68,6 +68,9 @@ export default function Settings() {
   
   // State for delete account confirmation dialog
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   
   // Account form setup
   const accountForm = useForm<AccountFormValues>({
