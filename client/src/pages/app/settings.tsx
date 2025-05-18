@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuthRedirect } from "@/hooks/use-auth-redirect";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -72,6 +72,7 @@ export default function Settings() {
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [accountFormChanged, setAccountFormChanged] = useState(false);
   
   // Default account values
   const defaultAccountValues = {
@@ -87,15 +88,19 @@ export default function Settings() {
     mode: "onChange", // Enable real-time validation
   });
   
-  // Check if form values are different from defaults
-  const isAccountFormChanged = () => {
-    const values = accountForm.getValues();
-    return (
-      values.firstName !== defaultAccountValues.firstName ||
-      values.lastName !== defaultAccountValues.lastName ||
-      values.email !== defaultAccountValues.email
-    );
-  };
+  // Watch form values for changes to enable/disable the Save button
+  useEffect(() => {
+    const subscription = accountForm.watch((value) => {
+      const hasChanges = 
+        value.firstName !== defaultAccountValues.firstName ||
+        value.lastName !== defaultAccountValues.lastName ||
+        value.email !== defaultAccountValues.email;
+      
+      setAccountFormChanged(hasChanges);
+    });
+    
+    return () => subscription.unsubscribe();
+  }, [accountForm, defaultAccountValues]);
   
   // Password form setup
   const passwordForm = useForm<PasswordFormValues>({
@@ -199,7 +204,7 @@ export default function Settings() {
               </Button>
               <Button 
                 type="submit"
-                disabled={!accountForm.formState.isValid || accountForm.formState.isSubmitting}
+                disabled={!accountForm.formState.isValid || accountForm.formState.isSubmitting || !accountFormChanged}
               >
                 Save Changes
               </Button>
