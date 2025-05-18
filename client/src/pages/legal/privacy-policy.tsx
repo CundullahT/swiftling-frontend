@@ -12,11 +12,15 @@ export default function PrivacyPolicy() {
           <h2 className="mt-2 text-center text-3xl font-extrabold text-gray-900">
             Privacy Policy
           </h2>
-          <div className="mt-2 flex justify-center">
-            <Button variant="ghost" size="sm" asChild className="flex items-center">
-              <Link href="/signup" className="flex items-center">
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Back to Signup
+          <div className="mt-4 flex justify-center space-x-4">
+            <Button variant="outline" asChild>
+              <Link href="/signup">
+                Sign Up
+              </Link>
+            </Button>
+            <Button variant="secondary" asChild>
+              <Link href="/login">
+                Log In
               </Link>
             </Button>
           </div>
