@@ -59,17 +59,27 @@ export default function AddPhrase() {
     tagLength: false
   });
   
+  // Track input values for validation
+  const [phraseValue, setPhraseValue] = useState("");
+  const [translationValue, setTranslationValue] = useState("");
+  
+  // Check if form is valid to enable/disable save button
+  const isFormValid = () => {
+    return phraseValue.trim() !== "" && 
+           translationValue.trim() !== "" && 
+           sourceLanguage !== "" && 
+           targetLanguage !== "" &&
+           !formErrors.tagLength;
+  };
+  
   // Handle form validation
   const validateForm = () => {
-    const phraseInput = document.getElementById('phrase') as HTMLInputElement;
-    const translationInput = document.getElementById('translation') as HTMLInputElement;
-    
     const errors = {
-      phrase: !phraseInput.value.trim(),
-      translation: !translationInput.value.trim(),
+      phrase: !phraseValue.trim(),
+      translation: !translationValue.trim(),
       sourceLanguage: !sourceLanguage,
       targetLanguage: !targetLanguage,
-      tagLength: false // This is handled directly in the addTag function
+      tagLength: formErrors.tagLength // Preserve existing tag length error
     };
     
     setFormErrors(errors);
@@ -112,6 +122,11 @@ export default function AddPhrase() {
     const value = e.target.value;
     setSourceLanguageInput(value);
     
+    // Update form validation as user types
+    if (formErrors.sourceLanguage && sourceLanguage) {
+      setFormErrors({...formErrors, sourceLanguage: false});
+    }
+    
     if (value.trim()) {
       // Filter suggestions based on input
       const filtered = LANGUAGES.filter(lang => 
@@ -127,6 +142,11 @@ export default function AddPhrase() {
   const handleTargetLanguageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setTargetLanguageInput(value);
+    
+    // Update form validation as user types
+    if (formErrors.targetLanguage && targetLanguage) {
+      setFormErrors({...formErrors, targetLanguage: false});
+    }
     
     if (value.trim()) {
       // Filter suggestions based on input
@@ -257,10 +277,15 @@ export default function AddPhrase() {
                     id="phrase"
                     name="phrase"
                     placeholder="Enter phrase to learn"
+                    value={phraseValue}
                     className={formErrors.phrase ? "border-red-500" : ""}
-                    onChange={() => {
-                      if (formErrors.phrase) {
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      setPhraseValue(value);
+                      if (value.trim() && formErrors.phrase) {
                         setFormErrors({...formErrors, phrase: false});
+                      } else if (!value.trim() && !formErrors.phrase) {
+                        setFormErrors({...formErrors, phrase: true});
                       }
                     }}
                   />
@@ -357,10 +382,15 @@ export default function AddPhrase() {
                     id="translation"
                     name="translation"
                     placeholder="Enter translation in your language"
+                    value={translationValue}
                     className={formErrors.translation ? "border-red-500" : ""}
-                    onChange={() => {
-                      if (formErrors.translation) {
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      setTranslationValue(value);
+                      if (value.trim() && formErrors.translation) {
                         setFormErrors({...formErrors, translation: false});
+                      } else if (!value.trim() && !formErrors.translation) {
+                        setFormErrors({...formErrors, translation: true});
                       }
                     }}
                   />
@@ -567,6 +597,10 @@ export default function AddPhrase() {
                   // Clear tag input field
                   setTagInput("");
                   
+                  // Reset tracked input values
+                  setPhraseValue("");
+                  setTranslationValue("");
+                  
                   // Reset any errors
                   setFormErrors({
                     phrase: false,
@@ -579,7 +613,13 @@ export default function AddPhrase() {
               >
                 Clear
               </Button>
-              <Button type="submit">Save</Button>
+              <Button 
+                type="submit" 
+                disabled={!isFormValid()}
+                className={!isFormValid() ? "opacity-50 cursor-not-allowed" : ""}
+              >
+                Save
+              </Button>
             </div>
           </form>
         </CardContent>
