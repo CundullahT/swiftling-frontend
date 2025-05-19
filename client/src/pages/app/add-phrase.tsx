@@ -240,7 +240,7 @@ export default function AddPhrase() {
           <CheckCircle2 className="h-5 w-5 text-green-600" />
           <AlertTitle className="text-green-800">Phrase Added Successfully!</AlertTitle>
           <AlertDescription className="text-green-700">
-            Your new phrase has been saved. You can continue adding more phrases or you can view your newly added phrase in the <GuardedLink href="/my-list" className="text-primary hover:underline font-medium">My Phrases</GuardedLink> page.
+            Your new phrase has been saved. You can continue adding more phrases or you can view your newly added phrase in the <GuardedLink href="/my-phrases" className="text-primary hover:underline font-medium">My Phrases</GuardedLink> page.
           </AlertDescription>
         </Alert>
       )}
@@ -540,7 +540,7 @@ export default function AddPhrase() {
             </div>
 
             <div className="flex justify-end space-x-3 mt-6">
-              <GuardedLink href="/my-list">
+              <GuardedLink href="/my-phrases">
                 <Button 
                   type="button" 
                   variant="outline"
