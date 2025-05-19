@@ -272,7 +272,7 @@ export default function AddPhrase() {
               {/* Row 1: Phrase & Source Language */}
               <div className="sm:col-span-3">
                 <div className="space-y-2">
-                  <Label htmlFor="phrase">Phrase</Label>
+                  <Label htmlFor="phrase">Phrase to Learn</Label>
                   <Input 
                     id="phrase"
                     name="phrase"
@@ -296,7 +296,7 @@ export default function AddPhrase() {
               </div>
               <div className="sm:col-span-1">
                 <div className="space-y-2">
-                  <Label htmlFor="sourceLanguage">Language</Label>
+                  <Label htmlFor="sourceLanguage">Language of the Phrase</Label>
                   <div className="relative">
                     <Input 
                       id="sourceLanguage"
@@ -377,11 +377,11 @@ export default function AddPhrase() {
               {/* Row 2: Translation & Target Language */}
               <div className="sm:col-span-3">
                 <div className="space-y-2">
-                  <Label htmlFor="translation">Translation</Label>
+                  <Label htmlFor="translation">Meaning of the Phrase</Label>
                   <Input 
                     id="translation"
                     name="translation"
-                    placeholder="Enter translation in your language"
+                    placeholder="Enter meaning in your language"
                     value={translationValue}
                     className={formErrors.translation ? "border-red-500" : ""}
                     onChange={(e) => {
@@ -401,7 +401,7 @@ export default function AddPhrase() {
               </div>
               <div className="sm:col-span-1">
                 <div className="space-y-2">
-                  <Label htmlFor="targetLanguage">Language</Label>
+                  <Label htmlFor="targetLanguage">Language of the Meaning</Label>
                   <div className="relative">
                     <Input 
                       id="targetLanguage"
