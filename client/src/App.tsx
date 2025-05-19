@@ -43,8 +43,8 @@ function App() {
   // Use scroll-to-top hook
   useScrollTop();
 
-  // Check if current path is an auth route, signup page, or legal page
-  const isAuthRoute = location.startsWith('/auth/') || location === '/signup' || location.startsWith('/legal/');
+  // Check if current path is an auth route, signup/login page, or legal page
+  const isAuthRoute = location.startsWith('/auth/') || location === '/signup' || location === '/login' || location.startsWith('/legal/');
 
   return (
     <QueryClientProvider client={queryClient}>
