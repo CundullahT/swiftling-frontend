@@ -98,10 +98,13 @@ export default function AddPhrase() {
       // Show success message
       setShowSuccessMessage(true);
       
-      // Hide the success message after 3 seconds
+      // Scroll to top of the page to show success message
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      
+      // Hide the success message after 6 seconds (longer display time)
       setTimeout(() => {
         setShowSuccessMessage(false);
-      }, 3000);
+      }, 6000);
       
       // Clear form fields for adding another phrase
       const phraseInput = document.getElementById('phrase') as HTMLInputElement;
