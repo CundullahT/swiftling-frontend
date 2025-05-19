@@ -266,7 +266,7 @@ export default function AddPhrase() {
                     )}
 
                     {/* Source language suggestions */}
-                    {filteredSourceLanguages.length > 0 && document.activeElement === document.getElementById('sourceLanguage') && (
+                    {filteredSourceLanguages.length > 0 && isSourceFocused && (
                       <div className="absolute z-20 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base overflow-auto focus:outline-none sm:text-sm">
                         <ul className="divide-y divide-gray-200">
                           {filteredSourceLanguages.map((language) => (
@@ -344,7 +344,14 @@ export default function AddPhrase() {
                           setFormErrors({...formErrors, targetLanguage: false});
                         }
                       }}
-                      onFocus={() => setFilteredTargetLanguages(LANGUAGES)}
+                      onFocus={() => {
+                        setFilteredTargetLanguages(LANGUAGES);
+                        setIsTargetFocused(true);
+                      }}
+                      onBlur={() => {
+                        // Small delay to allow clicking on dropdown items
+                        setTimeout(() => setIsTargetFocused(false), 200);
+                      }}
                       onKeyDown={(e) => handleLanguageKeyDown('target', e)}
                       className={formErrors.targetLanguage && !targetLanguage ? "border-red-500" : ""}
                     />
@@ -359,7 +366,7 @@ export default function AddPhrase() {
                     )}
 
                     {/* Target language suggestions */}
-                    {filteredTargetLanguages.length > 0 && (
+                    {filteredTargetLanguages.length > 0 && isTargetFocused && (
                       <div className="absolute z-20 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base overflow-auto focus:outline-none sm:text-sm">
                         <ul className="divide-y divide-gray-200">
                           {filteredTargetLanguages.map((language) => (
