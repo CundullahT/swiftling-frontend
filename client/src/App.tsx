@@ -18,6 +18,7 @@ import ForgotPassword from "@/pages/auth/forgot-password";
 import PasswordChangeVerification from "@/pages/auth/verify-pass-change";
 import SignUpVerification from "@/pages/auth/verify-sign-up";
 import Signup from "./pages/auth/signup";
+import Login from "./pages/auth/login";
 
 // Legal Pages
 import TermsOfService from "./pages/legal/terms-of-service";
@@ -71,6 +72,7 @@ function App() {
                 <Route path="/auth/verify-pass-change" component={PasswordChangeVerification} />
                 <Route path="/auth/verify-sign-up" component={SignUpVerification} />
                 <Route path="/signup" component={Signup} />
+                <Route path="/login" component={Login} />
                 
                 {/* Legal Routes */}
                 <Route path="/legal/terms-of-service" component={TermsOfService} />
