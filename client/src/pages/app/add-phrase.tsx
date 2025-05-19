@@ -239,11 +239,8 @@ export default function AddPhrase() {
         <Alert className="mb-6 border-green-500 bg-green-50">
           <CheckCircle2 className="h-5 w-5 text-green-600" />
           <AlertTitle className="text-green-800">Phrase Added Successfully!</AlertTitle>
-          <AlertDescription className="text-green-700 flex justify-between items-center">
-            <span>Your new phrase has been saved. You can continue adding more phrases.</span>
-            <GuardedLink href="/my-list" className="text-primary hover:underline font-medium ml-2">
-              View My Phrases
-            </GuardedLink>
+          <AlertDescription className="text-green-700">
+            Your new phrase has been saved. You can continue adding more phrases or you can view your newly added phrase in the <GuardedLink href="/my-list" className="text-primary hover:underline font-medium">My Phrases</GuardedLink> page.
           </AlertDescription>
         </Alert>
       )}
