@@ -52,7 +52,7 @@ export function QuizNavigationDialog({
             onClick={onProceed}
             className="sm:flex-1 bg-rose-600 hover:bg-rose-600/90 text-white"
           >
-            Leave Anyway
+            Leave Without Saving
           </Button>
         </AlertDialogFooter>
       </AlertDialogContent>
