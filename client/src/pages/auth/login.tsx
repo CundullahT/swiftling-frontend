@@ -128,7 +128,7 @@ export default function Login() {
         
         <div className="mt-4 text-center">
           <p className="text-xs text-gray-500">
-            By logging in, you agree to our <Link href="/legal/terms-of-service" className="text-primary hover:underline">Terms of Service</Link> and <Link href="/legal/privacy-policy" className="text-primary hover:underline">Privacy Policy</Link>
+            <Link href="/legal/terms-of-service" className="text-primary hover:underline">Terms of Service</Link> • <Link href="/legal/privacy-policy" className="text-primary hover:underline">Privacy Policy</Link>
           </p>
         </div>
       </div>
