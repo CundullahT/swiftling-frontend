@@ -106,17 +106,24 @@ export default function AddPhrase() {
         setShowSuccessMessage(false);
       }, 6000);
       
-      // Clear form fields for adding another phrase
-      const phraseInput = document.getElementById('phrase') as HTMLInputElement;
-      const translationInput = document.getElementById('translation') as HTMLInputElement;
-      const notesInput = document.getElementById('notes') as HTMLTextAreaElement;
+      // Reset form completely for adding another phrase
+      // Clear input field values
+      setPhraseValue("");
+      setTranslationValue("");
       
-      if (phraseInput) phraseInput.value = '';
-      if (translationInput) translationInput.value = '';
+      // Clear notes field
+      const notesInput = document.getElementById('notes') as HTMLTextAreaElement;
       if (notesInput) notesInput.value = '';
       
-      // Keep languages but clear tags
+      // Clear language selections
+      setSourceLanguage("");
+      setTargetLanguage("");
+      setSourceLanguageInput("");
+      setTargetLanguageInput("");
+      
+      // Clear tags
       setSelectedTags([]);
+      setTagInput("");
     }
   };
 
@@ -577,32 +584,30 @@ export default function AddPhrase() {
                 type="button" 
                 variant="outline"
                 onClick={() => {
-                  // Clear form fields
-                  const phraseInput = document.getElementById('phrase') as HTMLInputElement;
-                  const translationInput = document.getElementById('translation') as HTMLInputElement;
-                  const notesInput = document.getElementById('notes') as HTMLTextAreaElement;
+                  // Reset form completely
+                  // Clear input field values
+                  setPhraseValue("");
+                  setTranslationValue("");
                   
-                  if (phraseInput) phraseInput.value = '';
-                  if (translationInput) translationInput.value = '';
+                  // Clear notes field
+                  const notesInput = document.getElementById('notes') as HTMLTextAreaElement;
                   if (notesInput) notesInput.value = '';
                   
                   // Clear tags
                   setSelectedTags([]);
+                  setTagInput("");
                   
-                  // Clear language selections too
+                  // Clear language selections
                   setSourceLanguage("");
                   setTargetLanguage("");
-                  
-                  // Clear any input in language fields
                   setSourceLanguageInput("");
                   setTargetLanguageInput("");
                   
-                  // Clear tag input field
-                  setTagInput("");
-                  
-                  // Reset tracked input values
-                  setPhraseValue("");
-                  setTranslationValue("");
+                  // Focus on the first field for better user experience
+                  const phraseInput = document.getElementById('phrase') as HTMLInputElement;
+                  if (phraseInput) {
+                    phraseInput.focus();
+                  }
                   
                   // Reset any errors
                   setFormErrors({
