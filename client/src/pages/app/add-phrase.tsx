@@ -41,6 +41,8 @@ export default function AddPhrase() {
   const [targetLanguageInput, setTargetLanguageInput] = useState("");
   const [filteredSourceLanguages, setFilteredSourceLanguages] = useState<typeof LANGUAGES>([]);
   const [filteredTargetLanguages, setFilteredTargetLanguages] = useState<typeof LANGUAGES>([]);
+  const [isSourceFocused, setIsSourceFocused] = useState(false);
+  const [isTargetFocused, setIsTargetFocused] = useState(false);
   
   // Form validation states
   const [formErrors, setFormErrors] = useState({
@@ -90,7 +92,8 @@ export default function AddPhrase() {
       );
       setFilteredSourceLanguages(filtered);
     } else {
-      setFilteredSourceLanguages([]);
+      // Show all languages when input is empty
+      setFilteredSourceLanguages(LANGUAGES);
     }
   };
   
@@ -105,7 +108,8 @@ export default function AddPhrase() {
       );
       setFilteredTargetLanguages(filtered);
     } else {
-      setFilteredTargetLanguages([]);
+      // Show all languages when input is empty
+      setFilteredTargetLanguages(LANGUAGES);
     }
   };
   
@@ -240,6 +244,14 @@ export default function AddPhrase() {
                           setFormErrors({...formErrors, sourceLanguage: false});
                         }
                       }}
+                      onFocus={() => {
+                        setFilteredSourceLanguages(LANGUAGES);
+                        setIsSourceFocused(true);
+                      }}
+                      onBlur={() => {
+                        // Small delay to allow clicking on dropdown items
+                        setTimeout(() => setIsSourceFocused(false), 200);
+                      }}
                       onKeyDown={(e) => handleLanguageKeyDown('source', e)}
                       className={formErrors.sourceLanguage && !sourceLanguage ? "border-red-500" : ""}
                     />
@@ -254,7 +266,7 @@ export default function AddPhrase() {
                     )}
 
                     {/* Source language suggestions */}
-                    {filteredSourceLanguages.length > 0 && (
+                    {filteredSourceLanguages.length > 0 && document.activeElement === document.getElementById('sourceLanguage') && (
                       <div className="absolute z-20 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base overflow-auto focus:outline-none sm:text-sm">
                         <ul className="divide-y divide-gray-200">
                           {filteredSourceLanguages.map((language) => (
@@ -332,6 +344,7 @@ export default function AddPhrase() {
                           setFormErrors({...formErrors, targetLanguage: false});
                         }
                       }}
+                      onFocus={() => setFilteredTargetLanguages(LANGUAGES)}
                       onKeyDown={(e) => handleLanguageKeyDown('target', e)}
                       className={formErrors.targetLanguage && !targetLanguage ? "border-red-500" : ""}
                     />
