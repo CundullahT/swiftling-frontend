@@ -46,7 +46,7 @@ export function QuizNavigationDialog({
             onClick={onEndQuiz}
             className="sm:flex-1 bg-amber-500 hover:bg-amber-500/90 text-white"
           >
-            End Quiz
+            Save and End
           </Button>
           <Button
             onClick={onProceed}
