@@ -38,19 +38,19 @@ export function QuizNavigationDialog({
         <AlertDialogFooter className="flex-col sm:flex-row gap-2">
           <Button
             onClick={onContinue}
-            className="sm:flex-1 bg-primary hover:bg-primary/90 text-white"
+            className="sm:flex-1 bg-primary hover:bg-primary/90 text-white text-sm sm:text-base py-2 h-auto"
           >
             Continue Quiz
           </Button>
           <Button 
             onClick={onEndQuiz}
-            className="sm:flex-1 bg-amber-500 hover:bg-amber-500/90 text-white"
+            className="sm:flex-1 bg-amber-500 hover:bg-amber-500/90 text-white text-sm sm:text-base py-2 h-auto"
           >
             Save and End
           </Button>
           <Button
             onClick={onProceed}
-            className="sm:flex-1 bg-rose-600 hover:bg-rose-600/90 text-white"
+            className="sm:flex-1 bg-rose-600 hover:bg-rose-600/90 text-white text-sm sm:text-base py-2 h-auto whitespace-normal"
           >
             Leave Without Saving
           </Button>
