@@ -17,9 +17,14 @@ import {
   SelectValue
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+} from "@/components/ui/alert";
 import { SAMPLE_TAGS, LANGUAGES } from "@/lib/constants";
 import { GuardedLink } from "@/components/ui/guarded-link";
-import { X, Plus } from "lucide-react";
+import { CheckCircle2, X, Plus } from "lucide-react";
 
 export default function AddPhrase() {
   // Placeholder for auth check - would be tied to a real auth system in future
@@ -27,7 +32,7 @@ export default function AddPhrase() {
   useAuthRedirect(!isAuthenticated, "/login");
   
   const [, setLocation] = useLocation();
-  const [multiplePhrasesValue, setMultiplePhrasesValue] = useState("");
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   
   // Form state
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
@@ -76,8 +81,19 @@ export default function AddPhrase() {
     e.preventDefault();
     
     if (validateForm()) {
-      // Save phrase logic would go here
-      setLocation("/my-list");
+      // This is a placeholder for the API call
+      // In a real implementation, we would save the phrase to the backend
+      // and then show the success message based on the response
+      
+      // Show success message
+      setShowSuccessMessage(true);
+      
+      // Hide the success message after 3 seconds
+      setTimeout(() => {
+        setShowSuccessMessage(false);
+        // Navigate to My Phrases page
+        setLocation("/my-list");
+      }, 3000);
     }
   };
 
@@ -199,10 +215,9 @@ export default function AddPhrase() {
     }
   };
   
-  // Handle multiple phrases submission
-  const handleMultipleSubmit = () => {
-    // Process and save multiple phrases logic would go here
-    setLocation("/my-list");
+  // Function to dismiss success message
+  const dismissSuccessMessage = () => {
+    setShowSuccessMessage(false);
   };
 
   return (
