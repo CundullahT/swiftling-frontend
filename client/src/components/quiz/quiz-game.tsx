@@ -404,7 +404,7 @@ export function QuizGame({ quizType, minTime, startTime, maxTime, onComplete, se
           onClick={onComplete}
           className="w-full text-gray-500 hover:text-gray-700 text-xs md:text-base py-1 md:py-2"
         >
-          End Quiz
+          Save and End the Quiz
         </Button>
       </div>
     </div>
