@@ -33,6 +33,7 @@ export default function AddPhrase() {
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState("");
   const [filteredSuggestions, setFilteredSuggestions] = useState<string[]>([]);
+  const [isTagInputFocused, setIsTagInputFocused] = useState(false);
   
   // Language state
   const [sourceLanguage, setSourceLanguage] = useState("");
@@ -148,7 +149,9 @@ export default function AddPhrase() {
       );
       setFilteredSuggestions(filtered);
     } else {
-      setFilteredSuggestions([]);
+      // Show all available tags when input is empty
+      const availableTags = SAMPLE_TAGS.filter(tag => !selectedTags.includes(tag));
+      setFilteredSuggestions(availableTags);
     }
   };
   
@@ -441,13 +444,22 @@ export default function AddPhrase() {
                 <div className="relative">
                   <Input
                     id="tags"
-                    placeholder={selectedTags.length >= 3 ? "Maximum tags reached" : "Type to add a tag..."}
+                    placeholder={selectedTags.length >= 3 ? "Maximum tags reached" : "Type or select a tag..."}
                     value={tagInput}
                     onChange={(e) => {
                       handleTagInputChange(e);
                       if (formErrors.tagLength) {
                         setFormErrors({...formErrors, tagLength: false});
                       }
+                    }}
+                    onFocus={() => {
+                      const availableTags = SAMPLE_TAGS.filter(tag => !selectedTags.includes(tag));
+                      setFilteredSuggestions(availableTags);
+                      setIsTagInputFocused(true);
+                    }}
+                    onBlur={() => {
+                      // Small delay to allow clicking on dropdown items
+                      setTimeout(() => setIsTagInputFocused(false), 200);
                     }}
                     onKeyDown={handleTagKeyDown}
                     disabled={selectedTags.length >= 3}
@@ -468,7 +480,7 @@ export default function AddPhrase() {
                   )}
                   
                   {/* Tag suggestions */}
-                  {filteredSuggestions.length > 0 && selectedTags.length < 3 && (
+                  {filteredSuggestions.length > 0 && selectedTags.length < 3 && isTagInputFocused && (
                     <div className="absolute z-10 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base overflow-auto focus:outline-none sm:text-sm">
                       <ul className="divide-y divide-gray-200">
                         {filteredSuggestions.map((suggestion, index) => (
