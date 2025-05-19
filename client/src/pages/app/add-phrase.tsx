@@ -224,6 +224,17 @@ export default function AddPhrase() {
     <div className="py-6 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto pb-20 md:pb-6">
       <h1 className="text-3xl font-semibold text-secondary bg-gradient-to-r from-primary/90 to-secondary bg-clip-text text-transparent mb-6">Add New Phrase</h1>
       
+      {/* Success message - shown only when a phrase is successfully added */}
+      {showSuccessMessage && (
+        <Alert className="mb-6 border-green-500 bg-green-50">
+          <CheckCircle2 className="h-5 w-5 text-green-600" />
+          <AlertTitle className="text-green-800">Phrase Added Successfully!</AlertTitle>
+          <AlertDescription className="text-green-700">
+            Your new phrase has been saved. You will be redirected to your phrases list shortly.
+          </AlertDescription>
+        </Alert>
+      )}
+      
       <Card className="mb-6">
         <CardContent className="pt-6">
           <form className="space-y-6" onSubmit={handleSubmit}>
@@ -518,7 +529,7 @@ export default function AddPhrase() {
               </div>
             </div>
 
-            <div className="flex justify-end space-x-3">
+            <div className="flex justify-end space-x-3 mt-6">
               <GuardedLink href="/my-list">
                 <Button 
                   type="button" 
@@ -532,31 +543,6 @@ export default function AddPhrase() {
           </form>
         </CardContent>
       </Card>
-
-      <div>
-        <h2 className="text-lg font-medium text-gray-900 mb-4">Quick Add Multiple Phrases</h2>
-        <Card>
-          <CardContent className="pt-6">
-            <div className="mb-4">
-              <p className="text-sm text-gray-500">
-                Enter one phrase per line in the format: 
-                <span className="font-medium"> phrase | translation | tags (optional, comma separated) | notes (optional)</span>
-              </p>
-            </div>
-            <Textarea 
-              rows={5} 
-              placeholder="Buenos días | Good morning | Greetings,Morning,Spanish | Used as a morning greeting until noon"
-              value={multiplePhrasesValue}
-              onChange={(e) => setMultiplePhrasesValue(e.target.value)}
-            />
-            <div className="mt-5">
-              <GuardedLink href="/my-list">
-                <Button onClick={handleMultipleSubmit}>Add Phrases</Button>
-              </GuardedLink>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
     </div>
   );
 }
