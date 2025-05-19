@@ -28,7 +28,7 @@ export function QuizNavigationDialog({
 }: QuizNavigationDialogProps) {
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
-      <AlertDialogContent className="max-w-md">
+      <AlertDialogContent className="max-w-md sm:max-w-lg">
         <AlertDialogHeader>
           <AlertDialogTitle>Quiz in Progress</AlertDialogTitle>
           <AlertDialogDescription>
@@ -38,19 +38,19 @@ export function QuizNavigationDialog({
         <AlertDialogFooter className="flex-col sm:flex-row gap-2">
           <Button
             onClick={onContinue}
-            className="sm:flex-1 bg-primary hover:bg-primary/90 text-white text-sm sm:text-base py-2 h-auto"
+            className="sm:flex-1 bg-primary hover:bg-primary/90 text-white"
           >
             Continue Quiz
           </Button>
           <Button 
             onClick={onEndQuiz}
-            className="sm:flex-1 bg-amber-500 hover:bg-amber-500/90 text-white text-sm sm:text-base py-2 h-auto"
+            className="sm:flex-1 bg-amber-500 hover:bg-amber-500/90 text-white"
           >
             Save and End
           </Button>
           <Button
             onClick={onProceed}
-            className="sm:flex-1 bg-rose-600 hover:bg-rose-600/90 text-white text-sm sm:text-base py-2 h-auto whitespace-normal"
+            className="sm:flex-1 bg-rose-600 hover:bg-rose-600/90 text-white"
           >
             Leave Without Saving
           </Button>
