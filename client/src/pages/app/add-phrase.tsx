@@ -560,6 +560,13 @@ export default function AddPhrase() {
                   setSourceLanguage("");
                   setTargetLanguage("");
                   
+                  // Clear any input in language fields
+                  setSourceLanguageInput("");
+                  setTargetLanguageInput("");
+                  
+                  // Clear tag input field
+                  setTagInput("");
+                  
                   // Reset any errors
                   setFormErrors({
                     phrase: false,
