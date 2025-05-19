@@ -91,9 +91,19 @@ export default function AddPhrase() {
       // Hide the success message after 3 seconds
       setTimeout(() => {
         setShowSuccessMessage(false);
-        // Navigate to My Phrases page
-        setLocation("/my-list");
       }, 3000);
+      
+      // Clear form fields for adding another phrase
+      const phraseInput = document.getElementById('phrase') as HTMLInputElement;
+      const translationInput = document.getElementById('translation') as HTMLInputElement;
+      const notesInput = document.getElementById('notes') as HTMLTextAreaElement;
+      
+      if (phraseInput) phraseInput.value = '';
+      if (translationInput) translationInput.value = '';
+      if (notesInput) notesInput.value = '';
+      
+      // Keep languages but clear tags
+      setSelectedTags([]);
     }
   };
 
@@ -230,7 +240,7 @@ export default function AddPhrase() {
           <CheckCircle2 className="h-5 w-5 text-green-600" />
           <AlertTitle className="text-green-800">Phrase Added Successfully!</AlertTitle>
           <AlertDescription className="text-green-700">
-            Your new phrase has been saved. You will be redirected to your phrases list shortly.
+            Your new phrase has been saved. You can continue adding more phrases.
           </AlertDescription>
         </Alert>
       )}
