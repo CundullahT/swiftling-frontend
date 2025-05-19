@@ -540,14 +540,38 @@ export default function AddPhrase() {
             </div>
 
             <div className="flex justify-end space-x-3 mt-6">
-              <GuardedLink href="/my-phrases">
-                <Button 
-                  type="button" 
-                  variant="outline"
-                >
-                  Cancel
-                </Button>
-              </GuardedLink>
+              <Button 
+                type="button" 
+                variant="outline"
+                onClick={() => {
+                  // Clear form fields
+                  const phraseInput = document.getElementById('phrase') as HTMLInputElement;
+                  const translationInput = document.getElementById('translation') as HTMLInputElement;
+                  const notesInput = document.getElementById('notes') as HTMLTextAreaElement;
+                  
+                  if (phraseInput) phraseInput.value = '';
+                  if (translationInput) translationInput.value = '';
+                  if (notesInput) notesInput.value = '';
+                  
+                  // Clear tags
+                  setSelectedTags([]);
+                  
+                  // Clear language selections too
+                  setSourceLanguage("");
+                  setTargetLanguage("");
+                  
+                  // Reset any errors
+                  setFormErrors({
+                    phrase: false,
+                    translation: false,
+                    sourceLanguage: false,
+                    targetLanguage: false,
+                    tagLength: false
+                  });
+                }}
+              >
+                Clear
+              </Button>
               <Button type="submit">Save</Button>
             </div>
           </form>
