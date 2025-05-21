@@ -1339,15 +1339,7 @@ export default function MyList() {
                         onKeyDown={(e) => handleLanguageKeyDown('source', e)}
                         className={formErrors.sourceLanguage && !sourceLanguage ? "border-red-500" : ""}
                       />
-                      {sourceLanguageInput && (
-                        <button
-                          type="button"
-                          className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
-                          onClick={() => setLanguage('source', sourceLanguageInput)}
-                        >
-                          <Plus className="h-4 w-4" />
-                        </button>
-                      )}
+                      {/* No plus button for source language field as users should select from the provided options */}
 
                       {/* Source language suggestions */}
                       {filteredSourceLanguages.length > 0 && (
@@ -1434,15 +1426,7 @@ export default function MyList() {
                         onKeyDown={(e) => handleLanguageKeyDown('target', e)}
                         className={formErrors.targetLanguage && !targetLanguage ? "border-red-500" : ""}
                       />
-                      {targetLanguageInput && (
-                        <button
-                          type="button"
-                          className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
-                          onClick={() => setLanguage('target', targetLanguageInput)}
-                        >
-                          <Plus className="h-4 w-4" />
-                        </button>
-                      )}
+                      {/* No plus button for target language field as users should select from the provided options */}
 
                       {/* Target language suggestions */}
                       {filteredTargetLanguages.length > 0 && (
