@@ -1528,18 +1528,22 @@ export default function MyList() {
                         }
                       }}
                       onFocus={() => {
-                        // Show all available tags that aren't already selected
-                        const availableTags = SAMPLE_TAGS.filter(tag => !selectedTags.includes(tag));
-                        setFilteredSuggestions(availableTags);
-                        
-                        // Force an update to make sure the dropdown appears even with tags selected
-                        if (availableTags.length > 0 && selectedTags.length > 0) {
-                          setTimeout(() => setFilteredSuggestions([...availableTags]), 0);
+                        // Always show available tags, regardless of whether some are selected
+                        if (selectedTags.length < 3) {
+                          const availableTags = SAMPLE_TAGS.filter(tag => !selectedTags.includes(tag));
+                          setFilteredSuggestions(availableTags);
                         }
                       }}
                       onBlur={() => {
                         // Small delay to allow clicking on dropdown items
                         setTimeout(() => setFilteredSuggestions([]), 200);
+                      }}
+                      onClick={() => {
+                        // Also show suggestions on click for better usability
+                        if (selectedTags.length < 3) {
+                          const availableTags = SAMPLE_TAGS.filter(tag => !selectedTags.includes(tag));
+                          setFilteredSuggestions(availableTags);
+                        }
                       }}
                       onKeyDown={handleTagKeyDown}
                       className={`pr-8 ${formErrors.tagLength ? "border-red-500" : ""}`}
@@ -1558,7 +1562,7 @@ export default function MyList() {
                       </button>
                     )}
                     
-                    {/* Tag suggestions */}
+                    {/* Tag suggestions - always show when focused regardless of text input */}
                     {filteredSuggestions.length > 0 && selectedTags.length < 3 && (
                       <div 
                         className="absolute z-50 mt-1 w-full bg-white shadow-lg rounded-md py-1 text-base overflow-auto focus:outline-none sm:text-sm border border-gray-200"
