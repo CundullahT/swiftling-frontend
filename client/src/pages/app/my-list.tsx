@@ -1543,6 +1543,15 @@ export default function MyList() {
                         if (selectedTags.length < 3) {
                           const availableTags = SAMPLE_TAGS.filter(tag => !selectedTags.includes(tag));
                           setFilteredSuggestions(availableTags);
+                          
+                          // Add auto-scrolling functionality to make tag options visible
+                          setTimeout(() => {
+                            const inputElement = document.getElementById('edit-tags');
+                            if (inputElement) {
+                              // Calculate position to ensure tag suggestions are visible
+                              inputElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            }
+                          }, 100);
                         }
                       }}
                       onKeyDown={handleTagKeyDown}
