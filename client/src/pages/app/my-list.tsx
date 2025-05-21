@@ -1531,6 +1531,11 @@ export default function MyList() {
                         // Show all available tags that aren't already selected
                         const availableTags = SAMPLE_TAGS.filter(tag => !selectedTags.includes(tag));
                         setFilteredSuggestions(availableTags);
+                        
+                        // Force an update to make sure the dropdown appears even with tags selected
+                        if (availableTags.length > 0 && selectedTags.length > 0) {
+                          setTimeout(() => setFilteredSuggestions([...availableTags]), 0);
+                        }
                       }}
                       onBlur={() => {
                         // Small delay to allow clicking on dropdown items
@@ -1555,7 +1560,14 @@ export default function MyList() {
                     
                     {/* Tag suggestions */}
                     {filteredSuggestions.length > 0 && selectedTags.length < 3 && (
-                      <div className="absolute z-50 mt-1 w-full bg-white shadow-lg max-h-32 rounded-md py-1 text-base overflow-auto focus:outline-none sm:text-sm border border-gray-200">
+                      <div 
+                        className="absolute z-50 mt-1 w-full bg-white shadow-lg rounded-md py-1 text-base overflow-auto focus:outline-none sm:text-sm border border-gray-200"
+                        style={{ 
+                          maxHeight: "150px", 
+                          bottom: "auto",
+                          top: "100%" 
+                        }}
+                      >
                         <ul className="divide-y divide-gray-200">
                           {filteredSuggestions.map((tag) => (
                             <li
