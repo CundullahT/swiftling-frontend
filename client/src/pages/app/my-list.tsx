@@ -1336,6 +1336,9 @@ export default function MyList() {
                             setFormErrors({...formErrors, sourceLanguage: false});
                           }
                         }}
+                        onFocus={() => {
+                          setFilteredSourceLanguages(LANGUAGES);
+                        }}
                         onKeyDown={(e) => handleLanguageKeyDown('source', e)}
                         className={formErrors.sourceLanguage && !sourceLanguage ? "border-red-500" : ""}
                       />
@@ -1422,6 +1425,9 @@ export default function MyList() {
                           if (formErrors.targetLanguage) {
                             setFormErrors({...formErrors, targetLanguage: false});
                           }
+                        }}
+                        onFocus={() => {
+                          setFilteredTargetLanguages(LANGUAGES);
                         }}
                         onKeyDown={(e) => handleLanguageKeyDown('target', e)}
                         className={formErrors.targetLanguage && !targetLanguage ? "border-red-500" : ""}
@@ -1512,6 +1518,10 @@ export default function MyList() {
                         if (formErrors.tagLength) {
                           setFormErrors({...formErrors, tagLength: false});
                         }
+                      }}
+                      onFocus={() => {
+                        const availableTags = SAMPLE_TAGS.filter(tag => !selectedTags.includes(tag));
+                        setFilteredSuggestions(availableTags);
                       }}
                       onKeyDown={handleTagKeyDown}
                       className={`pr-8 ${formErrors.tagLength ? "border-red-500" : ""}`}
