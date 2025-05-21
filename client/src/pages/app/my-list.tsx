@@ -1339,6 +1339,10 @@ export default function MyList() {
                         onFocus={() => {
                           setFilteredSourceLanguages(LANGUAGES);
                         }}
+                        onBlur={() => {
+                          // Small delay to allow clicking on dropdown items
+                          setTimeout(() => setFilteredSourceLanguages([]), 200);
+                        }}
                         onKeyDown={(e) => handleLanguageKeyDown('source', e)}
                         className={formErrors.sourceLanguage && !sourceLanguage ? "border-red-500" : ""}
                       />
@@ -1429,6 +1433,10 @@ export default function MyList() {
                         onFocus={() => {
                           setFilteredTargetLanguages(LANGUAGES);
                         }}
+                        onBlur={() => {
+                          // Small delay to allow clicking on dropdown items
+                          setTimeout(() => setFilteredTargetLanguages([]), 200);
+                        }}
                         onKeyDown={(e) => handleLanguageKeyDown('target', e)}
                         className={formErrors.targetLanguage && !targetLanguage ? "border-red-500" : ""}
                       />
@@ -1511,7 +1519,7 @@ export default function MyList() {
                   <div className="relative">
                     <Input
                       id="edit-tags"
-                      placeholder={selectedTags.length >= 3 ? "Maximum 3 tags reached" : "Type to add a tag..."}
+                      placeholder={selectedTags.length >= 3 ? "Maximum 3 tags reached" : "Type or select a tag..."}
                       value={tagInput}
                       onChange={(e) => {
                         handleTagInputChange(e);
@@ -1520,8 +1528,13 @@ export default function MyList() {
                         }
                       }}
                       onFocus={() => {
+                        // Show all available tags that aren't already selected
                         const availableTags = SAMPLE_TAGS.filter(tag => !selectedTags.includes(tag));
                         setFilteredSuggestions(availableTags);
+                      }}
+                      onBlur={() => {
+                        // Small delay to allow clicking on dropdown items
+                        setTimeout(() => setFilteredSuggestions([]), 200);
                       }}
                       onKeyDown={handleTagKeyDown}
                       className={`pr-8 ${formErrors.tagLength ? "border-red-500" : ""}`}
@@ -1542,12 +1555,12 @@ export default function MyList() {
                     
                     {/* Tag suggestions */}
                     {filteredSuggestions.length > 0 && selectedTags.length < 3 && (
-                      <div className="absolute z-20 mt-1 w-full bg-white shadow-lg max-h-40 rounded-md py-1 text-base overflow-auto focus:outline-none sm:text-sm">
+                      <div className="absolute z-50 mt-1 w-full bg-white shadow-lg max-h-32 rounded-md py-1 text-base overflow-auto focus:outline-none sm:text-sm border border-gray-200">
                         <ul className="divide-y divide-gray-200">
                           {filteredSuggestions.map((tag) => (
                             <li
                               key={tag}
-                              className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                              className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm"
                               onClick={() => addTag(tag)}
                             >
                               {tag}
