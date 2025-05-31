@@ -1319,7 +1319,7 @@ export default function MyList() {
                 </div>
                 <div className="sm:col-span-1">
                   <div className="space-y-2">
-                    <Label htmlFor="edit-sourceLanguage">Source Language</Label>
+                    <Label htmlFor="edit-sourceLanguage">Language of the Phrase</Label>
                     <div className="relative">
                       <Input 
                         id="edit-sourceLanguage"
