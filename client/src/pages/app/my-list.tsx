@@ -1391,7 +1391,7 @@ export default function MyList() {
                 {/* Row 2: Translation & Target Language */}
                 <div className="sm:col-span-3">
                   <div className="space-y-2">
-                    <Label htmlFor="edit-translation">Translation</Label>
+                    <Label htmlFor="edit-translation">Meaning of the Phrase</Label>
                     <Input 
                       id="edit-translation"
                       name="translation"
