@@ -907,7 +907,6 @@ export default function MyList() {
           </Button>
         </GuardedLink>
       </div>
-
       {/* Filter Bar */}
       <Card className="p-4 mb-6">
         <div className="flex flex-col sm:flex-row gap-4">
@@ -1002,7 +1001,6 @@ export default function MyList() {
           </div>
         </div>
       </Card>
-
       {/* Phrases List */}
       <Card className="mb-6">
         <div className="divide-y divide-gray-200">
@@ -1126,7 +1124,6 @@ export default function MyList() {
           )}
         </div>
       </Card>
-
       {/* Notes Dialog */}
       <Dialog open={isNotesDialogOpen} onOpenChange={setIsNotesDialogOpen}>
         <DialogContent className="sm:max-w-md rounded-xl overflow-hidden">
@@ -1193,7 +1190,6 @@ export default function MyList() {
           </div>
         </DialogContent>
       </Dialog>
-      
       {/* Pronunciation Dialog */}
       <Dialog open={isPronunciationDialogOpen} onOpenChange={setIsPronunciationDialogOpen}>
         <DialogContent className="sm:max-w-md rounded-xl overflow-hidden">
@@ -1286,7 +1282,6 @@ export default function MyList() {
           </div>
         </DialogContent>
       </Dialog>
-      
       {/* Edit Dialog */}
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
         <DialogContent className="sm:max-w-3xl rounded-xl">
@@ -1303,7 +1298,7 @@ export default function MyList() {
                 {/* Row 1: Phrase & Source Language */}
                 <div className="sm:col-span-3">
                   <div className="space-y-2">
-                    <Label htmlFor="edit-phrase">Phrase</Label>
+                    <Label htmlFor="edit-phrase">Phrase to Learn</Label>
                     <Input 
                       id="edit-phrase"
                       name="phrase"
@@ -1618,7 +1613,6 @@ export default function MyList() {
           </form>
         </DialogContent>
       </Dialog>
-
       {/* Delete Confirmation Dialog */}
       <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <DialogContent className="sm:max-w-md rounded-xl overflow-hidden">
