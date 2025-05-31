@@ -1413,7 +1413,7 @@ export default function MyList() {
                 
                 <div className="sm:col-span-1">
                   <div className="space-y-2">
-                    <Label htmlFor="edit-targetLanguage">Target Language</Label>
+                    <Label htmlFor="edit-targetLanguage">Language of the Meaning</Label>
                     <div className="relative">
                       <Input 
                         id="edit-targetLanguage"
