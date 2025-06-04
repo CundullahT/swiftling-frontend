@@ -133,7 +133,8 @@ export default function Dashboard() {
   // Dummy user data for UI display
   const user = {
     streakDays: 7,
-    bestTime: 3.8, // Best time in seconds
+    bestTime: 3.8, // Latest best time in seconds
+    overallBestTime: 2.4, // Overall best time in seconds
     latestQuiz: {
       correct: 12,
       wrong: 5,
@@ -279,14 +280,25 @@ export default function Dashboard() {
               </div>
             </div>
             
-            {/* Best Time */}
+            {/* Latest Best Time */}
             <div className="flex items-center">
               <div className="h-12 w-12 rounded-full bg-primary/20 flex items-center justify-center">
                 <Clock className="h-6 w-6 text-primary" />
               </div>
               <div className="ml-4">
                 <h2 className="text-xl font-semibold text-secondary">Latest Best Time</h2>
-                <p className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">{user.bestTime}s</p>
+                <p className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">{Math.round(user.bestTime)}s</p>
+              </div>
+            </div>
+            
+            {/* Overall Best Time */}
+            <div className="flex items-center">
+              <div className="h-12 w-12 rounded-full bg-accent/20 flex items-center justify-center">
+                <Clock className="h-6 w-6 text-accent" />
+              </div>
+              <div className="ml-4">
+                <h2 className="text-xl font-semibold text-secondary">Overall Best Time</h2>
+                <p className="text-3xl font-bold bg-gradient-to-r from-accent to-primary bg-clip-text text-transparent">{Math.round(user.overallBestTime)}s</p>
               </div>
             </div>
             
