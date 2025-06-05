@@ -344,7 +344,7 @@ export default function QuizHistory() {
               <ChevronLeft className="h-5 w-5" />
             </Button>
           </GuardedLink>
-          <h1 className="text-3xl font-semibold text-secondary bg-gradient-to-r from-primary/90 to-secondary bg-clip-text text-transparent">Quiz History</h1>
+          <h1 className="text-3xl font-semibold text-secondary bg-gradient-to-r from-primary/90 to-secondary bg-clip-text text-transparent leading-tight py-1">Quiz History</h1>
         </div>
       </div>
       
