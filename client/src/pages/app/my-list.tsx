@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
-import { X, Plus, Search, ChevronLeft, ChevronRight } from "lucide-react";
+import { X, Plus, Search, ChevronLeft, ChevronRight, BookOpen, ArrowRight } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -24,7 +24,6 @@ import { PhraseCard } from "@/components/ui/phrase-card";
 import { SAMPLE_TAGS, LANGUAGES } from "@/lib/constants";
 import { useState } from "react";
 import { GuardedLink } from "@/components/ui/guarded-link";
-
 
 export default function MyList() {
   // Placeholder for auth check - would be tied to a real auth system in future
@@ -50,52 +49,16 @@ export default function MyList() {
   // Audio states
   const [isPlayingOriginal, setIsPlayingOriginal] = useState(false);
   const [isPlayingTranslation, setIsPlayingTranslation] = useState(false);
-  
-  // State for search, filter, and sort
-  const [searchTerm, setSearchTerm] = useState("");
-  const [tagFilter, setTagFilter] = useState<string>("all");
-  const [languageFilter, setLanguageFilter] = useState<string>("all");
-  const [sortOption, setSortOption] = useState<string>("recent");
-  
-  // Pagination state
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
-  
-  // Custom setter for search term that also resets pagination
-  const handleSearchTermChange = (value: string) => {
-    setSearchTerm(value);
-    setCurrentPage(1); // Reset to page 1 when search changes
-  };
-  
-  // Custom setter for tag filter that also resets pagination
-  const handleTagFilterChange = (value: string) => {
-    setTagFilter(value);
-    setCurrentPage(1); // Reset to page 1 when filter changes
-  };
-  
-  // Custom setter for language filter that also resets pagination
-  const handleLanguageFilterChange = (value: string) => {
-    setLanguageFilter(value);
-    setCurrentPage(1); // Reset to page 1 when filter changes
-  };
-  
-  // Custom setter for sort option that also resets pagination
-  const handleSortOptionChange = (value: string) => {
-    setSortOption(value);
-    setCurrentPage(1); // Reset to page 1 when sort changes
-  };
 
-  // Form state for edit dialog
+  // Edit dialog states
   const [editedPhrase, setEditedPhrase] = useState("");
   const [editedTranslation, setEditedTranslation] = useState("");
   const [editedNotes, setEditedNotes] = useState("");
-  
-  // Tag management
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState("");
   const [filteredSuggestions, setFilteredSuggestions] = useState<string[]>([]);
   
-  // Language state
+  // Language selection states for edit dialog
   const [sourceLanguage, setSourceLanguage] = useState("");
   const [targetLanguage, setTargetLanguage] = useState("");
   const [sourceLanguageInput, setSourceLanguageInput] = useState("");
@@ -103,575 +66,73 @@ export default function MyList() {
   const [filteredSourceLanguages, setFilteredSourceLanguages] = useState<typeof LANGUAGES>([]);
   const [filteredTargetLanguages, setFilteredTargetLanguages] = useState<typeof LANGUAGES>([]);
 
-  // Example phrases data with notes - 50 phrases total
-  const [phrases, setPhrases] = useState([
-    // Spanish phrases
-    { 
-      id: 1, 
-      phrase: 'Buenos días', 
-      translation: 'Good morning', 
-      tags: ['Greetings', 'Morning', 'Beginner'], 
-      proficiency: 85,
-      notes: 'Used as a morning greeting until around noon. The informal version is just "Hola".',
-      sourceLanguage: 'spanish',
-      targetLanguage: 'english'
-    },
-    { 
-      id: 2, 
-      phrase: '¿Cómo estás?', 
-      translation: 'How are you?', 
-      tags: ['Greetings', 'Questions'], 
-      proficiency: 70,
-      notes: 'Informal way to ask how someone is doing. For formal situations use "¿Cómo está usted?"',
-      sourceLanguage: 'spanish',
-      targetLanguage: 'english'
-    },
-    { 
-      id: 3, 
-      phrase: 'Gracias', 
-      translation: 'Thank you', 
-      tags: ['Common phrases', 'Beginner'], 
-      proficiency: 95,
-      notes: 'The standard way to say thank you. You can add "muchas" before it for "thank you very much".',
-      sourceLanguage: 'spanish',
-      targetLanguage: 'english'
-    },
-    { 
-      id: 4, 
-      phrase: 'Por favor', 
-      translation: 'Please', 
-      tags: ['Common phrases', 'Beginner'], 
-      proficiency: 90,
-      notes: 'Used to make polite requests. Can be placed at the beginning or end of a sentence.',
-      sourceLanguage: 'spanish',
-      targetLanguage: 'english'
-    },
-    { 
-      id: 5, 
-      phrase: 'Lo siento', 
-      translation: 'I\'m sorry', 
-      tags: ['Common phrases', 'Expressions', 'Beginner'], 
-      proficiency: 60,
-      notes: 'Used to apologize. For more serious apologies, you can say "Lo siento mucho" (I\'m very sorry).',
-      sourceLanguage: 'spanish',
-      targetLanguage: 'english'
-    },
-    { 
-      id: 6, 
-      phrase: 'Buenas noches', 
-      translation: 'Good evening/night', 
-      tags: ['Greetings', 'Evening', 'Beginner'], 
-      proficiency: 80,
-      notes: 'Used in the evening and at night as both a greeting and a farewell.',
-      sourceLanguage: 'spanish',
-      targetLanguage: 'english'
-    },
-    { 
-      id: 7, 
-      phrase: 'Adiós', 
-      translation: 'Goodbye', 
-      tags: ['Farewells', 'Beginner'], 
-      proficiency: 95,
-      notes: 'Formal way to say goodbye. "Hasta luego" (see you later) is often more common.',
-      sourceLanguage: 'spanish',
-      targetLanguage: 'english'
-    },
-    { 
-      id: 8, 
-      phrase: 'Hasta mañana', 
-      translation: 'See you tomorrow', 
-      tags: ['Farewells', 'Intermediate'], 
-      proficiency: 75,
-      notes: 'A common way to say goodbye when you expect to see the person the next day.',
-      sourceLanguage: 'spanish',
-      targetLanguage: 'english'
-    },
-    { 
-      id: 9, 
-      phrase: 'Mucho gusto', 
-      translation: 'Nice to meet you', 
-      tags: ['Greetings', 'Introductions', 'Beginner'], 
-      proficiency: 65,
-      notes: 'Used when meeting someone for the first time.',
-      sourceLanguage: 'spanish',
-      targetLanguage: 'english'
-    },
-    { 
-      id: 10, 
-      phrase: 'No entiendo', 
-      translation: 'I don\'t understand', 
-      tags: ['Common phrases', 'Learning', 'Beginner'], 
-      proficiency: 85,
-      notes: 'Very useful phrase when learning a language. You can follow it with "¿Puedes repetir?" (Can you repeat?)',
-      sourceLanguage: 'spanish',
-      targetLanguage: 'english'
-    },
-    
-    // French phrases
-    { 
-      id: 11, 
-      phrase: 'Bonjour', 
-      translation: 'Hello/Good day', 
-      tags: ['Greetings', 'Beginner'], 
-      proficiency: 90,
-      notes: 'The most common greeting in French, used during the day.',
-      sourceLanguage: 'french',
-      targetLanguage: 'english'
-    },
-    { 
-      id: 12, 
-      phrase: 'Comment ça va?', 
-      translation: 'How are you?', 
-      tags: ['Greetings', 'Questions', 'Beginner'], 
-      proficiency: 75,
-      notes: 'Casual way to ask how someone is doing. "Comment allez-vous?" is more formal.',
-      sourceLanguage: 'french',
-      targetLanguage: 'english'
-    },
-    { 
-      id: 13, 
-      phrase: 'Merci', 
-      translation: 'Thank you', 
-      tags: ['Common phrases', 'Beginner'], 
-      proficiency: 100,
-      notes: 'Basic way to say "thank you". "Merci beaucoup" means "thank you very much".',
-      sourceLanguage: 'french',
-      targetLanguage: 'english'
-    },
-    { 
-      id: 14, 
-      phrase: 'S\'il vous plaît', 
-      translation: 'Please', 
-      tags: ['Common phrases', 'Beginner'], 
-      proficiency: 85,
-      notes: 'Formal way to say "please". "S\'il te plaît" is the informal version.',
-      sourceLanguage: 'french',
-      targetLanguage: 'english'
-    },
-    { 
-      id: 15, 
-      phrase: 'Je suis désolé(e)', 
-      translation: 'I\'m sorry', 
-      tags: ['Common phrases', 'Expressions', 'Beginner'], 
-      proficiency: 70,
-      notes: 'Add "e" at the end if you are female (désolée).',
-      sourceLanguage: 'french',
-      targetLanguage: 'english'
-    },
-    
-    // German phrases
-    { 
-      id: 16, 
-      phrase: 'Guten Tag', 
-      translation: 'Good day', 
-      tags: ['Greetings', 'Beginner'], 
-      proficiency: 80,
-      notes: 'Formal greeting used during the day. "Hallo" is more casual.',
-      sourceLanguage: 'german',
-      targetLanguage: 'english'
-    },
-    { 
-      id: 17, 
-      phrase: 'Wie geht es dir?', 
-      translation: 'How are you?', 
-      tags: ['Greetings', 'Questions', 'Beginner'], 
-      proficiency: 65,
-      notes: 'Informal way to ask how someone is doing. "Wie geht es Ihnen?" is formal.',
-      sourceLanguage: 'german',
-      targetLanguage: 'english'
-    },
-    { 
-      id: 18, 
-      phrase: 'Danke', 
-      translation: 'Thank you', 
-      tags: ['Common phrases', 'Beginner'], 
-      proficiency: 95,
-      notes: 'The basic way to say "thank you". "Vielen Dank" means "many thanks".',
-      sourceLanguage: 'german',
-      targetLanguage: 'english'
-    },
-    { 
-      id: 19, 
-      phrase: 'Bitte', 
-      translation: 'Please/You\'re welcome', 
-      tags: ['Common phrases', 'Beginner'], 
-      proficiency: 85,
-      notes: 'This word can mean both "please" and "you\'re welcome" depending on context.',
-      sourceLanguage: 'german',
-      targetLanguage: 'english'
-    },
-    { 
-      id: 20, 
-      phrase: 'Es tut mir leid', 
-      translation: 'I\'m sorry', 
-      tags: ['Common phrases', 'Expressions', 'Beginner'], 
-      proficiency: 60,
-      notes: 'The standard way to apologize in German.',
-      sourceLanguage: 'german',
-      targetLanguage: 'english'
-    },
-    
-    // Italian phrases
-    { 
-      id: 21, 
-      phrase: 'Buongiorno', 
-      translation: 'Good morning/day', 
-      tags: ['Greetings', 'Beginner'], 
-      proficiency: 85,
-      notes: 'Used as a greeting until the afternoon, when "buonasera" (good evening) is used.',
-      sourceLanguage: 'italian',
-      targetLanguage: 'english'
-    },
-    { 
-      id: 22, 
-      phrase: 'Come stai?', 
-      translation: 'How are you?', 
-      tags: ['Greetings', 'Questions', 'Beginner'], 
-      proficiency: 75,
-      notes: 'Informal way to ask how someone is doing. "Come sta?" is formal.',
-      sourceLanguage: 'italian',
-      targetLanguage: 'english'
-    },
-    { 
-      id: 23, 
-      phrase: 'Grazie', 
-      translation: 'Thank you', 
-      tags: ['Common phrases', 'Beginner'], 
-      proficiency: 100,
-      notes: 'Basic way to say thanks. "Grazie mille" means "a thousand thanks".',
-      sourceLanguage: 'italian',
-      targetLanguage: 'english'
-    },
-    { 
-      id: 24, 
-      phrase: 'Per favore', 
-      translation: 'Please', 
-      tags: ['Common phrases', 'Beginner'], 
-      proficiency: 90,
-      notes: 'Used to make a request polite. "Per piacere" is also commonly used.',
-      sourceLanguage: 'italian',
-      targetLanguage: 'english'
-    },
-    { 
-      id: 25, 
-      phrase: 'Mi dispiace', 
-      translation: 'I\'m sorry', 
-      tags: ['Common phrases', 'Expressions', 'Beginner'], 
-      proficiency: 65,
-      notes: 'Used to apologize in Italian. "Scusi" is used for more minor apologies or to get attention.',
-      sourceLanguage: 'italian',
-      targetLanguage: 'english'
-    },
-    
-    // Japanese phrases
-    { 
-      id: 26, 
-      phrase: 'おはようございます (Ohayou gozaimasu) - 今日は素晴らしい天気ですね。早起きは健康にいいと言われています。', 
-      translation: 'Good morning - It\'s a beautiful weather today. They say waking up early is good for your health.', 
-      tags: ['Greetings', 'Morning', 'Beginner'], 
-      proficiency: 70,
-      notes: 'Formal morning greeting. "おはよう" (Ohayou) is the casual version. This extended version includes a comment about the weather and a common saying about early rising.',
-      sourceLanguage: 'japanese',
-      targetLanguage: 'english'
-    },
-    { 
-      id: 27, 
-      phrase: 'お元気ですか？ (O-genki desu ka?)', 
-      translation: 'How are you?', 
-      tags: ['Greetings', 'Questions', 'Beginner'], 
-      proficiency: 55,
-      notes: 'Formal way to ask how someone is doing.',
-      sourceLanguage: 'japanese',
-      targetLanguage: 'english'
-    },
-    { 
-      id: 28, 
-      phrase: 'ありがとうございます (Arigatou gozaimasu)', 
-      translation: 'Thank you', 
-      tags: ['Common phrases', 'Beginner'], 
-      proficiency: 80,
-      notes: 'Formal way to say thank you. "ありがとう" (Arigatou) is casual.',
-      sourceLanguage: 'japanese',
-      targetLanguage: 'english'
-    },
-    { 
-      id: 29, 
-      phrase: 'お願いします (Onegai shimasu)', 
-      translation: 'Please', 
-      tags: ['Common phrases', 'Beginner'], 
-      proficiency: 75,
-      notes: 'Used when making a request or asking for something.',
-      sourceLanguage: 'japanese',
-      targetLanguage: 'english'
-    },
-    { 
-      id: 30, 
-      phrase: 'すみません (Sumimasen)', 
-      translation: 'Excuse me/I\'m sorry', 
-      tags: ['Common phrases', 'Expressions', 'Beginner'], 
-      proficiency: 85,
-      notes: 'Versatile expression used to say "excuse me", "I\'m sorry", or "thank you" depending on context.',
-      sourceLanguage: 'japanese',
-      targetLanguage: 'english'
-    },
-    
-    // Mandarin Chinese phrases
-    { 
-      id: 31, 
-      phrase: '你好 (Nǐ hǎo) - 很高兴认识你。希望我们可以成为好朋友。我在学习中文已经有六个月了。', 
-      translation: 'Hello - Nice to meet you. I hope we can become good friends. I have been learning Chinese for six months already.', 
-      tags: ['Greetings', 'Beginner'], 
-      proficiency: 90,
-      notes: 'The most common greeting in Mandarin Chinese, extended with some friendly conversation phrases that might be used when meeting someone new.',
-      sourceLanguage: 'mandarin',
-      targetLanguage: 'english'
-    },
-    { 
-      id: 32, 
-      phrase: '你好吗？ (Nǐ hǎo ma?)', 
-      translation: 'How are you?', 
-      tags: ['Greetings', 'Questions', 'Beginner'], 
-      proficiency: 75,
-      notes: 'A common way to ask how someone is doing.',
-      sourceLanguage: 'mandarin',
-      targetLanguage: 'english'
-    },
-    { 
-      id: 33, 
-      phrase: '谢谢 (Xièxiè)', 
-      translation: 'Thank you', 
-      tags: ['Common phrases', 'Beginner'], 
-      proficiency: 95,
-      notes: 'The standard way to say thank you in Mandarin.',
-      sourceLanguage: 'mandarin',
-      targetLanguage: 'english'
-    },
-    { 
-      id: 34, 
-      phrase: '请 (Qǐng)', 
-      translation: 'Please', 
-      tags: ['Common phrases', 'Beginner'], 
-      proficiency: 80,
-      notes: 'Used when making a request or offering something.',
-      sourceLanguage: 'mandarin',
-      targetLanguage: 'english'
-    },
-    { 
-      id: 35, 
-      phrase: '对不起 (Duìbùqǐ)', 
-      translation: 'I\'m sorry', 
-      tags: ['Common phrases', 'Expressions', 'Beginner'], 
-      proficiency: 70,
-      notes: 'Used to apologize for mistakes or inconveniences.',
-      sourceLanguage: 'mandarin',
-      targetLanguage: 'english'
-    },
-    
-    // Portuguese phrases
-    { 
-      id: 36, 
-      phrase: 'Bom dia', 
-      translation: 'Good morning', 
-      tags: ['Greetings', 'Morning', 'Beginner'], 
-      proficiency: 85,
-      notes: 'Used as a greeting in the morning until noon.',
-      sourceLanguage: 'portuguese',
-      targetLanguage: 'english'
-    },
-    { 
-      id: 37, 
-      phrase: 'Como está?', 
-      translation: 'How are you?', 
-      tags: ['Greetings', 'Questions', 'Beginner'], 
-      proficiency: 70,
-      notes: 'Formal way to ask how someone is doing. "Como vai?" is more casual.',
-      sourceLanguage: 'portuguese',
-      targetLanguage: 'english'
-    },
-    { 
-      id: 38, 
-      phrase: 'Obrigado/Obrigada', 
-      translation: 'Thank you', 
-      tags: ['Common phrases', 'Beginner'], 
-      proficiency: 90,
-      notes: 'Use "obrigado" if you\'re male and "obrigada" if you\'re female.',
-      sourceLanguage: 'portuguese',
-      targetLanguage: 'english'
-    },
-    { 
-      id: 39, 
-      phrase: 'Por favor', 
-      translation: 'Please', 
-      tags: ['Common phrases', 'Beginner'], 
-      proficiency: 95,
-      notes: 'Used to make requests polite, similar to Spanish.',
-      sourceLanguage: 'portuguese',
-      targetLanguage: 'english'
-    },
-    { 
-      id: 40, 
-      phrase: 'Desculpe', 
-      translation: 'Sorry', 
-      tags: ['Common phrases', 'Expressions', 'Beginner'], 
-      proficiency: 75,
-      notes: 'Used for minor apologies or to get attention. "Sinto muito" is for more serious apologies.',
-      sourceLanguage: 'portuguese',
-      targetLanguage: 'english'
-    },
-    
-    // Russian phrases
-    { 
-      id: 41, 
-      phrase: 'Здравствуйте (Zdravstvuyte)', 
-      translation: 'Hello', 
-      tags: ['Greetings', 'Beginner'], 
-      proficiency: 60,
-      notes: 'Formal greeting. "Привет" (Privet) is the informal version.',
-      sourceLanguage: 'russian',
-      targetLanguage: 'english'
-    },
-    { 
-      id: 42, 
-      phrase: 'Как дела? (Kak dela?)', 
-      translation: 'How are you?', 
-      tags: ['Greetings', 'Questions', 'Beginner'], 
-      proficiency: 65,
-      notes: 'The common way to ask how someone is doing.',
-      sourceLanguage: 'russian',
-      targetLanguage: 'english'
-    },
-    { 
-      id: 43, 
-      phrase: 'Спасибо (Spasibo)', 
-      translation: 'Thank you', 
-      tags: ['Common phrases', 'Beginner'], 
-      proficiency: 80,
-      notes: 'Basic way to express thanks in Russian.',
-      sourceLanguage: 'russian',
-      targetLanguage: 'english'
-    },
-    { 
-      id: 44, 
-      phrase: 'Пожалуйста (Pozhaluysta)', 
-      translation: 'Please/You\'re welcome', 
-      tags: ['Common phrases', 'Beginner'], 
-      proficiency: 70,
-      notes: 'Like German "bitte", this can mean both "please" and "you\'re welcome".',
-      sourceLanguage: 'russian',
-      targetLanguage: 'english'
-    },
-    { 
-      id: 45, 
-      phrase: 'Извините (Izvinite)', 
-      translation: 'I\'m sorry/Excuse me', 
-      tags: ['Common phrases', 'Expressions', 'Beginner'], 
-      proficiency: 55,
-      notes: 'Formal way to apologize or get someone\'s attention.',
-      sourceLanguage: 'russian',
-      targetLanguage: 'english'
-    },
-    
-    // Korean phrases
-    { 
-      id: 46, 
-      phrase: '안녕하세요 (Annyeong haseyo) - 만나서 반갑습니다. 저는 한국어를 공부하고 있습니다. 천천히 말해 주세요.', 
-      translation: 'Hello - Nice to meet you. I am studying Korean. Please speak slowly.', 
-      tags: ['Greetings', 'Beginner'], 
-      proficiency: 75,
-      notes: 'Standard greeting in Korean. "안녕" (Annyeong) is casual. Extended with useful phrases for language learners when meeting native speakers.',
-      sourceLanguage: 'korean',
-      targetLanguage: 'english'
-    },
-    { 
-      id: 47, 
-      phrase: '어떻게 지내세요? (Eotteoke jinaeseyo?)', 
-      translation: 'How are you?', 
-      tags: ['Greetings', 'Questions', 'Intermediate'], 
-      proficiency: 50,
-      notes: 'Formal way to ask how someone has been doing.',
-      sourceLanguage: 'korean',
-      targetLanguage: 'english'
-    },
-    { 
-      id: 48, 
-      phrase: '감사합니다 (Gamsahamnida)', 
-      translation: 'Thank you', 
-      tags: ['Common phrases', 'Beginner'], 
-      proficiency: 85,
-      notes: 'Formal way to say thank you. "고마워" (Gomawo) is casual.',
-      sourceLanguage: 'korean',
-      targetLanguage: 'english'
-    },
-    { 
-      id: 49, 
-      phrase: '주세요 (Juseyo)', 
-      translation: 'Please give me', 
-      tags: ['Common phrases', 'Beginner'], 
-      proficiency: 70,
-      notes: 'Used when asking for something. Add the item before "주세요".',
-      sourceLanguage: 'korean',
-      targetLanguage: 'english'
-    },
-    { 
-      id: 50, 
-      phrase: '죄송합니다 (Joesonghamnida)', 
-      translation: 'I\'m sorry', 
-      tags: ['Common phrases', 'Expressions', 'Beginner'], 
-      proficiency: 65,
-      notes: 'Formal apology. "미안해" (Mianhae) is the casual version.',
-      sourceLanguage: 'korean',
-      targetLanguage: 'english'
-    }
-  ]);
+  // Phrases data - empty array to show empty state
+  const [phrases, setPhrases] = useState<any[]>([]);
+
+  // State for search and filtering
+  const [searchTerm, setSearchTerm] = useState("");
+  const [tagFilter, setTagFilter] = useState("all");
+  const [languageFilter, setLanguageFilter] = useState("all");
+  const [sortOption, setSortOption] = useState("recent");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 6;
   
-  // Handle showing notes for a phrase
-  const handleViewNotes = (phrase: any) => {
-    setSelectedPhrase(phrase);
-    setIsNotesDialogOpen(true);
-  };
-  
-  // Handle pronunciation dialog
-  const handlePronunciation = (phrase: any) => {
-    setSelectedPhrase(phrase);
-    setIsPronunciationDialogOpen(true);
-  };
-  
-  // Play pronunciation - placeholder for future implementation
-  const playPronunciation = async (text: string, language: string, isOriginal: boolean) => {
-    try {
-      // Set the loading state to true
-      if (isOriginal) {
-        setIsPlayingOriginal(true);
-      } else {
-        setIsPlayingTranslation(true);
-      }
-      
-      // Simulate a delay to show the loading indicator
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      // Show the "not implemented" message through console
-      console.info("Pronunciation feature will be implemented with a custom backend service.");
-      
-      // Reset the loading state
-      if (isOriginal) {
-        setIsPlayingOriginal(false);
-      } else {
-        setIsPlayingTranslation(false);
-      }
-    } catch (error) {
-      console.error("Error in pronunciation handler:", error);
-      if (isOriginal) {
-        setIsPlayingOriginal(false);
-      } else {
-        setIsPlayingTranslation(false);
-      }
-    }
+  // Form validation
+  const [formErrors, setFormErrors] = useState({
+    phrase: false,
+    translation: false,
+    sourceLanguage: false,
+    targetLanguage: false,
+    tagLength: false
+  });
+
+  // Handler functions
+  const handleSearchTermChange = (value: string) => {
+    setSearchTerm(value);
+    setCurrentPage(1);
   };
 
-  // Handle editing a phrase
+  const handleTagFilterChange = (value: string) => {
+    setTagFilter(value);
+    setCurrentPage(1);
+  };
+
+  const handleLanguageFilterChange = (value: string) => {
+    setLanguageFilter(value);
+    setCurrentPage(1);
+  };
+
+  const handleSortOptionChange = (value: string) => {
+    setSortOption(value);
+    setCurrentPage(1);
+  };
+
+  // Filter and sort function
+  const getFilteredAndSortedPhrases = () => {
+    return phrases.filter(phrase => {
+      const matchesSearch = phrase.phrase.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           phrase.translation.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesTag = tagFilter === "all" || phrase.tags?.includes(tagFilter);
+      const matchesLanguage = languageFilter === "all" || 
+                             phrase.sourceLanguage === languageFilter || 
+                             phrase.targetLanguage === languageFilter;
+      return matchesSearch && matchesTag && matchesLanguage;
+    }).sort((a, b) => {
+      switch (sortOption) {
+        case "alphabetical":
+          return a.phrase.localeCompare(b.phrase);
+        case "proficiency":
+          return b.proficiency - a.proficiency;
+        case "recent":
+        default:
+          return b.id - a.id;
+      }
+    });
+  };
+
+  // Dialog handlers
   const handleEdit = (phrase: any) => {
     setSelectedPhrase(phrase);
-    // Initialize edit state with phrase values
     setEditedPhrase(phrase.phrase);
     setEditedTranslation(phrase.translation);
     setEditedNotes(phrase.notes || "");
@@ -680,88 +141,53 @@ export default function MyList() {
     setTargetLanguage(phrase.targetLanguage || "");
     setIsEditDialogOpen(true);
   };
-  
-  // Handle delete confirmation dialog
+
   const handleDeleteConfirmation = (phrase: any) => {
     setSelectedPhrase(phrase);
     setIsDeleteDialogOpen(true);
   };
-  
-  // Handle actual phrase deletion
-  const handleDelete = () => {
-    if (!selectedPhrase) return;
-    
-    // This is a placeholder for future implementation
-    // No actual deletion happens in this version
-    // Will be connected to backend API in the future
-    
-    // Just close the dialog
-    setIsDeleteDialogOpen(false);
-    
-    // Placeholder for future implementation
-    console.log(`Delete requested for phrase ID: ${selectedPhrase.id}`);
+
+  const handlePronunciation = (phrase: any) => {
+    setSelectedPhrase(phrase);
+    setIsPronunciationDialogOpen(true);
   };
 
-  // Language management functions
-  const handleSourceLanguageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setSourceLanguageInput(value);
-    
-    if (value.trim()) {
-      // Filter suggestions based on input
-      const filtered = LANGUAGES.filter(lang => 
-        lang.name.toLowerCase().includes(value.toLowerCase())
-      );
-      setFilteredSourceLanguages(filtered);
-    } else {
-      setFilteredSourceLanguages([]);
+  const handleViewNotes = (phrase: any) => {
+    setSelectedPhrase(phrase);
+    setIsNotesDialogOpen(true);
+  };
+
+  const handleDelete = () => {
+    if (selectedPhrase) {
+      setPhrases(phrases.filter(p => p.id !== selectedPhrase.id));
+      setIsDeleteDialogOpen(false);
     }
   };
-  
-  const handleTargetLanguageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setTargetLanguageInput(value);
-    
-    if (value.trim()) {
-      // Filter suggestions based on input
-      const filtered = LANGUAGES.filter(lang => 
-        lang.name.toLowerCase().includes(value.toLowerCase())
-      );
-      setFilteredTargetLanguages(filtered);
-    } else {
-      setFilteredTargetLanguages([]);
-    }
-  };
-  
-  const setLanguage = (type: 'source' | 'target', value: string) => {
-    if (type === 'source') {
-      setSourceLanguage(value);
-      setSourceLanguageInput('');
-      setFilteredSourceLanguages([]);
-    } else {
-      setTargetLanguage(value);
-      setTargetLanguageInput('');
-      setFilteredTargetLanguages([]);
-    }
-  };
-  
-  const handleLanguageKeyDown = (type: 'source' | 'target', e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      e.preventDefault(); // Prevent form submission
-      const value = type === 'source' ? sourceLanguageInput : targetLanguageInput;
-      if (value) {
-        setLanguage(type, value);
-      }
-    }
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Handle form submission logic here
+    setIsEditDialogOpen(false);
   };
 
   // Tag management functions
+  const addTag = (tag: string) => {
+    if (tag && !selectedTags.includes(tag) && selectedTags.length < 3) {
+      setSelectedTags([...selectedTags, tag]);
+      setTagInput("");
+      setFilteredSuggestions([]);
+    }
+  };
+
+  const removeTag = (tagToRemove: string) => {
+    setSelectedTags(selectedTags.filter(tag => tag !== tagToRemove));
+  };
+
   const handleTagInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setTagInput(value);
     
-    if (value.trim()) {
-      // Filter suggestions based on input
+    if (value.length > 0) {
       const filtered = SAMPLE_TAGS.filter(tag => 
         tag.toLowerCase().includes(value.toLowerCase()) && 
         !selectedTags.includes(tag)
@@ -771,841 +197,673 @@ export default function MyList() {
       setFilteredSuggestions([]);
     }
   };
-  
-  const addTag = (tag: string) => {
-    const trimmedTag = tag.trim();
-    if (!trimmedTag) return;
-    
-    // Check if tag length is within limits (3-16 characters)
-    if (trimmedTag.length < 3 || trimmedTag.length > 16) {
-      // Show error for tag length
-      setFormErrors({
-        ...formErrors,
-        tagLength: true
-      });
-      return;
+
+  const handleTagKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && tagInput.trim() && selectedTags.length < 3) {
+      e.preventDefault();
+      addTag(tagInput.trim());
     }
-    
-    // Check if we've reached the maximum tags limit
-    if (selectedTags.length >= 3) return;
-    
-    // If tag doesn't exist in selected tags, add it
-    if (!selectedTags.includes(trimmedTag)) {
-      setSelectedTags([...selectedTags, trimmedTag]);
-      // Clear any tag length error
-      if (formErrors.tagLength) {
-        setFormErrors({
-          ...formErrors,
-          tagLength: false
-        });
-      }
-    }
-    
-    setTagInput('');
-    setFilteredSuggestions([]);
-  };
-  
-  const removeTag = (tagToRemove: string) => {
-    setSelectedTags(selectedTags.filter(tag => tag !== tagToRemove));
-  };
-  
-  const handleTagKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && tagInput) {
-      e.preventDefault(); // Prevent form submission
-      addTag(tagInput);
-    }
-  };
-  
-  // Form validation states
-  const [formErrors, setFormErrors] = useState({
-    phrase: false,
-    translation: false,
-    sourceLanguage: false,
-    targetLanguage: false,
-    tagLength: false
-  });
-  
-  // Handle form validation
-  const validateForm = () => {
-    const errors = {
-      phrase: !editedPhrase.trim(),
-      translation: !editedTranslation.trim(),
-      sourceLanguage: !sourceLanguage,
-      targetLanguage: !targetLanguage,
-      tagLength: false // This is handled directly in the addTag function
-    };
-    
-    setFormErrors(errors);
-    return !Object.values(errors).some(error => error);
   };
 
-  // Handle form submission - UI only, no real saving
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  // Language input handlers
+  const handleSourceLanguageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSourceLanguageInput(value);
     
-    if (validateForm()) {
-      // If validation passes, close the dialog
-      setIsEditDialogOpen(false);
+    if (value.length > 0) {
+      const filtered = LANGUAGES.filter(lang => 
+        lang.name.toLowerCase().includes(value.toLowerCase())
+      );
+      setFilteredSourceLanguages(filtered);
+    } else {
+      setFilteredSourceLanguages([]);
     }
   };
-  
-  // Filter and sort the phrases
-  const getFilteredAndSortedPhrases = () => {
-    // First, filter the phrases
-    let filtered = phrases.filter(phrase => {
-      // Search term filter (case-insensitive) - only check phrase and translation
-      const matchesSearch = searchTerm === "" || 
-        phrase.phrase.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        phrase.translation.toLowerCase().includes(searchTerm.toLowerCase());
-        
-      // Tag filter (case-insensitive)
-      const matchesTag = tagFilter === "all" || 
-        (phrase.tags && phrase.tags.some(tag => tag.toLowerCase() === tagFilter.toLowerCase()));
-      
-      // Language filter
-      const matchesLanguage = languageFilter === "all" || 
-        phrase.sourceLanguage === languageFilter || 
-        phrase.targetLanguage === languageFilter;
-        
-      return matchesSearch && matchesTag && matchesLanguage;
-    });
+
+  const handleTargetLanguageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setTargetLanguageInput(value);
     
-    // Then, sort the filtered phrases
-    const sortedResults = filtered.sort((a, b) => {
-      switch (sortOption) {
-        case "alphabetical":
-          return a.phrase.localeCompare(b.phrase);
-        case "proficiency-high":
-          return b.proficiency - a.proficiency;
-        case "proficiency-low":
-          return a.proficiency - b.proficiency;
-        case "recent":
-        default:
-          // For demo purposes, we'll use the id as a proxy for "recent"
-          // In a real app, this would use a timestamp
-          return b.id - a.id;
-      }
-    });
-    
-    // Check if current page exceeds the maximum available pages after filtering
-    const maxPage = Math.ceil(sortedResults.length / itemsPerPage);
-    if (currentPage > maxPage && maxPage > 0) {
-      // If we're on a page that no longer exists after filtering, move to the last valid page
-      setTimeout(() => setCurrentPage(maxPage), 0);
+    if (value.length > 0) {
+      const filtered = LANGUAGES.filter(lang => 
+        lang.name.toLowerCase().includes(value.toLowerCase())
+      );
+      setFilteredTargetLanguages(filtered);
+    } else {
+      setFilteredTargetLanguages([]);
     }
-    
-    return sortedResults;
+  };
+
+  const handleLanguageKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, type: 'source' | 'target') => {
+    // Handle language selection on Enter key
+  };
+
+  const playPronunciation = (text: string, language: string, isOriginal: boolean) => {
+    // Handle text-to-speech functionality
+  };
+
+  const setLanguage = (language: any, type: 'source' | 'target') => {
+    if (type === 'source') {
+      setSourceLanguage(language.value);
+      setSourceLanguageInput(language.name);
+      setFilteredSourceLanguages([]);
+    } else {
+      setTargetLanguage(language.value);
+      setTargetLanguageInput(language.name);
+      setFilteredTargetLanguages([]);
+    }
   };
 
   return (
-    <div className="py-6 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto pb-20 md:pb-6">
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-3xl font-semibold text-secondary bg-gradient-to-r from-primary/90 to-secondary bg-clip-text text-transparent">My Phrases</h1>
-        <GuardedLink href="/add-phrase">
-          <Button className="bg-primary hover:bg-primary/90 text-white">
-            Add Phrase
-          </Button>
-        </GuardedLink>
+    <div className="container mx-auto px-4 py-8 max-w-6xl">
+      {/* Header */}
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-secondary mb-2">My Phrases</h1>
+        <p className="text-secondary/70">Manage and review your saved phrases</p>
       </div>
-      {/* Filter Bar */}
-      <Card className="p-4 mb-6">
-        <div className="flex flex-col sm:flex-row gap-4">
-          <div className="flex-1">
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Search className="h-5 w-5 text-primary/60" />
+
+      {/* Empty state when no phrases exist */}
+      {phrases.length === 0 ? (
+        <Card className="mb-6">
+          <div className="pt-8 pb-8 px-6">
+            <div className="flex flex-col items-center justify-center text-center py-12">
+              <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+                <BookOpen className="h-8 w-8 text-primary" />
               </div>
-              <Input 
-                placeholder="Search phrases or translations" 
-                className="pl-10" 
-                value={searchTerm}
-                onChange={(e) => handleSearchTermChange(e.target.value)}
-              />
+              <h3 className="text-xl font-semibold text-secondary mb-2">No Phrases Added Yet</h3>
+              <p className="text-secondary/70 mb-6 max-w-md">
+                You haven't added any phrases to your learning list yet. Start building your vocabulary by adding your first phrase!
+              </p>
+              <GuardedLink href="/add-phrase">
+                <Button className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white">
+                  <ArrowRight className="h-4 w-4 mr-2" />
+                  Add Your First Phrase
+                </Button>
+              </GuardedLink>
             </div>
           </div>
+        </Card>
+      ) : (
+        <>
+          {/* Search and Filter Controls */}
+          <Card className="mb-6">
+            <div className="p-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                {/* Search Input */}
+                <div className="relative">
+                  <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                  <Input
+                    placeholder="Search phrases..."
+                    value={searchTerm}
+                    onChange={(e) => handleSearchTermChange(e.target.value)}
+                    className="pl-10"
+                  />
+                </div>
 
-          {/* Language Filter */}
-          <div className="sm:w-1/5">
-            <Select 
-              defaultValue="all" 
-              value={languageFilter}
-              onValueChange={handleLanguageFilterChange}
-            >
-              <SelectTrigger id="language">
-                <SelectValue placeholder="Filter by Language" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Languages</SelectItem>
-                {LANGUAGES.map((language) => (
-                  <SelectItem key={language.id} value={language.id}>
-                    {language.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          
-          <div className="sm:w-1/5">
-            <Select 
-              defaultValue="all" 
-              value={tagFilter}
-              onValueChange={handleTagFilterChange}
-            >
-              <SelectTrigger id="tag">
-                <SelectValue placeholder="Filter by Tag" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Tags</SelectItem>
-                {SAMPLE_TAGS.map((tag) => (
-                  <SelectItem key={tag} value={tag.toLowerCase()}>
-                    {tag}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="sm:w-1/5">
-            <div className="flex gap-2">
-              <div className="flex-1">
-                <Select 
-                  defaultValue="recent" 
-                  value={sortOption}
-                  onValueChange={handleSortOptionChange}
-                >
-                  <SelectTrigger id="sort">
+                {/* Tag Filter */}
+                <Select value={tagFilter} onValueChange={handleTagFilterChange}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Filter by tag" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Tags</SelectItem>
+                    {SAMPLE_TAGS.map((tag) => (
+                      <SelectItem key={tag} value={tag}>{tag}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+
+                {/* Language Filter */}
+                <Select value={languageFilter} onValueChange={handleLanguageFilterChange}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Filter by language" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Languages</SelectItem>
+                    {LANGUAGES.map((language) => (
+                      <SelectItem key={language.value} value={language.value}>{language.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+
+                {/* Sort Options */}
+                <Select value={sortOption} onValueChange={handleSortOptionChange}>
+                  <SelectTrigger>
                     <SelectValue placeholder="Sort by" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="recent">Recently Added</SelectItem>
+                    <SelectItem value="recent">Recent</SelectItem>
                     <SelectItem value="alphabetical">Alphabetical</SelectItem>
-                    <SelectItem value="proficiency-high">Proficiency (High to Low)</SelectItem>
-                    <SelectItem value="proficiency-low">Proficiency (Low to High)</SelectItem>
+                    <SelectItem value="proficiency">Proficiency</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
-              <Button 
-                variant="outline" 
-                size="icon"
-                className="h-10 w-10 shrink-0"
-                title="Clear all filters and sorting"
-                onClick={() => {
-                  handleSearchTermChange("");
-                  handleTagFilterChange("all");
-                  handleLanguageFilterChange("all");
-                  handleSortOptionChange("recent");
-                }}
-              >
-                <X className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-        </div>
-      </Card>
-      {/* Phrases List */}
-      <Card className="mb-6">
-        <div className="divide-y divide-gray-200">
-          {getFilteredAndSortedPhrases().length > 0 ? (
-            <>
-              {getFilteredAndSortedPhrases()
-                .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
-                .map((phrase) => (
-                  <PhraseCard
-                    key={phrase.id}
-                    phrase={phrase.phrase}
-                    translation={phrase.translation}
-                    tags={phrase.tags}
-                    proficiency={phrase.proficiency}
-                    notes={phrase.notes}
-                    sourceLanguage={phrase.sourceLanguage}
-                    targetLanguage={phrase.targetLanguage}
-                    onEdit={() => handleEdit(phrase)}
-                    onDelete={() => handleDeleteConfirmation(phrase)}
-                    onSpeak={() => handlePronunciation(phrase)}
-                    onViewNotes={() => handleViewNotes(phrase)}
-                  />
-                ))}
-              
-              {/* Pagination */}
-              {getFilteredAndSortedPhrases().length > itemsPerPage && (
-                <div className="w-full p-4 flex justify-center items-center border-t border-primary/10 bg-primary/5">
-                  <div className="flex flex-wrap items-center justify-center gap-2">
-                    {/* First/Previous row on small screens */}
-                    <div className="flex items-center gap-2">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => setCurrentPage(1)}
-                        disabled={currentPage === 1}
-                        className="hidden sm:flex"
-                      >
-                        First
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setCurrentPage(currentPage - 1)}
-                        disabled={currentPage === 1}
-                        className="flex items-center min-w-0"
-                      >
-                        <ChevronLeft className="h-4 w-4 sm:mr-1" />
-                        <span className="hidden sm:inline">Previous</span>
-                      </Button>
-                      
-                      {/* Page numbers */}
-                      <div className="flex items-center gap-1">
-                        {Array.from({length: Math.min(3, Math.ceil(getFilteredAndSortedPhrases().length / itemsPerPage))}, (_, i) => {
-                          const pageNum = currentPage === 1 ? i + 1 : 
-                                        currentPage === Math.ceil(getFilteredAndSortedPhrases().length / itemsPerPage) ? 
-                                        Math.max(1, Math.ceil(getFilteredAndSortedPhrases().length / itemsPerPage) - 2) + i :
-                                        currentPage - 1 + i;
-                          
-                          if (pageNum <= Math.ceil(getFilteredAndSortedPhrases().length / itemsPerPage)) {
-                            return (
-                              <Button
-                                key={i}
-                                variant={currentPage === pageNum ? "default" : "outline"}
-                                size="sm"
-                                onClick={() => setCurrentPage(pageNum)}
-                                className="w-9 h-9 p-0"
-                              >
-                                {pageNum}
-                              </Button>
-                            );
-                          }
-                          return null;
-                        })}
-                      </div>
-                      
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setCurrentPage(currentPage + 1)}
-                        disabled={currentPage === Math.ceil(getFilteredAndSortedPhrases().length / itemsPerPage)}
-                        className="flex items-center min-w-0"
-                      >
-                        <span className="hidden sm:inline">Next</span>
-                        <ChevronRight className="h-4 w-4 sm:ml-1" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => setCurrentPage(Math.ceil(getFilteredAndSortedPhrases().length / itemsPerPage))}
-                        disabled={currentPage === Math.ceil(getFilteredAndSortedPhrases().length / itemsPerPage)}
-                        className="hidden sm:flex"
-                      >
-                        Last
-                      </Button>
-                    </div>
-                    
-                    {/* Page indicator for small screens */}
-                    <div className="text-sm text-gray-500 w-full text-center sm:hidden mt-2">
-                      Page {currentPage} of {Math.ceil(getFilteredAndSortedPhrases().length / itemsPerPage)}
-                    </div>
-                  </div>
+
+              {/* Clear filters button */}
+              {(searchTerm || tagFilter !== "all" || languageFilter !== "all" || sortOption !== "recent") && (
+                <div className="mt-4 flex justify-center">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      handleSearchTermChange("");
+                      handleTagFilterChange("all");
+                      handleLanguageFilterChange("all");
+                      handleSortOptionChange("recent");
+                    }}
+                  >
+                    <X className="h-4 w-4 mr-2" />
+                    Clear filters
+                  </Button>
                 </div>
               )}
-            </>
-          ) : (
-            <div className="px-4 py-8 text-center">
-              <p className="text-gray-500">No phrases match your filters.</p>
-              <Button 
-                variant="link" 
-                onClick={() => {
-                  handleSearchTermChange("");
-                  handleTagFilterChange("all");
-                  handleLanguageFilterChange("all");
-                  handleSortOptionChange("recent");
-                }}
-                className="mt-2"
-              >
-                Clear filters
-              </Button>
             </div>
-          )}
-        </div>
-      </Card>
+          </Card>
+
+          {/* Phrases List */}
+          <Card className="mb-6">
+            <div className="divide-y divide-gray-200">
+              {getFilteredAndSortedPhrases().length > 0 ? (
+                <>
+                  {getFilteredAndSortedPhrases()
+                    .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+                    .map((phrase) => (
+                      <PhraseCard
+                        key={phrase.id}
+                        phrase={phrase.phrase}
+                        translation={phrase.translation}
+                        tags={phrase.tags}
+                        proficiency={phrase.proficiency}
+                        notes={phrase.notes}
+                        sourceLanguage={phrase.sourceLanguage}
+                        targetLanguage={phrase.targetLanguage}
+                        onEdit={() => handleEdit(phrase)}
+                        onDelete={() => handleDeleteConfirmation(phrase)}
+                        onSpeak={() => handlePronunciation(phrase)}
+                        onViewNotes={() => handleViewNotes(phrase)}
+                      />
+                    ))}
+                  
+                  {/* Pagination */}
+                  {getFilteredAndSortedPhrases().length > itemsPerPage && (
+                    <div className="w-full p-4 flex justify-center items-center border-t border-primary/10 bg-primary/5">
+                      <div className="flex flex-wrap items-center justify-center gap-2">
+                        <div className="flex items-center gap-2">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setCurrentPage(1)}
+                            disabled={currentPage === 1}
+                            className="hidden sm:flex"
+                          >
+                            First
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setCurrentPage(currentPage - 1)}
+                            disabled={currentPage === 1}
+                            className="flex items-center min-w-0"
+                          >
+                            <ChevronLeft className="h-4 w-4 sm:mr-1" />
+                            <span className="hidden sm:inline">Previous</span>
+                          </Button>
+                          
+                          <div className="flex items-center gap-1">
+                            {Array.from({length: Math.min(3, Math.ceil(getFilteredAndSortedPhrases().length / itemsPerPage))}, (_, i) => {
+                              const pageNum = currentPage === 1 ? i + 1 : 
+                                            currentPage === Math.ceil(getFilteredAndSortedPhrases().length / itemsPerPage) ? 
+                                            Math.max(1, Math.ceil(getFilteredAndSortedPhrases().length / itemsPerPage) - 2) + i :
+                                            currentPage - 1 + i;
+                              
+                              if (pageNum <= Math.ceil(getFilteredAndSortedPhrases().length / itemsPerPage)) {
+                                return (
+                                  <Button
+                                    key={i}
+                                    variant={currentPage === pageNum ? "default" : "outline"}
+                                    size="sm"
+                                    onClick={() => setCurrentPage(pageNum)}
+                                    className="w-9 h-9 p-0"
+                                  >
+                                    {pageNum}
+                                  </Button>
+                                );
+                              }
+                              return null;
+                            })}
+                          </div>
+                          
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setCurrentPage(currentPage + 1)}
+                            disabled={currentPage === Math.ceil(getFilteredAndSortedPhrases().length / itemsPerPage)}
+                            className="flex items-center min-w-0"
+                          >
+                            <span className="hidden sm:inline">Next</span>
+                            <ChevronRight className="h-4 w-4 sm:ml-1" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setCurrentPage(Math.ceil(getFilteredAndSortedPhrases().length / itemsPerPage))}
+                            disabled={currentPage === Math.ceil(getFilteredAndSortedPhrases().length / itemsPerPage)}
+                            className="hidden sm:flex"
+                          >
+                            Last
+                          </Button>
+                        </div>
+                        
+                        <div className="text-sm text-gray-500 w-full text-center sm:hidden mt-2">
+                          Page {currentPage} of {Math.ceil(getFilteredAndSortedPhrases().length / itemsPerPage)}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <div className="px-4 py-8 text-center">
+                  <p className="text-gray-500">No phrases match your filters.</p>
+                  <Button 
+                    variant="link" 
+                    onClick={() => {
+                      handleSearchTermChange("");
+                      handleTagFilterChange("all");
+                      handleLanguageFilterChange("all");
+                      handleSortOptionChange("recent");
+                    }}
+                    className="mt-2"
+                  >
+                    Clear filters
+                  </Button>
+                </div>
+              )}
+            </div>
+          </Card>
+        </>
+      )}
+
       {/* Notes Dialog */}
       <Dialog open={isNotesDialogOpen} onOpenChange={setIsNotesDialogOpen}>
         <DialogContent className="sm:max-w-md rounded-xl overflow-hidden">
           <DialogHeader>
-            <DialogTitle className="text-xl font-semibold flex items-center gap-2">
-              <span className="text-primary">{selectedPhrase?.phrase}</span> 
-              <span className="text-sm font-normal text-gray-500">({selectedPhrase?.translation})</span>
-            </DialogTitle>
+            <DialogTitle className="text-lg font-semibold text-secondary">Notes</DialogTitle>
+            <DialogDescription className="text-secondary/70">
+              Notes for "{selectedPhrase?.phrase}" → "{selectedPhrase?.translation}"
+            </DialogDescription>
           </DialogHeader>
-          <div className="border-t border-gray-200 pt-4">
-            <div className="mb-4">
-              <h3 className="text-sm font-medium mb-2">Languages:</h3>
-              <div className="flex gap-2 items-center">
-                <Badge className="px-2 py-1 bg-primary-500/10 text-primary-700">
-                  {selectedPhrase && selectedPhrase.sourceLanguage ? 
-                    selectedPhrase.sourceLanguage.charAt(0).toUpperCase() + selectedPhrase.sourceLanguage.slice(1) :
-                    "Unknown"
-                  }
-                </Badge>
-                <span className="text-gray-400">→</span>
-                <Badge className="px-2 py-1 bg-primary-500/10 text-primary-700">
-                  {selectedPhrase && selectedPhrase.targetLanguage ? 
-                    selectedPhrase.targetLanguage.charAt(0).toUpperCase() + selectedPhrase.targetLanguage.slice(1) :
-                    "Unknown"
-                  }
-                </Badge>
-              </div>
-            </div>
-            <div className="mb-4">
-              <h3 className="text-sm font-medium mb-2">Status:</h3>
-              <div>
-                {(selectedPhrase?.proficiency || 0) > 80 ? (
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/20 text-primary-700 dark:text-primary-300 whitespace-nowrap">
-                    Learned
-                  </span>
-                ) : (
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-accent/20 text-amber-700 dark:text-amber-300 whitespace-nowrap">
-                    In&nbsp;Progress
-                  </span>
-                )}
-              </div>
+          
+          <div className="space-y-4">
+            <div className="flex items-center gap-2 text-sm text-secondary/60">
+              <span className="font-medium">{selectedPhrase?.sourceLanguage && selectedPhrase?.sourceLanguage in LANGUAGES ? LANGUAGES.find(lang => lang.value === selectedPhrase.sourceLanguage)?.name : selectedPhrase?.sourceLanguage}</span>
+              <span>→</span>
+              <span className="font-medium">{selectedPhrase?.targetLanguage && selectedPhrase?.targetLanguage in LANGUAGES ? LANGUAGES.find(lang => lang.value === selectedPhrase.targetLanguage)?.name : selectedPhrase?.targetLanguage}</span>
             </div>
             
-            {/* Tags section */}
             {selectedPhrase?.tags && selectedPhrase.tags.length > 0 && (
-              <div className="mb-4">
-                <h3 className="text-sm font-medium mb-2">Tags:</h3>
-                <div className="flex flex-wrap gap-1.5">
-                  {selectedPhrase.tags.map((tag, index) => (
-                    <Badge 
-                      key={index}
-                      variant="outline" 
-                      className="bg-accent/10 hover:bg-accent/20 text-xs text-center px-2 py-0.5 text-accent-foreground border-accent/20"
-                    >
-                      {tag}
-                    </Badge>
-                  ))}
-                </div>
+              <div className="flex flex-wrap gap-1">
+                {selectedPhrase.tags.map((tag, index) => (
+                  <Badge key={index} variant="secondary" className="text-xs">
+                    {tag}
+                  </Badge>
+                ))}
               </div>
             )}
             
-            <h3 className="text-sm font-medium mb-2">Notes:</h3>
-            <p className="text-gray-700">{selectedPhrase?.notes}</p>
+            <div className="bg-secondary/5 rounded-lg p-4">
+              <p className="text-secondary text-sm leading-relaxed">
+                {selectedPhrase?.notes || "No notes available for this phrase."}
+              </p>
+            </div>
           </div>
         </DialogContent>
       </Dialog>
+
       {/* Pronunciation Dialog */}
       <Dialog open={isPronunciationDialogOpen} onOpenChange={setIsPronunciationDialogOpen}>
         <DialogContent className="sm:max-w-md rounded-xl overflow-hidden">
           <DialogHeader>
-            <DialogTitle className="text-xl font-semibold">
-              Pronunciation <span className="text-xs bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full ml-2">Coming Soon</span>
-            </DialogTitle>
-            <DialogDescription>
-              This feature will allow you to listen to phrase pronunciations in a future update
+            <DialogTitle className="text-lg font-semibold text-secondary">Practice Pronunciation</DialogTitle>
+            <DialogDescription className="text-secondary/70">
+              Listen to the pronunciation and practice speaking
             </DialogDescription>
           </DialogHeader>
-          <div className="border-t border-gray-200 pt-4">
-            <div className="space-y-6">
-              {/* Original phrase pronunciation */}
-              <div className="space-y-2">
-                <div className="flex justify-between items-center">
-                  <div>
-                    <h3 className="text-sm font-medium">Original Phrase</h3>
-                    <p className="text-lg mt-1 text-gray-800">
-                      {selectedPhrase?.phrase}
-                    </p>
-                    <p className="text-xs text-gray-500">
-                      {selectedPhrase?.sourceLanguage && 
-                        selectedPhrase.sourceLanguage.charAt(0).toUpperCase() + 
-                        selectedPhrase.sourceLanguage.slice(1)}
-                    </p>
-                  </div>
-                  <Button 
-                    variant="outline" 
-                    size="icon"
-                    className="h-10 w-10"
-                    disabled={isPlayingOriginal}
-                    onClick={() => selectedPhrase && 
-                      playPronunciation(
-                        selectedPhrase.phrase, 
-                        selectedPhrase.sourceLanguage || 'en',
-                        true
-                      )
-                    }
-                    title="Pronunciation feature coming soon"
-                  >
-                    {isPlayingOriginal ? (
-                      <div className="h-5 w-5 rounded-full border-2 border-primary border-t-transparent animate-spin" />
-                    ) : (
-                      <span className="text-lg">🔊</span>
-                    )}
-                  </Button>
-                </div>
-                <p className="text-xs text-gray-500 italic">Pronunciation will be available in a future update</p>
+          
+          <div className="space-y-6">
+            {/* Original phrase */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium text-secondary/70">
+                  {selectedPhrase?.sourceLanguage && selectedPhrase?.sourceLanguage in LANGUAGES ? LANGUAGES.find(lang => lang.value === selectedPhrase.sourceLanguage)?.name : selectedPhrase?.sourceLanguage}
+                </span>
               </div>
+              <div className="bg-primary/5 rounded-lg p-4">
+                <p className="text-lg font-medium text-secondary mb-3">{selectedPhrase?.phrase}</p>
+                <Button
+                  onClick={() => selectedPhrase && playPronunciation(selectedPhrase.phrase, selectedPhrase.sourceLanguage || '', true)}
+                  variant="outline"
+                  size="sm"
+                  disabled={isPlayingOriginal}
+                  className="w-full"
+                >
+                  {isPlayingOriginal ? "Playing..." : "🔊 Play Pronunciation"}
+                </Button>
+              </div>
+            </div>
 
-              {/* Translation pronunciation */}
-              <div className="space-y-2">
-                <div className="flex justify-between items-center">
-                  <div>
-                    <h3 className="text-sm font-medium">Translation</h3>
-                    <p className="text-lg mt-1 text-gray-800">
-                      {selectedPhrase?.translation}
-                    </p>
-                    <p className="text-xs text-gray-500">
-                      {selectedPhrase?.targetLanguage && 
-                        selectedPhrase.targetLanguage.charAt(0).toUpperCase() + 
-                        selectedPhrase.targetLanguage.slice(1)}
-                    </p>
-                  </div>
-                  <Button 
-                    variant="outline" 
-                    size="icon"
-                    className="h-10 w-10"
-                    disabled={isPlayingTranslation}
-                    onClick={() => selectedPhrase && 
-                      playPronunciation(
-                        selectedPhrase.translation, 
-                        selectedPhrase.targetLanguage || 'en',
-                        false
-                      )
-                    }
-                    title="Pronunciation feature coming soon"
-                  >
-                    {isPlayingTranslation ? (
-                      <div className="h-5 w-5 rounded-full border-2 border-primary border-t-transparent animate-spin" />
-                    ) : (
-                      <span className="text-lg">🔊</span>
-                    )}
-                  </Button>
-                </div>
-                <p className="text-xs text-gray-500 italic">Pronunciation will be available in a future update</p>
+            {/* Translation */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium text-secondary/70">
+                  {selectedPhrase?.targetLanguage && selectedPhrase?.targetLanguage in LANGUAGES ? LANGUAGES.find(lang => lang.value === selectedPhrase.targetLanguage)?.name : selectedPhrase?.targetLanguage}
+                </span>
+              </div>
+              <div className="bg-accent/5 rounded-lg p-4">
+                <p className="text-lg font-medium text-secondary mb-3">{selectedPhrase?.translation}</p>
+                <Button
+                  onClick={() => selectedPhrase && playPronunciation(selectedPhrase.translation, selectedPhrase.targetLanguage || '', false)}
+                  variant="outline"
+                  size="sm"
+                  disabled={isPlayingTranslation}
+                  className="w-full"
+                >
+                  {isPlayingTranslation ? "Playing..." : "🔊 Play Pronunciation"}
+                </Button>
               </div>
             </div>
           </div>
         </DialogContent>
       </Dialog>
-      {/* Edit Dialog */}
+
+      {/* Edit Phrase Dialog */}
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent className="sm:max-w-3xl rounded-xl">
+        <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto rounded-xl">
           <DialogHeader>
-            <DialogTitle>Edit Phrase</DialogTitle>
-            <DialogDescription>
-              Make changes to your phrase below.
+            <DialogTitle className="text-lg font-semibold text-secondary">Edit Phrase</DialogTitle>
+            <DialogDescription className="text-secondary/70">
+              Update your phrase and its details
             </DialogDescription>
           </DialogHeader>
           
-          <form onSubmit={handleSubmit} className="flex flex-col">
-            <div className="space-y-5 overflow-y-auto h-[50vh] max-h-[50vh] sm:h-auto sm:max-h-full pr-3 -mr-3 sm:pr-0 sm:mr-0 -mt-1">
-              <div className="grid grid-cols-1 gap-y-5 gap-x-4 sm:grid-cols-4">
-                {/* Row 1: Phrase & Source Language */}
-                <div className="sm:col-span-3">
-                  <div className="space-y-2">
-                    <Label htmlFor="edit-phrase">Phrase to Learn</Label>
-                    <Input 
-                      id="edit-phrase"
-                      name="phrase"
-                      value={editedPhrase}
-                      onChange={(e) => {
-                        setEditedPhrase(e.target.value);
-                        if (formErrors.phrase) {
-                          setFormErrors({...formErrors, phrase: false});
-                        }
-                      }}
-                      placeholder="Enter phrase to learn"
-                      className={formErrors.phrase ? "border-red-500" : ""}
-                    />
-                    {formErrors.phrase && (
-                      <p className="text-sm text-red-500">Phrase is required</p>
-                    )}
-                  </div>
-                </div>
-                <div className="sm:col-span-1">
-                  <div className="space-y-2">
-                    <Label htmlFor="edit-sourceLanguage">Language of the Phrase</Label>
-                    <div className="relative">
-                      <Input 
-                        id="edit-sourceLanguage"
-                        placeholder="Type or select language"
-                        value={sourceLanguageInput}
-                        onChange={(e) => {
-                          handleSourceLanguageChange(e);
-                          if (formErrors.sourceLanguage) {
-                            setFormErrors({...formErrors, sourceLanguage: false});
-                          }
-                        }}
-                        onFocus={() => {
-                          setFilteredSourceLanguages(LANGUAGES);
-                        }}
-                        onBlur={() => {
-                          // Small delay to allow clicking on dropdown items
-                          setTimeout(() => setFilteredSourceLanguages([]), 200);
-                        }}
-                        onKeyDown={(e) => handleLanguageKeyDown('source', e)}
-                        className={formErrors.sourceLanguage && !sourceLanguage ? "border-red-500" : ""}
-                      />
-                      {/* No plus button for source language field as users should select from the provided options */}
-
-                      {/* Source language suggestions */}
-                      {filteredSourceLanguages.length > 0 && (
-                        <div className="absolute z-20 mt-1 w-full bg-white shadow-lg max-h-40 rounded-md py-1 text-base overflow-auto focus:outline-none sm:text-sm">
-                          <ul className="divide-y divide-gray-200">
-                            {filteredSourceLanguages.map((language) => (
-                              <li
-                                key={language.id}
-                                className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                                onClick={() => {
-                                  setLanguage('source', language.id);
-                                  if (formErrors.sourceLanguage) {
-                                    setFormErrors({...formErrors, sourceLanguage: false});
-                                  }
-                                }}
-                              >
-                                {language.name}
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
-                    </div>
-                    {sourceLanguage && (
-                      <div className="mt-2">
-                        <Badge className="px-2 py-1 bg-primary-500/10 text-primary-700 hover:bg-primary-500/20 transition-colors duration-200">
-                          {LANGUAGES.find(l => l.id === sourceLanguage)?.name || sourceLanguage}
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setSourceLanguage("");
-                              setFormErrors({...formErrors, sourceLanguage: true});
-                            }}
-                            className="ml-1 rounded-full outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
-                          >
-                            <X className="h-3 w-3" />
-                          </button>
-                        </Badge>
-                      </div>
-                    )}
-                    {formErrors.sourceLanguage && !sourceLanguage && (
-                      <p className="text-sm text-red-500">Source language is required</p>
-                    )}
-                  </div>
-                </div>
-
-                {/* Row 2: Translation & Target Language */}
-                <div className="sm:col-span-3">
-                  <div className="space-y-2">
-                    <Label htmlFor="edit-translation">Meaning of the Phrase</Label>
-                    <Input 
-                      id="edit-translation"
-                      name="translation"
-                      value={editedTranslation}
-                      onChange={(e) => {
-                        setEditedTranslation(e.target.value);
-                        if (formErrors.translation) {
-                          setFormErrors({...formErrors, translation: false});
-                        }
-                      }}
-                      placeholder="Enter translation in your language"
-                      className={formErrors.translation ? "border-red-500" : ""}
-                    />
-                    {formErrors.translation && (
-                      <p className="text-sm text-red-500">Translation is required</p>
-                    )}
-                  </div>
-                </div>
-                
-                <div className="sm:col-span-1">
-                  <div className="space-y-2">
-                    <Label htmlFor="edit-targetLanguage">Language of the Meaning</Label>
-                    <div className="relative">
-                      <Input 
-                        id="edit-targetLanguage"
-                        placeholder="Type or select language"
-                        value={targetLanguageInput}
-                        onChange={(e) => {
-                          handleTargetLanguageChange(e);
-                          if (formErrors.targetLanguage) {
-                            setFormErrors({...formErrors, targetLanguage: false});
-                          }
-                        }}
-                        onFocus={() => {
-                          setFilteredTargetLanguages(LANGUAGES);
-                        }}
-                        onBlur={() => {
-                          // Small delay to allow clicking on dropdown items
-                          setTimeout(() => setFilteredTargetLanguages([]), 200);
-                        }}
-                        onKeyDown={(e) => handleLanguageKeyDown('target', e)}
-                        className={formErrors.targetLanguage && !targetLanguage ? "border-red-500" : ""}
-                      />
-                      {/* No plus button for target language field as users should select from the provided options */}
-
-                      {/* Target language suggestions */}
-                      {filteredTargetLanguages.length > 0 && (
-                        <div className="absolute z-20 mt-1 w-full bg-white shadow-lg max-h-40 rounded-md py-1 text-base overflow-auto focus:outline-none sm:text-sm">
-                          <ul className="divide-y divide-gray-200">
-                            {filteredTargetLanguages.map((language) => (
-                              <li
-                                key={language.id}
-                                className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                                onClick={() => {
-                                  setLanguage('target', language.id);
-                                  if (formErrors.targetLanguage) {
-                                    setFormErrors({...formErrors, targetLanguage: false});
-                                  }
-                                }}
-                              >
-                                {language.name}
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
-                    </div>
-                    {targetLanguage && (
-                      <div className="mt-2">
-                        <Badge className="px-2 py-1 bg-primary-500/10 text-primary-700 hover:bg-primary-500/20 transition-colors duration-200">
-                          {LANGUAGES.find(l => l.id === targetLanguage)?.name || targetLanguage}
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setTargetLanguage("");
-                              setFormErrors({...formErrors, targetLanguage: true});
-                            }}
-                            className="ml-1 rounded-full outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
-                          >
-                            <X className="h-3 w-3" />
-                          </button>
-                        </Badge>
-                      </div>
-                    )}
-                    {formErrors.targetLanguage && !targetLanguage && (
-                      <p className="text-sm text-red-500">Target language is required</p>
-                    )}
-                  </div>
-                </div>
-
-                {/* Row 3: Notes & Tags */}
-                <div className="sm:col-span-2">
-                  <Label htmlFor="edit-notes">Notes (optional)</Label>
-                  <Textarea 
-                    id="edit-notes"
-                    name="notes"
-                    value={editedNotes}
-                    onChange={(e) => setEditedNotes(e.target.value)}
-                    placeholder="Add explanations, context, or example sentences."
-                    rows={3}
-                  />
-                </div>
-
-                <div className="sm:col-span-2">
-                  <Label htmlFor="edit-tags">Tags (optional, max 3)</Label>
-                  <div className="flex flex-wrap gap-2 mb-2">
-                    {selectedTags.map(tag => (
-                      <Badge key={tag} className="px-2 py-1 bg-primary-500/10 text-primary-700 hover:bg-primary-500/20 transition-colors duration-200">
-                        {tag}
-                        <button
-                          type="button"
-                          onClick={() => removeTag(tag)}
-                          className="ml-1 rounded-full outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
-                        >
-                          <X className="h-3 w-3" />
-                        </button>
-                      </Badge>
-                    ))}
-                  </div>
-                  <div className="relative">
-                    <Input
-                      id="edit-tags"
-                      placeholder={selectedTags.length >= 3 ? "Maximum 3 tags reached" : "Type or select a tag..."}
-                      value={tagInput}
-                      onChange={(e) => {
-                        handleTagInputChange(e);
-                        if (formErrors.tagLength) {
-                          setFormErrors({...formErrors, tagLength: false});
-                        }
-                      }}
-                      onFocus={() => {
-                        // Always show available tags, regardless of whether some are selected
-                        if (selectedTags.length < 3) {
-                          const availableTags = SAMPLE_TAGS.filter(tag => !selectedTags.includes(tag));
-                          setFilteredSuggestions(availableTags);
-                        }
-                      }}
-                      onBlur={() => {
-                        // Small delay to allow clicking on dropdown items
-                        setTimeout(() => setFilteredSuggestions([]), 200);
-                      }}
-                      onClick={() => {
-                        // Also show suggestions on click for better usability
-                        if (selectedTags.length < 3) {
-                          const availableTags = SAMPLE_TAGS.filter(tag => !selectedTags.includes(tag));
-                          setFilteredSuggestions(availableTags);
-                          
-                          // Add auto-scrolling functionality to make tag options visible
-                          setTimeout(() => {
-                            const inputElement = document.getElementById('edit-tags');
-                            if (inputElement) {
-                              // Calculate position to ensure tag suggestions are visible
-                              inputElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                            }
-                          }, 100);
-                        }
-                      }}
-                      onKeyDown={handleTagKeyDown}
-                      className={`pr-8 ${formErrors.tagLength ? "border-red-500" : ""}`}
-                      disabled={selectedTags.length >= 3}
-                    />
-                    {formErrors.tagLength && (
-                      <p className="text-sm text-red-500">Tags must be between 3-16 characters</p>
-                    )}
-                    {tagInput && selectedTags.length < 3 && (
-                      <button
-                        type="button"
-                        className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
-                        onClick={() => addTag(tagInput)}
-                      >
-                        <Plus className="h-4 w-4" />
-                      </button>
-                    )}
-                    
-                    {/* Tag suggestions - always show when focused regardless of text input */}
-                    {filteredSuggestions.length > 0 && selectedTags.length < 3 && (
-                      <div 
-                        className="absolute z-50 mt-1 w-full bg-white shadow-lg rounded-md py-1 text-base overflow-auto focus:outline-none sm:text-sm border border-gray-200"
-                        style={{ 
-                          maxHeight: "150px", 
-                          bottom: "auto",
-                          top: "100%" 
-                        }}
-                      >
-                        <ul className="divide-y divide-gray-200">
-                          {filteredSuggestions.map((tag) => (
-                            <li
-                              key={tag}
-                              className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm"
-                              onClick={() => addTag(tag)}
-                            >
-                              {tag}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Phrase Input */}
+            <div className="space-y-2">
+              <Label htmlFor="phrase" className="text-sm font-medium text-secondary">
+                Phrase *
+              </Label>
+              <Input
+                id="phrase"
+                value={editedPhrase}
+                onChange={(e) => {
+                  setEditedPhrase(e.target.value);
+                  setFormErrors(prev => ({ ...prev, phrase: false }));
+                }}
+                className={formErrors.phrase ? "border-red-500" : ""}
+                placeholder="Enter the phrase"
+              />
+              {formErrors.phrase && (
+                <p className="text-red-500 text-xs">Please enter a phrase</p>
+              )}
             </div>
-            
-            <div className="flex flex-col sm:flex-row sm:justify-end gap-3 pt-4 mt-4 border-t">
-              <Button 
-                type="button" 
-                variant="outline" 
+
+            {/* Source Language */}
+            <div className="space-y-2 relative">
+              <Label htmlFor="sourceLanguage" className="text-sm font-medium text-secondary">
+                Source Language *
+              </Label>
+              <Input
+                id="sourceLanguage"
+                value={sourceLanguageInput}
+                onChange={handleSourceLanguageChange}
+                onFocus={() => {
+                  setFormErrors(prev => ({ ...prev, sourceLanguage: false }));
+                  if (sourceLanguageInput.length > 0) {
+                    setFilteredSourceLanguages(LANGUAGES.filter(lang => 
+                      lang.name.toLowerCase().includes(sourceLanguageInput.toLowerCase())
+                    ));
+                  } else {
+                    setFilteredSourceLanguages(LANGUAGES);
+                  }
+                }}
+                onBlur={() => {
+                  setTimeout(() => setFilteredSourceLanguages([]), 150);
+                }}
+                onKeyDown={(e) => handleLanguageKeyDown(e, 'source')}
+                className={formErrors.sourceLanguage ? "border-red-500" : ""}
+                placeholder="Search for a language..."
+              />
+
+              {filteredSourceLanguages.length > 0 && (
+                <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-md shadow-lg max-h-40 overflow-y-auto">
+                  {filteredSourceLanguages.map((language) => (
+                    <div
+                      key={language.value}
+                      className="px-3 py-2 hover:bg-gray-100 cursor-pointer text-sm"
+                      onClick={() => setLanguage(language, 'source')}
+                    >
+                      <div className="flex items-center">
+                        <span className="mr-2">{language.icon}</span>
+                        <span>{language.name}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {sourceLanguage && (
+                <div className="flex items-center text-sm text-secondary/70 mt-1">
+                  <span className="mr-2">{LANGUAGES.find(lang => lang.value === sourceLanguage)?.icon}</span>
+                  <span>Selected: {LANGUAGES.find(lang => lang.value === sourceLanguage)?.name}</span>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      setSourceLanguage("");
+                      setSourceLanguageInput("");
+                      setFormErrors(prev => ({ ...prev, sourceLanguage: false }));
+                    }}
+                    className="ml-2 h-auto p-1"
+                  >
+                    <X className="h-3 w-3" />
+                  </Button>
+                </div>
+              )}
+
+              {formErrors.sourceLanguage && !sourceLanguage && (
+                <p className="text-red-500 text-xs">Please select a source language</p>
+              )}
+            </div>
+
+            {/* Translation Input */}
+            <div className="space-y-2">
+              <Label htmlFor="translation" className="text-sm font-medium text-secondary">
+                Translation *
+              </Label>
+              <Input
+                id="translation"
+                value={editedTranslation}
+                onChange={(e) => {
+                  setEditedTranslation(e.target.value);
+                  setFormErrors(prev => ({ ...prev, translation: false }));
+                }}
+                className={formErrors.translation ? "border-red-500" : ""}
+                placeholder="Enter the translation"
+              />
+              {formErrors.translation && (
+                <p className="text-red-500 text-xs">Please enter a translation</p>
+              )}
+            </div>
+
+            {/* Target Language */}
+            <div className="space-y-2 relative">
+              <Label htmlFor="targetLanguage" className="text-sm font-medium text-secondary">
+                Target Language *
+              </Label>
+              <Input
+                id="targetLanguage"
+                value={targetLanguageInput}
+                onChange={handleTargetLanguageChange}
+                onFocus={() => {
+                  setFormErrors(prev => ({ ...prev, targetLanguage: false }));
+                  if (targetLanguageInput.length > 0) {
+                    setFilteredTargetLanguages(LANGUAGES.filter(lang => 
+                      lang.name.toLowerCase().includes(targetLanguageInput.toLowerCase())
+                    ));
+                  } else {
+                    setFilteredTargetLanguages(LANGUAGES);
+                  }
+                }}
+                onBlur={() => {
+                  setTimeout(() => setFilteredTargetLanguages([]), 150);
+                }}
+                onKeyDown={(e) => handleLanguageKeyDown(e, 'target')}
+                className={formErrors.targetLanguage ? "border-red-500" : ""}
+                placeholder="Search for a language..."
+              />
+
+              {filteredTargetLanguages.length > 0 && (
+                <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-md shadow-lg max-h-40 overflow-y-auto">
+                  {filteredTargetLanguages.map((language) => (
+                    <div
+                      key={language.value}
+                      className="px-3 py-2 hover:bg-gray-100 cursor-pointer text-sm"
+                      onClick={() => setLanguage(language, 'target')}
+                    >
+                      <div className="flex items-center">
+                        <span className="mr-2">{language.icon}</span>
+                        <span>{language.name}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {targetLanguage && (
+                <div className="flex items-center text-sm text-secondary/70 mt-1">
+                  <span className="mr-2">{LANGUAGES.find(lang => lang.value === targetLanguage)?.icon}</span>
+                  <span>Selected: {LANGUAGES.find(lang => lang.value === targetLanguage)?.name}</span>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      setTargetLanguage("");
+                      setTargetLanguageInput("");
+                      setFormErrors(prev => ({ ...prev, targetLanguage: false }));
+                    }}
+                    className="ml-2 h-auto p-1"
+                  >
+                    <X className="h-3 w-3" />
+                  </Button>
+                </div>
+              )}
+
+              {formErrors.targetLanguage && !targetLanguage && (
+                <p className="text-red-500 text-xs">Please select a target language</p>
+              )}
+            </div>
+
+            {/* Notes */}
+            <div className="space-y-2">
+              <Label htmlFor="notes" className="text-sm font-medium text-secondary">Notes</Label>
+              <Textarea
+                id="notes"
+                value={editedNotes}
+                onChange={(e) => setEditedNotes(e.target.value)}
+                placeholder="Add any notes about this phrase (optional)"
+                className="resize-none"
+                rows={3}
+              />
+            </div>
+
+            {/* Tags */}
+            <div className="space-y-2">
+              <Label className="text-sm font-medium text-secondary">Tags (up to 3)</Label>
+              
+              {/* Selected tags */}
+              {selectedTags.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {selectedTags.map((tag) => (
+                    <Badge key={tag} variant="secondary" className="flex items-center gap-1">
+                      {tag}
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => removeTag(tag)}
+                        className="h-auto p-0 hover:bg-transparent"
+                      >
+                        <X className="h-3 w-3" />
+                      </Button>
+                    </Badge>
+                  ))}
+                </div>
+              )}
+
+              {/* Tag input */}
+              {selectedTags.length < 3 && (
+                <div className="space-y-2 relative">
+                  <Input
+                    value={tagInput}
+                    onChange={handleTagInputChange}
+                    onFocus={() => {
+                      setFormErrors(prev => ({ ...prev, tagLength: false }));
+                      if (selectedTags.length < 3) {
+                        setFilteredSuggestions(SAMPLE_TAGS.filter(tag => 
+                          !selectedTags.includes(tag)
+                        ));
+                      } else {
+                        setFilteredSuggestions([]);
+                      }
+                    }}
+                    onBlur={() => {
+                      setTimeout(() => {
+                        if (selectedTags.length < 3) {
+                          setFilteredSuggestions([]);
+                        }
+                      }, 150);
+                    }}
+                    onKeyDown={handleTagKeyDown}
+                    placeholder={selectedTags.length >= 3 ? "Maximum 3 tags reached" : "Type to search tags or create new..."}
+                    disabled={selectedTags.length >= 3}
+                    className={formErrors.tagLength ? "border-red-500" : ""}
+                  />
+
+                  {formErrors.tagLength && selectedTags.length >= 3 && (
+                    <p className="text-red-500 text-xs">Maximum 3 tags allowed. Remove a tag to add another.</p>
+                  )}
+
+                  {/* Tag suggestions */}
+                  {tagInput.length > 0 && filteredSuggestions.length > 0 && selectedTags.length < 3 && (
+                    <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-md shadow-lg max-h-32 overflow-y-auto">
+                      {filteredSuggestions.map((tag) => (
+                        <div
+                          key={tag}
+                          className="px-3 py-2 hover:bg-gray-100 cursor-pointer text-sm"
+                          onClick={() => addTag(tag)}
+                        >
+                          {tag}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* Form Actions */}
+            <div className="flex justify-end gap-3 pt-6">
+              <Button
+                type="button"
+                variant="outline"
                 onClick={() => setIsEditDialogOpen(false)}
-                className="w-full sm:w-auto"
               >
                 Cancel
               </Button>
-              <Button 
+              <Button
                 type="submit"
-                className="w-full sm:w-auto"
+                className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white"
               >
                 Save Changes
               </Button>
@@ -1613,58 +871,49 @@ export default function MyList() {
           </form>
         </DialogContent>
       </Dialog>
+
       {/* Delete Confirmation Dialog */}
       <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <DialogContent className="sm:max-w-md rounded-xl overflow-hidden">
           <DialogHeader>
-            <DialogTitle className="text-xl font-semibold">
-              Delete Phrase
-            </DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-lg font-semibold text-secondary">Delete Phrase</DialogTitle>
+            <DialogDescription className="text-secondary/70">
               Are you sure you want to delete this phrase? This action cannot be undone.
             </DialogDescription>
           </DialogHeader>
-          <div className="border-t border-gray-200 pt-4">
-            <div className="mb-4">
-              <div className="p-3 bg-destructive/10 rounded-md mb-4">
-                <div className="flex gap-2 mb-2">
-                  <span className="font-medium">{selectedPhrase?.phrase}</span>
-                  <span className="text-gray-500">({selectedPhrase?.translation})</span>
-                </div>
-                {selectedPhrase?.tags && selectedPhrase.tags.length > 0 && (
-                  <div className="flex flex-wrap gap-1.5">
+          
+          {selectedPhrase && (
+            <div className="space-y-4">
+              <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                <p className="font-medium text-secondary">{selectedPhrase.phrase}</p>
+                <p className="text-sm text-secondary/70">{selectedPhrase.translation}</p>
+                {selectedPhrase.tags && selectedPhrase.tags.length > 0 && (
+                  <div className="flex flex-wrap gap-1 mt-2">
                     {selectedPhrase.tags.map((tag, index) => (
-                      <Badge 
-                        key={index}
-                        variant="outline" 
-                        className="bg-accent/10 hover:bg-accent/20 text-xs text-center px-2 py-0.5 text-accent-foreground border-accent/20"
-                      >
+                      <Badge key={index} variant="secondary" className="text-xs">
                         {tag}
                       </Badge>
                     ))}
                   </div>
                 )}
               </div>
+              
+              <div className="flex justify-end gap-3">
+                <Button
+                  variant="outline"
+                  onClick={() => setIsDeleteDialogOpen(false)}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  variant="destructive"
+                  onClick={handleDelete}
+                >
+                  Delete Phrase
+                </Button>
+              </div>
             </div>
-            <div className="flex flex-col sm:flex-row sm:justify-end gap-3 pt-2">
-              <Button 
-                type="button" 
-                variant="outline" 
-                onClick={() => setIsDeleteDialogOpen(false)}
-                className="w-full sm:w-auto"
-              >
-                Cancel
-              </Button>
-              <Button 
-                type="button"
-                variant="destructive"
-                onClick={handleDelete}
-                className="w-full sm:w-auto"
-              >
-                Delete Phrase
-              </Button>
-            </div>
-          </div>
+          )}
         </DialogContent>
       </Dialog>
     </div>
