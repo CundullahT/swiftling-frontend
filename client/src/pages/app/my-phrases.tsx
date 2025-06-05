@@ -76,8 +76,7 @@ export default function MyPhrases() {
           <h1 className="text-3xl font-semibold text-secondary bg-gradient-to-r from-primary/90 to-secondary bg-clip-text text-transparent">My Phrases</h1>
         </div>
         <GuardedLink href="/add-phrase">
-          <Button className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white">
-            <Plus className="h-4 w-4 mr-2" />
+          <Button className="bg-primary hover:bg-primary/90 text-white">
             Add Phrase
           </Button>
         </GuardedLink>
@@ -96,8 +95,7 @@ export default function MyPhrases() {
                 Start building your language learning collection by adding your first phrase. You can organize them with tags and track your progress!
               </p>
               <GuardedLink href="/add-phrase">
-                <Button className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white">
-                  <ArrowRight className="h-4 w-4 mr-2" />
+                <Button className="bg-primary hover:bg-primary/90 text-white">
                   Add Your First Phrase
                 </Button>
               </GuardedLink>
