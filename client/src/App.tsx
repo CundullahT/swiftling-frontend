@@ -7,7 +7,7 @@ import NotFound from "@/pages/not-found";
 
 // App Pages
 import Dashboard from "@/pages/app/dashboard";
-import MyList from "@/pages/app/my-list";
+import MyPhrases from "@/pages/app/my-phrases";
 import AddPhrase from "@/pages/app/add-phrase";
 import Quiz from "@/pages/app/quiz";
 import QuizHistory from "@/pages/app/quiz-history";
@@ -61,7 +61,7 @@ function App() {
                 
                 {/* App Routes */}
                 <Route path="/dashboard" component={Dashboard} />
-                <Route path="/my-phrases" component={MyList} />
+                <Route path="/my-phrases" component={MyPhrases} />
                 <Route path="/add-phrase" component={AddPhrase} />
                 <Route path="/quiz" component={Quiz} />
                 <Route path="/quiz-history" component={QuizHistory} />
