@@ -257,7 +257,7 @@ export default function Quiz() {
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-3xl font-semibold text-secondary bg-gradient-to-r from-primary/90 to-secondary bg-clip-text text-transparent">Quiz</h1>
           <GuardedLink href="/quiz-history">
-            <Button variant="outline" className="flex items-center gap-2">
+            <Button className="bg-primary hover:bg-primary/90 text-white flex items-center gap-2">
               <BookOpen className="h-4 w-4" />
               <span>View Quiz History</span>
             </Button>
@@ -319,7 +319,7 @@ export default function Quiz() {
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-3xl font-semibold text-secondary bg-gradient-to-r from-primary/90 to-secondary bg-clip-text text-transparent">Quiz</h1>
         <GuardedLink href="/quiz-history">
-          <Button variant="outline" className="flex items-center gap-2">
+          <Button className="bg-primary hover:bg-primary/90 text-white flex items-center gap-2">
             <BookOpen className="h-4 w-4" />
             <span>View Quiz History</span>
           </Button>
