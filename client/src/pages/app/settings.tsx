@@ -143,7 +143,7 @@ export default function Settings() {
         <form onSubmit={accountForm.handleSubmit(onAccountSubmit)} className="mb-8" noValidate>
           <Card>
             <CardContent className="pt-6">
-              <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">Account Settings</h3>
+              <h3 className="text-xl font-semibold text-secondary mb-4">Account Settings</h3>
               <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
                 <div className="sm:col-span-3">
                   <FormField
@@ -220,7 +220,7 @@ export default function Settings() {
         <form onSubmit={passwordForm.handleSubmit(onPasswordSubmit)} className="mb-6" noValidate>
           <Card>
             <CardContent className="pt-6">
-              <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">Password Settings</h3>
+              <h3 className="text-xl font-semibold text-secondary mb-4">Password Settings</h3>
               <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
                 <div className="sm:col-span-6">
                   <FormField
@@ -301,10 +301,10 @@ export default function Settings() {
       
       {/* Danger Zone */}
       <div className="mt-10">
-        <h3 className="text-lg font-medium text-red-600 mb-4">Danger Zone</h3>
+        <h3 className="text-xl font-semibold text-red-600 mb-4">Danger Zone</h3>
         <Card>
           <CardContent className="pt-6">
-            <h3 className="text-lg leading-6 font-medium text-red-600">Delete Account</h3>
+            <h3 className="text-xl font-semibold text-red-600">Delete Account</h3>
             <div className="mt-2 w-full text-sm text-gray-500">
               <p className="whitespace-normal">
                 Once you delete your account, all of your data will be permanently removed. This action cannot be undone.
