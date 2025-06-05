@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { GuardedLink } from "@/components/ui/guarded-link";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Calendar, Clock, Check, X, AlertCircle, Trophy, Timer, ChevronLeft, ChevronRight } from "lucide-react";
+import { Calendar, Clock, Check, X, AlertCircle, Trophy, Timer, ChevronLeft, ChevronRight, BookOpen, ArrowRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 
@@ -21,7 +21,11 @@ export default function QuizHistory() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
   
-  // Sample quiz history data with 25 entries for pagination testing
+  // Quiz history data - empty array to show empty state
+  const quizHistory: any[] = [];
+  
+  // Sample data for testing (uncomment to test with data)
+  /*
   const quizHistory = [
     {
       id: 1,
@@ -323,7 +327,7 @@ export default function QuizHistory() {
       worstTime: 5.9,
       averageTime: 3.9
     }
-  ];
+    */
 
   // Calculate success rate percentage
   const getSuccessRate = (correct: number, wrong: number, timedOut: number) => {
@@ -344,53 +348,75 @@ export default function QuizHistory() {
         </div>
       </div>
       
-      <Card className="mb-6">
-        <CardContent className="pt-6">
-          <div className="overflow-hidden">
-            <div className="overflow-x-auto relative w-full">
-              <Table className="w-full">
-                <TableHeader>
-                  <TableRow className="border-b border-primary/10">
-                    <TableHead className="text-secondary">Date</TableHead>
-                    <TableHead className="text-center text-secondary">Quiz Type</TableHead>
-                    <TableHead className="text-center text-secondary">Language</TableHead>
-                    <TableHead className="text-center text-secondary">Score</TableHead>
-                    <TableHead className="text-secondary">
-                      <div className="flex items-center justify-center">
-                        <Check className="h-4 w-4 text-green-600 mr-1" />
-                        <span>Correct</span>
-                      </div>
-                    </TableHead>
-                    <TableHead className="text-secondary">
-                      <div className="flex items-center justify-center">
-                        <X className="h-4 w-4 text-rose-600 mr-1" />
-                        <span>Wrong</span>
-                      </div>
-                    </TableHead>
-                    <TableHead className="text-secondary">
-                      <div className="flex items-center justify-center">
-                        <AlertCircle className="h-4 w-4 text-amber-600 mr-1" />
-                        <span>Timed Out</span>
-                      </div>
-                    </TableHead>
-                    <TableHead className="text-secondary">
-                      <div className="flex items-center justify-center">
-                        <Trophy className="h-4 w-4 text-primary mr-1" />
-                        <span>Best Time</span>
-                      </div>
-                    </TableHead>
-                    <TableHead className="text-secondary">
-                      <div className="flex items-center justify-center">
-                        <Timer className="h-4 w-4 text-rose-600 mr-1" />
-                        <span>Worst Time</span>
-                      </div>
-                    </TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {quizHistory
-                    .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
-                    .map((quiz) => (
+      {/* Show empty state when no quiz history */}
+      {quizHistory.length === 0 ? (
+        <Card className="mb-6">
+          <CardContent className="pt-8 pb-8">
+            <div className="flex flex-col items-center justify-center text-center py-12">
+              <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+                <BookOpen className="h-8 w-8 text-primary" />
+              </div>
+              <h3 className="text-xl font-semibold text-secondary mb-2">No Quiz History Yet</h3>
+              <p className="text-secondary/70 mb-6 max-w-md">
+                You haven't solved any quizzes yet. Start your language learning journey by taking your first quiz!
+              </p>
+              <GuardedLink href="/quiz">
+                <Button className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white">
+                  <ArrowRight className="h-4 w-4 mr-2" />
+                  Start Your First Quiz
+                </Button>
+              </GuardedLink>
+            </div>
+          </CardContent>
+        </Card>
+      ) : (
+        <Card className="mb-6">
+          <CardContent className="pt-6">
+            <div className="overflow-hidden">
+              <div className="overflow-x-auto relative w-full">
+                <Table className="w-full">
+                  <TableHeader>
+                    <TableRow className="border-b border-primary/10">
+                      <TableHead className="text-secondary">Date</TableHead>
+                      <TableHead className="text-center text-secondary">Quiz Type</TableHead>
+                      <TableHead className="text-center text-secondary">Language</TableHead>
+                      <TableHead className="text-center text-secondary">Score</TableHead>
+                      <TableHead className="text-secondary">
+                        <div className="flex items-center justify-center">
+                          <Check className="h-4 w-4 text-green-600 mr-1" />
+                          <span>Correct</span>
+                        </div>
+                      </TableHead>
+                      <TableHead className="text-secondary">
+                        <div className="flex items-center justify-center">
+                          <X className="h-4 w-4 text-rose-600 mr-1" />
+                          <span>Wrong</span>
+                        </div>
+                      </TableHead>
+                      <TableHead className="text-secondary">
+                        <div className="flex items-center justify-center">
+                          <AlertCircle className="h-4 w-4 text-amber-600 mr-1" />
+                          <span>Timed Out</span>
+                        </div>
+                      </TableHead>
+                      <TableHead className="text-secondary">
+                        <div className="flex items-center justify-center">
+                          <Trophy className="h-4 w-4 text-primary mr-1" />
+                          <span>Best Time</span>
+                        </div>
+                      </TableHead>
+                      <TableHead className="text-secondary">
+                        <div className="flex items-center justify-center">
+                          <Timer className="h-4 w-4 text-rose-600 mr-1" />
+                          <span>Worst Time</span>
+                        </div>
+                      </TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {quizHistory
+                      .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+                      .map((quiz) => (
                     <TableRow key={quiz.id} className="hover:bg-secondary/5 transition-colors">
                       <TableCell>
                         <div className="flex items-center">
