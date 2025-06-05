@@ -244,11 +244,11 @@ export default function MyList() {
 
   const setLanguage = (language: any, type: 'source' | 'target') => {
     if (type === 'source') {
-      setSourceLanguage(language.value);
+      setSourceLanguage(language.id);
       setSourceLanguageInput(language.name);
       setFilteredSourceLanguages([]);
     } else {
-      setTargetLanguage(language.value);
+      setTargetLanguage(language.id);
       setTargetLanguageInput(language.name);
       setFilteredTargetLanguages([]);
     }
@@ -321,7 +321,7 @@ export default function MyList() {
                   <SelectContent>
                     <SelectItem value="all">All Languages</SelectItem>
                     {LANGUAGES.map((language) => (
-                      <SelectItem key={language.value} value={language.value}>{language.name}</SelectItem>
+                      <SelectItem key={language.id} value={language.id}>{language.name}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -495,9 +495,9 @@ export default function MyList() {
           
           <div className="space-y-4">
             <div className="flex items-center gap-2 text-sm text-secondary/60">
-              <span className="font-medium">{selectedPhrase?.sourceLanguage && selectedPhrase?.sourceLanguage in LANGUAGES ? LANGUAGES.find(lang => lang.value === selectedPhrase.sourceLanguage)?.name : selectedPhrase?.sourceLanguage}</span>
+              <span className="font-medium">{selectedPhrase?.sourceLanguage && LANGUAGES.find(lang => lang.id === selectedPhrase.sourceLanguage)?.name || selectedPhrase?.sourceLanguage}</span>
               <span>→</span>
-              <span className="font-medium">{selectedPhrase?.targetLanguage && selectedPhrase?.targetLanguage in LANGUAGES ? LANGUAGES.find(lang => lang.value === selectedPhrase.targetLanguage)?.name : selectedPhrase?.targetLanguage}</span>
+              <span className="font-medium">{selectedPhrase?.targetLanguage && LANGUAGES.find(lang => lang.id === selectedPhrase.targetLanguage)?.name || selectedPhrase?.targetLanguage}</span>
             </div>
             
             {selectedPhrase?.tags && selectedPhrase.tags.length > 0 && (
@@ -534,7 +534,7 @@ export default function MyList() {
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium text-secondary/70">
-                  {selectedPhrase?.sourceLanguage && selectedPhrase?.sourceLanguage in LANGUAGES ? LANGUAGES.find(lang => lang.value === selectedPhrase.sourceLanguage)?.name : selectedPhrase?.sourceLanguage}
+                  {selectedPhrase?.sourceLanguage && LANGUAGES.find(lang => lang.id === selectedPhrase.sourceLanguage)?.name || selectedPhrase?.sourceLanguage}
                 </span>
               </div>
               <div className="bg-primary/5 rounded-lg p-4">
@@ -555,7 +555,7 @@ export default function MyList() {
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium text-secondary/70">
-                  {selectedPhrase?.targetLanguage && selectedPhrase?.targetLanguage in LANGUAGES ? LANGUAGES.find(lang => lang.value === selectedPhrase.targetLanguage)?.name : selectedPhrase?.targetLanguage}
+                  {selectedPhrase?.targetLanguage && LANGUAGES.find(lang => lang.id === selectedPhrase.targetLanguage)?.name || selectedPhrase?.targetLanguage}
                 </span>
               </div>
               <div className="bg-accent/5 rounded-lg p-4">

@@ -13,7 +13,7 @@ export default function MobileNav() {
     },
     { 
       name: "Phrases", 
-      href: "/my-phrases", 
+      href: "/my-list", 
       icon: <ClipboardList className="h-6 w-6" /> 
     },
     { 
