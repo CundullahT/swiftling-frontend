@@ -89,11 +89,25 @@ export default function Quiz() {
   const isAuthenticated = true;
   useAuthRedirect(!isAuthenticated, "/login");
   
-  // Placeholder function to check if user has added any phrases
-  // In a real app, this would be a database query or API call
-  const hasPhrases = () => {
-    // For the prototype, you can set this to false to test the empty state
-    return true; // Set to false to show the empty state message, true to show the quiz setup
+  // Mock phrase data - replace with actual API call later
+  const [phrases, setPhrases] = useState<any[]>([]);
+  
+  // For testing different states, you can change this number:
+  // 0 = No phrases (show "add phrases" message)
+  // 1-9 = Some phrases but not enough (show "need 10 phrases" message)  
+  // 10+ = Enough phrases (show quiz setup)
+  const mockPhraseCount = 0; // Change this to test different states
+  
+  // Function to check phrase count and determine what to show
+  const getPhraseStatus = () => {
+    const count = mockPhraseCount; // Later replace with phrases.length from API
+    if (count === 0) {
+      return { type: 'no-phrases', count };
+    } else if (count < 10) {
+      return { type: 'insufficient-phrases', count };
+    } else {
+      return { type: 'sufficient-phrases', count };
+    }
   };
   
   // State for language selection
@@ -233,8 +247,11 @@ export default function Quiz() {
     );
   }
 
-  // Check if user has phrases, if not - show the empty state message
-  if (!hasPhrases()) {
+  // Get current phrase status
+  const phraseStatus = getPhraseStatus();
+  
+  // Show appropriate empty state based on phrase count
+  if (phraseStatus.type !== 'sufficient-phrases') {
     return (
       <div className="py-6 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto pb-20 md:pb-6">
         <div className="flex items-center justify-between mb-6">
@@ -247,27 +264,51 @@ export default function Quiz() {
           </GuardedLink>
         </div>
         
-        {/* No phrases yet message */}
-        <Card className="mb-6 border-2 border-dashed border-gray-200">
-          <CardContent className="pt-6 flex flex-col items-center justify-center text-center py-12">
-            <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mb-4">
-              <Brain className="h-10 w-10 text-primary" />
-            </div>
-            <h3 className="text-xl font-medium text-gray-900 mb-2">No Phrases Available</h3>
-            <p className="text-gray-500 max-w-md mb-6">
-              You need to add at least one phrase before you can start a quiz. Add your first phrase to begin practicing!
-            </p>
-            <GuardedLink href="/add-phrase">
-              <Button
-                size="lg"
-                className="gap-2"
-              >
-                <PlusCircle className="h-4 w-4" />
-                Add Your First Phrase
-              </Button>
-            </GuardedLink>
-          </CardContent>
-        </Card>
+        {/* No phrases state */}
+        {phraseStatus.type === 'no-phrases' && (
+          <Card className="mb-6">
+            <CardContent className="pt-8 pb-8">
+              <div className="flex flex-col items-center justify-center text-center py-12">
+                <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+                  <Brain className="h-8 w-8 text-primary" />
+                </div>
+                <h3 className="text-xl font-semibold text-secondary mb-2">No Phrases Added Yet</h3>
+                <p className="text-secondary/70 mb-6 max-w-md">
+                  You need to add phrases before you can start a quiz. Add your first phrase to begin your language learning journey!
+                </p>
+                <GuardedLink href="/add-phrase">
+                  <Button className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white">
+                    <PlusCircle className="h-4 w-4 mr-2" />
+                    Add Your First Phrase
+                  </Button>
+                </GuardedLink>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+        
+        {/* Insufficient phrases state */}
+        {phraseStatus.type === 'insufficient-phrases' && (
+          <Card className="mb-6">
+            <CardContent className="pt-8 pb-8">
+              <div className="flex flex-col items-center justify-center text-center py-12">
+                <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+                  <Sparkles className="h-8 w-8 text-primary" />
+                </div>
+                <h3 className="text-xl font-semibold text-secondary mb-2">Almost Ready for Quiz!</h3>
+                <p className="text-secondary/70 mb-6 max-w-md">
+                  You have {phraseStatus.count} phrase{phraseStatus.count !== 1 ? 's' : ''}, but need at least 10 phrases to create a meaningful quiz experience. Add {10 - phraseStatus.count} more phrase{10 - phraseStatus.count !== 1 ? 's' : ''} to get started!
+                </p>
+                <GuardedLink href="/add-phrase">
+                  <Button className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white">
+                    <PlusCircle className="h-4 w-4 mr-2" />
+                    Add More Phrases
+                  </Button>
+                </GuardedLink>
+              </div>
+            </CardContent>
+          </Card>
+        )}
       </div>
     );
   }
