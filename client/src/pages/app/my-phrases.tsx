@@ -95,7 +95,8 @@ export default function MyPhrases() {
                 Start building your language learning collection by adding your first phrase. You can organize them with tags and track your progress!
               </p>
               <GuardedLink href="/add-phrase">
-                <Button className="bg-primary hover:bg-primary/90 text-white">
+                <Button className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white">
+                  <ArrowRight className="h-4 w-4 mr-2" />
                   Add Your First Phrase
                 </Button>
               </GuardedLink>
