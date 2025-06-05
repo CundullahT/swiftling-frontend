@@ -69,8 +69,9 @@ export default function MyPhrases() {
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-3xl font-semibold text-secondary bg-gradient-to-r from-primary/90 to-secondary bg-clip-text text-transparent">My Phrases</h1>
         <GuardedLink href="/add-phrase">
-          <Button className="bg-primary hover:bg-primary/90 text-white">
-            Add Phrase
+          <Button className="bg-primary hover:bg-primary/90 text-white flex items-center gap-2">
+            <Plus className="h-4 w-4" />
+            <span>Add Phrase</span>
           </Button>
         </GuardedLink>
       </div>

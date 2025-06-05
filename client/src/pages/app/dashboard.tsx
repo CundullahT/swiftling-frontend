@@ -1,7 +1,7 @@
 import { useAuthRedirect } from "@/hooks/use-auth-redirect";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { BookOpen, Star, Clock, Check, X, AlertCircle, Timer } from "lucide-react";
+import { BookOpen, Star, Clock, Check, X, AlertCircle, Timer, Plus } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useState } from "react";
 import { GuardedLink } from "@/components/ui/guarded-link";
@@ -259,8 +259,9 @@ export default function Dashboard() {
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-3xl font-semibold text-secondary bg-gradient-to-r from-primary/90 to-secondary bg-clip-text text-transparent">Dashboard</h1>
         <GuardedLink href="/add-phrase">
-          <Button className="bg-primary hover:bg-primary/90 text-white">
-            Add Phrase
+          <Button className="bg-primary hover:bg-primary/90 text-white flex items-center gap-2">
+            <Plus className="h-4 w-4" />
+            <span>Add Phrase</span>
           </Button>
         </GuardedLink>
       </div>
