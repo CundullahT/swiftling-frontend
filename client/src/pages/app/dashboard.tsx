@@ -277,7 +277,7 @@ export default function Dashboard() {
               </div>
               <div className="ml-4">
                 <h2 className="text-xl font-semibold text-secondary">Daily Streak</h2>
-                <p className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">{user.streakDays} days</p>
+                <p className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent leading-tight py-1">{user.streakDays} days</p>
               </div>
             </div>
             
@@ -288,7 +288,7 @@ export default function Dashboard() {
               </div>
               <div className="ml-4">
                 <h2 className="text-xl font-semibold text-secondary">Overall Best Time</h2>
-                <p className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-primary bg-clip-text text-transparent">{Math.round(user.overallBestTime)}s</p>
+                <p className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-primary bg-clip-text text-transparent leading-tight py-1">{Math.round(user.overallBestTime)}s</p>
               </div>
             </div>
             
@@ -299,7 +299,7 @@ export default function Dashboard() {
               </div>
               <div className="ml-4">
                 <h2 className="text-xl font-semibold text-secondary">Latest Best Time</h2>
-                <p className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">{Math.round(user.bestTime)}s</p>
+                <p className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent leading-tight py-1">{Math.round(user.bestTime)}s</p>
               </div>
             </div>
             
