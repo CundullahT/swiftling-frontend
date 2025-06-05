@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
-import { X, Plus, Search, ChevronLeft, ChevronRight, BookOpen, ArrowRight } from "lucide-react";
+import { X, Plus, Search, ChevronLeft, ChevronRight, BookOpen, PlusCircle } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -67,14 +67,7 @@ export default function MyPhrases() {
   return (
     <div className="py-6 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto pb-20 md:pb-6">
       <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center">
-          <GuardedLink href="/dashboard">
-            <Button variant="ghost" size="icon" className="mr-2">
-              <ChevronLeft className="h-5 w-5" />
-            </Button>
-          </GuardedLink>
-          <h1 className="text-3xl font-semibold text-secondary bg-gradient-to-r from-primary/90 to-secondary bg-clip-text text-transparent">My Phrases</h1>
-        </div>
+        <h1 className="text-3xl font-semibold text-secondary bg-gradient-to-r from-primary/90 to-secondary bg-clip-text text-transparent">My Phrases</h1>
         <GuardedLink href="/add-phrase">
           <Button className="bg-primary hover:bg-primary/90 text-white">
             Add Phrase
@@ -96,7 +89,7 @@ export default function MyPhrases() {
               </p>
               <GuardedLink href="/add-phrase">
                 <Button className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white">
-                  <ArrowRight className="h-4 w-4 mr-2" />
+                  <PlusCircle className="h-4 w-4 mr-2" />
                   Add Your First Phrase
                 </Button>
               </GuardedLink>
@@ -128,7 +121,7 @@ export default function MyPhrases() {
                     <SelectContent>
                       <SelectItem value="all">All Languages</SelectItem>
                       {LANGUAGES.map((lang) => (
-                        <SelectItem key={lang.code} value={lang.code}>
+                        <SelectItem key={lang.id} value={lang.id}>
                           {lang.name}
                         </SelectItem>
                       ))}
