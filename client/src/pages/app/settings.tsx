@@ -134,7 +134,9 @@ export default function Settings() {
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
-      <h1 className="text-3xl font-bold mb-8">Settings</h1>
+      <div className="flex items-center justify-between mb-8">
+        <h1 className="text-3xl font-semibold text-secondary bg-gradient-to-r from-primary/90 to-secondary bg-clip-text text-transparent">Settings</h1>
+      </div>
       
       {/* Account Settings */}
       <Form {...accountForm}>
