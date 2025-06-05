@@ -262,7 +262,9 @@ export default function AddPhrase() {
 
   return (
     <div className="py-6 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto pb-20 md:pb-6">
-      <h1 className="text-3xl font-semibold text-secondary bg-gradient-to-r from-primary/90 to-secondary bg-clip-text text-transparent mb-6">Add New Phrase</h1>
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-3xl font-semibold text-secondary bg-gradient-to-r from-primary/90 to-secondary bg-clip-text text-transparent">Add New Phrase</h1>
+      </div>
       
       {/* Success message - shown only when a phrase is successfully added */}
       {showSuccessMessage && (
