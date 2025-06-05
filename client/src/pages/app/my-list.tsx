@@ -637,12 +637,11 @@ export default function MyList() {
                 <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-md shadow-lg max-h-40 overflow-y-auto">
                   {filteredSourceLanguages.map((language) => (
                     <div
-                      key={language.value}
+                      key={language.id}
                       className="px-3 py-2 hover:bg-gray-100 cursor-pointer text-sm"
                       onClick={() => setLanguage(language, 'source')}
                     >
                       <div className="flex items-center">
-                        <span className="mr-2">{language.icon}</span>
                         <span>{language.name}</span>
                       </div>
                     </div>
@@ -652,8 +651,7 @@ export default function MyList() {
 
               {sourceLanguage && (
                 <div className="flex items-center text-sm text-secondary/70 mt-1">
-                  <span className="mr-2">{LANGUAGES.find(lang => lang.value === sourceLanguage)?.icon}</span>
-                  <span>Selected: {LANGUAGES.find(lang => lang.value === sourceLanguage)?.name}</span>
+                  <span>Selected: {LANGUAGES.find(lang => lang.id === sourceLanguage)?.name}</span>
                   <Button
                     type="button"
                     variant="ghost"
@@ -726,12 +724,11 @@ export default function MyList() {
                 <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-md shadow-lg max-h-40 overflow-y-auto">
                   {filteredTargetLanguages.map((language) => (
                     <div
-                      key={language.value}
+                      key={language.id}
                       className="px-3 py-2 hover:bg-gray-100 cursor-pointer text-sm"
                       onClick={() => setLanguage(language, 'target')}
                     >
                       <div className="flex items-center">
-                        <span className="mr-2">{language.icon}</span>
                         <span>{language.name}</span>
                       </div>
                     </div>
@@ -741,8 +738,7 @@ export default function MyList() {
 
               {targetLanguage && (
                 <div className="flex items-center text-sm text-secondary/70 mt-1">
-                  <span className="mr-2">{LANGUAGES.find(lang => lang.value === targetLanguage)?.icon}</span>
-                  <span>Selected: {LANGUAGES.find(lang => lang.value === targetLanguage)?.name}</span>
+                  <span>Selected: {LANGUAGES.find(lang => lang.id === targetLanguage)?.name}</span>
                   <Button
                     type="button"
                     variant="ghost"
