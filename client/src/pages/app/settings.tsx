@@ -137,7 +137,6 @@ export default function Settings() {
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-3xl font-semibold text-secondary bg-gradient-to-r from-primary/90 to-secondary bg-clip-text text-transparent leading-tight py-1">Settings</h1>
       </div>
-      
       {/* Account Settings */}
       <Form {...accountForm}>
         <form onSubmit={accountForm.handleSubmit(onAccountSubmit)} className="mb-8" noValidate>
@@ -214,7 +213,6 @@ export default function Settings() {
           </Card>
         </form>
       </Form>
-      
       {/* Password Settings */}
       <Form {...passwordForm}>
         <form onSubmit={passwordForm.handleSubmit(onPasswordSubmit)} className="mb-6" noValidate>
@@ -298,13 +296,12 @@ export default function Settings() {
           </Card>
         </form>
       </Form>
-      
       {/* Danger Zone */}
       <div className="mt-10">
         <h3 className="text-xl font-semibold text-red-600 mb-4">Danger Zone</h3>
         <Card>
           <CardContent className="pt-6">
-            <h3 className="text-xl font-semibold text-red-600">Delete Account</h3>
+            <h3 className="text-xl text-red-600 font-medium">Delete Account</h3>
             <div className="mt-2 w-full text-sm text-gray-500">
               <p className="whitespace-normal">
                 Once you delete your account, all of your data will be permanently removed. This action cannot be undone.
@@ -321,7 +318,6 @@ export default function Settings() {
           </CardContent>
         </Card>
       </div>
-      
       {/* Delete Account Confirmation Dialog */}
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialogContent className="max-w-md">
