@@ -540,6 +540,7 @@ export default function QuizHistory() {
           </div>
         </CardContent>
       </Card>
+      )}
     </div>
   );
 }
