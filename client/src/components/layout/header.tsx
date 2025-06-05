@@ -9,7 +9,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Menu } from "lucide-react";
+import { Menu, User } from "lucide-react";
 import { useState } from "react";
 import Sidebar from "./sidebar";
 import { GuardedLink } from "@/components/ui/guarded-link";
@@ -77,7 +77,7 @@ export default function Header() {
                 <Button variant="ghost" className="relative h-8 w-8 rounded-full">
                   <Avatar className="h-8 w-8">
                     <AvatarFallback>
-                      {user.name.charAt(0)}
+                      <User className="h-4 w-4" />
                     </AvatarFallback>
                   </Avatar>
                 </Button>

@@ -8,7 +8,8 @@ import {
   HelpCircle, 
   Settings, 
   LogOut, 
-  X 
+  X,
+  User 
 } from "lucide-react";
 import { GuardedLink } from "@/components/ui/guarded-link";
 
@@ -71,7 +72,7 @@ export default function Sidebar({ onClose }: SidebarProps) {
           <div className="flex items-center space-x-3 mb-6 p-3 rounded-lg bg-gradient-to-r from-primary/5 to-transparent">
             <Avatar className="border-2 border-primary/20">
               <AvatarFallback className="bg-gradient-to-br from-primary to-secondary text-white">
-                {user.name.charAt(0)}
+                <User className="h-5 w-5" />
               </AvatarFallback>
             </Avatar>
             <div>
