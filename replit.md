@@ -110,7 +110,8 @@ Changelog:
   - Updated vite.config.ts to use __dirname instead of import.meta.dirname
   - Updated server/vite.ts with proper path resolution
   - Added cross-env dependency for Windows environment variable support
-  - Fixed Windows networking issue with platform-specific host binding (localhost vs 0.0.0.0)
+  - Fixed networking issues with platform-specific host binding: localhost for Windows/macOS, 0.0.0.0 for Linux
+  - Configured reusePort option to work only on Linux where properly supported
 ```
 
 ## User Preferences
