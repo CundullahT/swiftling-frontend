@@ -106,6 +106,11 @@ The application uses PostgreSQL as the primary database with the following main 
 ```
 Changelog:
 - June 22, 2025. Initial setup
+- June 23, 2025. Fixed cross-platform compatibility issues for Windows, macOS, and Linux
+  - Updated vite.config.ts to use __dirname instead of import.meta.dirname
+  - Updated server/vite.ts with proper path resolution
+  - Added cross-env dependency for Windows environment variable support
+  - Fixed Windows networking issue with platform-specific host binding (localhost vs 0.0.0.0)
 ```
 
 ## User Preferences
