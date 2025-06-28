@@ -26,6 +26,11 @@ export const GuardedLink = forwardRef(function GuardedLink(
       onClick(e);
     }
     
+    // Allow logout links to proceed without quiz protection
+    if (href === '/logout') {
+      return;
+    }
+    
     // If the quiz is active, we want to prevent the default Link behavior
     if (isQuizActive) {
       e.preventDefault();
