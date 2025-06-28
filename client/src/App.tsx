@@ -27,7 +27,6 @@ import PrivacyPolicy from "./pages/legal/privacy-policy";
 // Layout Components
 import Header from "@/components/layout/header";
 import MobileNav from "@/components/layout/mobile-nav";
-import { useState, useEffect, useCallback } from "react";
 
 // Custom Hooks
 import { useScrollTop } from "@/hooks/use-scroll-top";
@@ -35,66 +34,102 @@ import { useScrollTop } from "@/hooks/use-scroll-top";
 // Quiz Context Provider and Navigation Guard
 import { QuizProvider } from "@/context/quiz-context";
 import { QuizNavigationGuard } from "@/components/quiz/quiz-navigation-dialog";
-import { AuthProvider } from "@/context/auth-context";
+import { AuthProvider, useAuth } from "@/context/auth-context";
 import { ProtectedRoute } from "@/components/auth/protected-route";
 
-function App() {
+// App content component that uses authentication context
+function AppContent() {
   const [location] = useLocation();
-  const [isAuthenticated] = useState(true); // Always authenticated for now
+  const { isAuthenticated } = useAuth();
   
   // Use scroll-to-top hook
   useScrollTop();
 
   // Check if current path is an auth route, signup/login page, or legal page
   const isAuthRoute = location.startsWith('/auth/') || location === '/signup' || location === '/login' || location.startsWith('/legal/');
+  const isAppRoute = location.startsWith('/app/') || location === '/';
 
+  return (
+    <div className="min-h-screen flex flex-col bg-slate-50">
+      {/* Show header only for non-auth routes when authenticated */}
+      {isAuthenticated && !isAuthRoute && <Header />}
+      
+      <main className="flex-1">
+        <Switch>
+          {/* Protected App Routes */}
+          <Route path="/">
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          </Route>
+          <Route path="/app/dashboard">
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          </Route>
+          <Route path="/app/my-phrases">
+            <ProtectedRoute>
+              <MyPhrases />
+            </ProtectedRoute>
+          </Route>
+          <Route path="/app/add-phrase">
+            <ProtectedRoute>
+              <AddPhrase />
+            </ProtectedRoute>
+          </Route>
+          <Route path="/app/quiz">
+            <ProtectedRoute>
+              <Quiz />
+            </ProtectedRoute>
+          </Route>
+          <Route path="/app/quiz-history">
+            <ProtectedRoute>
+              <QuizHistory />
+            </ProtectedRoute>
+          </Route>
+          <Route path="/app/settings">
+            <ProtectedRoute>
+              <Settings />
+            </ProtectedRoute>
+          </Route>
+          
+          {/* Public Auth Routes */}
+          <Route path="/auth/forgot-password" component={ForgotPassword} />
+          <Route path="/auth/verify-pass-change" component={PasswordChangeVerification} />
+          <Route path="/auth/verify-sign-up" component={SignUpVerification} />
+          <Route path="/signup" component={Signup} />
+          <Route path="/login" component={Login} />
+          
+          {/* Public Legal Routes */}
+          <Route path="/legal/terms-of-service" component={TermsOfService} />
+          <Route path="/legal/privacy-policy" component={PrivacyPolicy} />
+          
+          {/* Not Found */}
+          <Route component={NotFound} />
+        </Switch>
+        
+        {/* Show mobile navigation only for non-auth routes when authenticated */}
+        {isAuthenticated && !isAuthRoute && <MobileNav />}
+      </main>
+      
+      {/* Toast Notifications */}
+      <Toaster />
+      
+      {/* Quiz Navigation Guard */}
+      <QuizNavigationGuard />
+    </div>
+  );
+}
+
+function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <TooltipProvider>
           <QuizProvider>
-          <div className="min-h-screen flex flex-col bg-slate-50">
-            {/* Show header only for non-auth routes when authenticated */}
-            {isAuthenticated && !isAuthRoute && <Header />}
-            
-            <main className="flex-1">
-              <Switch>
-                {/* Main Routes - No authentication pages for now */}
-                <Route path="/" component={Dashboard} />
-                
-                {/* App Routes */}
-                <Route path="/dashboard" component={Dashboard} />
-                <Route path="/my-phrases" component={MyPhrases} />
-                <Route path="/add-phrase" component={AddPhrase} />
-                <Route path="/quiz" component={Quiz} />
-                <Route path="/quiz-history" component={QuizHistory} />
-                <Route path="/settings" component={Settings} />
-                
-                {/* Auth Routes */}
-                <Route path="/auth/forgot-password" component={ForgotPassword} />
-                <Route path="/auth/verify-pass-change" component={PasswordChangeVerification} />
-                <Route path="/auth/verify-sign-up" component={SignUpVerification} />
-                <Route path="/signup" component={Signup} />
-                <Route path="/login" component={Login} />
-                
-                {/* Legal Routes */}
-                <Route path="/legal/terms-of-service" component={TermsOfService} />
-                <Route path="/legal/privacy-policy" component={PrivacyPolicy} />
-                
-                {/* Fallback to 404 */}
-                <Route component={NotFound} />
-              </Switch>
-            </main>
-            
-            {/* Show mobile nav only for non-auth routes when authenticated */}
-            {isAuthenticated && !isAuthRoute && <MobileNav />}
-            <Toaster />
-            
-            {/* Quiz Navigation Guard */}
-            <QuizNavigationGuard />
-          </div>
-        </QuizProvider>
-      </TooltipProvider>
+            <AppContent />
+          </QuizProvider>
+        </TooltipProvider>
       </AuthProvider>
     </QueryClientProvider>
   );
