@@ -128,6 +128,12 @@ Changelog:
   - Implemented browser-based environment detection using current hostname
   - Added environment info display component on dashboard
   - Updated query client to use environment-specific backend URLs
+- June 28, 2025. Completed Keycloak authentication integration and route optimization
+  - Fixed mixed content issues with backend authentication proxy at /api/auth/login
+  - Implemented HTTPS auto-detection for seamless authentication across environments
+  - Removed /app prefix from all frontend routes per user preference
+  - Updated login redirects to use direct routes (/dashboard instead of /app/dashboard)
+  - All app routes now use clean URLs: /dashboard, /my-phrases, /add-phrase, /quiz, /quiz-history, /settings
 ```
 
 ## User Preferences
