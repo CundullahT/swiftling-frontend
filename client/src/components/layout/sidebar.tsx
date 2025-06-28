@@ -105,7 +105,7 @@ export default function Sidebar({ onClose }: SidebarProps) {
       
       <div className="border-t border-primary/20 px-4 py-4 bg-gradient-to-r from-primary/5 to-transparent">
         <GuardedLink 
-          href="/dashboard"
+          href="/logout"
           className="w-full flex items-center px-3 py-2.5 text-base font-medium rounded-md text-secondary/80 hover:bg-accent/10 hover:text-accent transition-all duration-200"
           onClick={onClose}
         >
