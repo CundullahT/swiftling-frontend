@@ -266,6 +266,11 @@ export default function Dashboard() {
           </Button>
         </GuardedLink>
       </div>
+
+      {/* Environment Configuration Info */}
+      <div className="mb-6">
+        <EnvironmentInfo />
+      </div>
       
       {/* Stats Card with Daily Streak, Best Time, and Latest Quiz Results */}
       <Card className="mb-6">

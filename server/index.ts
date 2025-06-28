@@ -1,6 +1,7 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+import { initializeConfig } from "../shared/config";
 
 const app = express();
 app.use(express.json());
@@ -37,6 +38,10 @@ app.use((req, res, next) => {
 });
 
 (async () => {
+  // Initialize environment configuration
+  const config = await initializeConfig();
+  log(`Environment initialized: ${config.environment} (${config.hostname})`);
+
   const server = await registerRoutes(app);
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
@@ -60,9 +65,7 @@ app.use((req, res, next) => {
   // this serves both the API and the client.
   // It is the only port that is not firewalled.
   const port = 5000;
-  // const host = (process.platform === 'win32' || process.platform === 'darwin') ? 'localhost' : '0.0.0.0';
-  // const host = (process.platform === 'win32') ? 'localhost' : '0.0.0.0';
-  const host = '0.0.0.0'
+  const host = (process.platform === 'win32' || process.platform === 'darwin') ? 'localhost' : '0.0.0.0';
   
   server.listen({
     port,
