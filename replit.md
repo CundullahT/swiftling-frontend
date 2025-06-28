@@ -21,6 +21,16 @@ SwiftLing is a modern, interactive language learning web application built with 
 - **API Design**: RESTful API architecture with `/api` prefix
 - **Development**: Hot module replacement and runtime error overlays
 
+### Environment Configuration
+- **Multi-Environment Support**: Local, dev, prod environments with automatic detection
+- **Hostname Management**: Environment-based backend URL configuration
+  - Local: `localhost:5000` (HTTP)
+  - Dev: `cundi.onthewifi.com` (HTTPS)
+  - Prod: `swiftlingapp.com` (HTTPS)
+  - Other: Public IP fallback for custom deployments
+- **Frontend Detection**: Browser-based environment detection using current hostname
+- **Server Configuration**: Platform-specific networking (localhost for Windows/macOS, 0.0.0.0 for Linux)
+
 ### Database Schema
 The application uses PostgreSQL as the primary database with the following main entities:
 - **Users**: Stores user account information, learning preferences, and progress tracking
@@ -112,6 +122,12 @@ Changelog:
   - Added cross-env dependency for Windows environment variable support
   - Fixed networking issues with platform-specific host binding: localhost for Windows/macOS, 0.0.0.0 for Linux
   - Configured reusePort option to work only on Linux where properly supported
+- June 28, 2025. Implemented environment-based backend configuration system
+  - Added multi-environment support (local/dev/prod/other) with automatic detection
+  - Created hostname management for different deployment environments
+  - Implemented browser-based environment detection using current hostname
+  - Added environment info display component on dashboard
+  - Updated query client to use environment-specific backend URLs
 ```
 
 ## User Preferences
