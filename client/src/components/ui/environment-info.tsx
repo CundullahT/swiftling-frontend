@@ -28,11 +28,11 @@ function getEnvironmentInfo(): EnvironmentInfo {
     targetHostname = 'swiftlingapp.com';
   }
   
-  // Use HTTPS for prod and dev, HTTP for local and other
-  const protocol = (environment === 'prod' || environment === 'dev') ? 'https' : 'http';
+  // Use HTTPS for prod, HTTP for local, dev, and other
+  const protocol = (environment === 'prod') ? 'https' : 'http';
   
-  // Default port for local development
-  const port = environment === 'local' ? 5000 : undefined;
+  // Default port for local and dev environments
+  const port = (environment === 'local' || environment === 'dev') ? 5000 : undefined;
   
   return {
     environment,
