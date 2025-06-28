@@ -33,6 +33,12 @@ async function getPublicIP(): Promise<string> {
 function getEnvironment(): Environment {
   // Check if we're in a browser environment
   if (typeof window !== 'undefined') {
+    // Check for VITE_APP_ENV override first
+    const viteEnv = import.meta.env.VITE_APP_ENV;
+    if (viteEnv === 'dev') {
+      return 'dev';
+    }
+    
     // Browser environment - detect from current hostname
     const hostname = window.location.hostname;
     

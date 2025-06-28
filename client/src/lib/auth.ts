@@ -71,6 +71,10 @@ class AuthService {
     const config = await getConfig();
     const tokenUrl = `${config.keycloakUrl}/realms/${KEYCLOAK_CONFIG.realm}/protocol/openid-connect/token`;
 
+    console.log('Environment:', config.environment);
+    console.log('Keycloak URL:', config.keycloakUrl);
+    console.log('Full token URL:', tokenUrl);
+
     const formData = new URLSearchParams();
     formData.append('username', credentials.email);
     formData.append('password', credentials.password);
