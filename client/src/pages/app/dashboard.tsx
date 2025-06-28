@@ -13,7 +13,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { EnvironmentInfo } from "@/components/ui/environment-info";
 
 // PieChart component
 interface PieChartProps {
@@ -265,11 +264,6 @@ export default function Dashboard() {
             <span>Add Phrase</span>
           </Button>
         </GuardedLink>
-      </div>
-
-      {/* Environment Configuration Info */}
-      <div className="mb-6">
-        <EnvironmentInfo />
       </div>
       
       {/* Stats Card with Daily Streak, Best Time, and Latest Quiz Results */}
