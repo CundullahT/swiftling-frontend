@@ -3,6 +3,10 @@ import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import { initializeConfig } from "../shared/config";
 
+// Set environment to dev for testing Keycloak
+process.env.APP_ENV = 'dev';
+process.env.VITE_APP_ENV = 'dev';
+
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
