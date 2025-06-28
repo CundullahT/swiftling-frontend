@@ -6,6 +6,7 @@ export interface AppConfig {
   hostname: string;
   port?: number;
   protocol: 'http' | 'https';
+  keycloakUrl: string;
 }
 
 // Get public IP address from AWS checkip service
@@ -100,11 +101,25 @@ export async function initializeConfig(): Promise<AppConfig> {
   // Default port for local and dev environments
   const port = (environment === 'local' || environment === 'dev') ? 5000 : undefined;
   
+  // Build Keycloak URL based on environment
+  let keycloakUrl: string;
+  if (environment === 'local') {
+    keycloakUrl = 'http://localhost:8080';
+  } else if (environment === 'dev') {
+    keycloakUrl = 'http://cundi.onthewifi.com:8080';
+  } else if (environment === 'prod') {
+    keycloakUrl = 'https://keycloak.swiftlingapp.com';
+  } else {
+    // For 'other' environment, use the same hostname as the app with port 8080
+    keycloakUrl = `http://${hostname}:8080`;
+  }
+  
   const config: AppConfig = {
     environment,
     hostname,
     port,
     protocol,
+    keycloakUrl,
   };
   
   console.log(`Environment: ${environment}, Backend URL: ${protocol}://${hostname}${port ? `:${port}` : ''}`);
