@@ -99,7 +99,7 @@ export default function Header() {
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
-                  <GuardedLink href="/dashboard" className="w-full cursor-pointer">
+                  <GuardedLink href="/logout" className="w-full cursor-pointer">
                     Log out
                   </GuardedLink>
                 </DropdownMenuItem>
