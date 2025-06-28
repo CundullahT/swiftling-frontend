@@ -1,29 +1,59 @@
 import { useEffect, useState } from "react";
-import { getBackendInfo } from "@/lib/env-config";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
-interface BackendInfo {
+interface EnvironmentInfo {
   environment: string;
-  hostname: string;
+  currentHostname: string;
+  targetHostname: string;
   protocol: string;
   port?: number;
-  baseURL: string;
-  apiURL: string;
+}
+
+function getEnvironmentInfo(): EnvironmentInfo {
+  const currentHostname = window.location.hostname;
+  
+  // Detect environment based on current hostname
+  let environment = 'other';
+  let targetHostname = currentHostname;
+  
+  if (currentHostname === 'localhost' || currentHostname === '127.0.0.1') {
+    environment = 'local';
+    targetHostname = 'localhost';
+  } else if (currentHostname.includes('cundi.onthewifi.com')) {
+    environment = 'dev';
+    targetHostname = 'cundi.onthewifi.com';
+  } else if (currentHostname.includes('swiftlingapp.com')) {
+    environment = 'prod';
+    targetHostname = 'swiftlingapp.com';
+  }
+  
+  // Use HTTPS for prod and dev, HTTP for local and other
+  const protocol = (environment === 'prod' || environment === 'dev') ? 'https' : 'http';
+  
+  // Default port for local development
+  const port = environment === 'local' ? 5000 : undefined;
+  
+  return {
+    environment,
+    currentHostname,
+    targetHostname,
+    protocol,
+    port,
+  };
 }
 
 export function EnvironmentInfo() {
-  const [backendInfo, setBackendInfo] = useState<BackendInfo | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [envInfo, setEnvInfo] = useState<EnvironmentInfo | null>(null);
 
   useEffect(() => {
-    getBackendInfo()
-      .then(setBackendInfo)
-      .catch(console.error)
-      .finally(() => setLoading(false));
+    // Only run in browser environment
+    if (typeof window !== 'undefined') {
+      setEnvInfo(getEnvironmentInfo());
+    }
   }, []);
 
-  if (loading) {
+  if (!envInfo) {
     return (
       <Card className="w-full max-w-md">
         <CardHeader>
@@ -31,19 +61,6 @@ export function EnvironmentInfo() {
         </CardHeader>
         <CardContent>
           <div className="animate-pulse">Loading...</div>
-        </CardContent>
-      </Card>
-    );
-  }
-
-  if (!backendInfo) {
-    return (
-      <Card className="w-full max-w-md">
-        <CardHeader>
-          <CardTitle>Environment</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="text-red-500">Failed to load environment info</div>
         </CardContent>
       </Card>
     );
@@ -62,39 +79,45 @@ export function EnvironmentInfo() {
     }
   };
 
+  const baseURL = `${envInfo.protocol}://${envInfo.targetHostname}${envInfo.port ? `:${envInfo.port}` : ''}`;
+  const apiURL = `${baseURL}/api`;
+
   return (
     <Card className="w-full max-w-md">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           Environment
-          <Badge className={getEnvironmentColor(backendInfo.environment)}>
-            {backendInfo.environment.toUpperCase()}
+          <Badge className={getEnvironmentColor(envInfo.environment)}>
+            {envInfo.environment.toUpperCase()}
           </Badge>
         </CardTitle>
         <CardDescription>Backend connection information</CardDescription>
       </CardHeader>
       <CardContent className="space-y-2">
         <div className="text-sm">
-          <span className="font-medium">Hostname:</span> {backendInfo.hostname}
+          <span className="font-medium">Current Hostname:</span> {envInfo.currentHostname}
         </div>
         <div className="text-sm">
-          <span className="font-medium">Protocol:</span> {backendInfo.protocol}
+          <span className="font-medium">Target Hostname:</span> {envInfo.targetHostname}
         </div>
-        {backendInfo.port && (
+        <div className="text-sm">
+          <span className="font-medium">Protocol:</span> {envInfo.protocol}
+        </div>
+        {envInfo.port && (
           <div className="text-sm">
-            <span className="font-medium">Port:</span> {backendInfo.port}
+            <span className="font-medium">Port:</span> {envInfo.port}
           </div>
         )}
         <div className="text-sm">
           <span className="font-medium">Base URL:</span> 
           <code className="ml-1 text-xs bg-muted px-1 py-0.5 rounded">
-            {backendInfo.baseURL}
+            {baseURL}
           </code>
         </div>
         <div className="text-sm">
           <span className="font-medium">API URL:</span> 
           <code className="ml-1 text-xs bg-muted px-1 py-0.5 rounded">
-            {backendInfo.apiURL}
+            {apiURL}
           </code>
         </div>
       </CardContent>

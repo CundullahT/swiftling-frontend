@@ -30,24 +30,41 @@ async function getPublicIP(): Promise<string> {
 
 // Determine environment from NODE_ENV or other environment variables
 function getEnvironment(): Environment {
-  const nodeEnv = process.env.NODE_ENV || '';
-  const appEnv = process.env.APP_ENV || '';
-  
-  // Check both NODE_ENV and APP_ENV
-  const env = appEnv || nodeEnv;
-  
-  switch (env.toLowerCase()) {
-    case 'development':
-    case 'local':
+  // Check if we're in a browser environment
+  if (typeof window !== 'undefined') {
+    // Browser environment - detect from current hostname
+    const hostname = window.location.hostname;
+    
+    if (hostname === 'localhost' || hostname === '127.0.0.1') {
       return 'local';
-    case 'dev':
-    case 'development-remote':
+    } else if (hostname.includes('cundi.onthewifi.com')) {
       return 'dev';
-    case 'production':
-    case 'prod':
+    } else if (hostname.includes('swiftlingapp.com')) {
       return 'prod';
-    default:
+    } else {
       return 'other';
+    }
+  } else {
+    // Server environment - use process.env
+    const nodeEnv = process.env.NODE_ENV || '';
+    const appEnv = process.env.APP_ENV || '';
+    
+    // Check both NODE_ENV and APP_ENV
+    const env = appEnv || nodeEnv;
+    
+    switch (env.toLowerCase()) {
+      case 'development':
+      case 'local':
+        return 'local';
+      case 'dev':
+      case 'development-remote':
+        return 'dev';
+      case 'production':
+      case 'prod':
+        return 'prod';
+      default:
+        return 'other';
+    }
   }
 }
 
@@ -61,6 +78,11 @@ async function getHostname(environment: Environment): Promise<string> {
     case 'prod':
       return 'swiftlingapp.com';
     case 'other':
+      // In browser environment, use current hostname for 'other'
+      if (typeof window !== 'undefined') {
+        return window.location.hostname;
+      }
+      // On server, get public IP
       return await getPublicIP();
     default:
       return 'localhost';
