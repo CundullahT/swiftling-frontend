@@ -13,6 +13,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
+import { EnvironmentInfo } from "@/components/ui/environment-info";
 
 // PieChart component
 interface PieChartProps {
