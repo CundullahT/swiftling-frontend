@@ -70,17 +70,18 @@ export function AuthProvider({ children }: AuthProviderProps) {
     console.log('Logout called - before cleanup');
     console.log('Current auth state:', isAuthenticated);
     
+    // Clear auth service first
     authService.logout();
     
-    // Force refresh auth state to ensure UI updates
-    refreshAuthState();
+    // Immediately update state
+    setIsAuthenticated(false);
+    setTokens(null);
+    setError(null);
     
     console.log('Logout called - after cleanup, redirecting to login');
     
-    // Redirect to login page after logout
-    setTimeout(() => {
-      setLocation('/login');
-    }, 100);
+    // Force immediate redirect to login page
+    window.location.href = '/login';
   };
 
   return (
