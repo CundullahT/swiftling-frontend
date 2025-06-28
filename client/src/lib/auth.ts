@@ -63,8 +63,10 @@ class AuthService {
   }
 
   private clearTokens(): void {
+    console.log('Clearing tokens from auth service');
     localStorage.removeItem('auth_tokens');
     this.tokens = null;
+    console.log('Tokens cleared, this.tokens is now:', this.tokens);
   }
 
   public async login(credentials: LoginCredentials): Promise<AuthTokens> {

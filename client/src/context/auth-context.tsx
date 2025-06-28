@@ -57,12 +57,20 @@ export function AuthProvider({ children }: AuthProviderProps) {
   };
 
   const logout = () => {
+    console.log('Logout called - before cleanup');
+    console.log('Current auth state:', isAuthenticated);
+    
     authService.logout();
     setIsAuthenticated(false);
     setTokens(null);
     setError(null);
+    
+    console.log('Logout called - after cleanup, redirecting to login');
+    
     // Redirect to login page after logout
-    setLocation('/login');
+    setTimeout(() => {
+      setLocation('/login');
+    }, 100);
   };
 
   return (

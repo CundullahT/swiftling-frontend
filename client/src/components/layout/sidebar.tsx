@@ -30,14 +30,18 @@ export default function Sidebar({ onClose }: SidebarProps) {
   };
 
   const handleLogout = async () => {
+    console.log('Sidebar logout button clicked');
     try {
+      console.log('Calling logout function...');
       logout();
+      console.log('Logout function called, showing toast...');
       toast({
         title: "Logged out successfully",
         description: "You have been logged out of SwiftLing.",
       });
       onClose(); // Close sidebar after logout
     } catch (error) {
+      console.error('Logout error:', error);
       toast({
         title: "Logout error",
         description: "There was an issue logging out. Please try again.",
