@@ -35,6 +35,8 @@ import { useScrollTop } from "@/hooks/use-scroll-top";
 // Quiz Context Provider and Navigation Guard
 import { QuizProvider } from "@/context/quiz-context";
 import { QuizNavigationGuard } from "@/components/quiz/quiz-navigation-dialog";
+import { AuthProvider } from "@/context/auth-context";
+import { ProtectedRoute } from "@/components/auth/protected-route";
 
 function App() {
   const [location] = useLocation();
@@ -48,8 +50,9 @@ function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <QuizProvider>
+      <AuthProvider>
+        <TooltipProvider>
+          <QuizProvider>
           <div className="min-h-screen flex flex-col bg-slate-50">
             {/* Show header only for non-auth routes when authenticated */}
             {isAuthenticated && !isAuthRoute && <Header />}
@@ -92,6 +95,7 @@ function App() {
           </div>
         </QuizProvider>
       </TooltipProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }

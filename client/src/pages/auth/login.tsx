@@ -3,10 +3,13 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { useAuth } from "@/context/auth-context";
+import { useToast } from "@/hooks/use-toast";
+import { useEffect } from "react";
 import {
   Form,
   FormControl,
@@ -27,6 +30,17 @@ const loginSchema = z.object({
 type LoginFormValues = z.infer<typeof loginSchema>;
 
 export default function Login() {
+  const { login, isLoading, isAuthenticated } = useAuth();
+  const { toast } = useToast();
+  const [, setLocation] = useLocation();
+
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      setLocation('/app/dashboard');
+    }
+  }, [isAuthenticated, setLocation]);
+
   // Form setup with validation
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -38,11 +52,21 @@ export default function Login() {
   });
   
   // Handle form submission
-  const onSubmit = (data: LoginFormValues) => {
-    console.log("Form submitted:", data);
-    
-    // In a real implementation, we would send the data to the backend
-    // and redirect the user to the app on successful login
+  const onSubmit = async (data: LoginFormValues) => {
+    try {
+      await login(data);
+      toast({
+        title: "Login successful",
+        description: "Welcome back to SwiftLing!",
+      });
+      setLocation('/app/dashboard');
+    } catch (error) {
+      toast({
+        title: "Login failed",
+        description: error instanceof Error ? error.message : "Please check your credentials and try again.",
+        variant: "destructive",
+      });
+    }
   };
   
   return (
@@ -108,9 +132,9 @@ export default function Login() {
                 <Button 
                   type="submit" 
                   className="w-full mt-6"
-                  disabled={!form.formState.isValid || form.formState.isSubmitting}
+                  disabled={!form.formState.isValid || form.formState.isSubmitting || isLoading}
                 >
-                  Log In
+                  {isLoading ? "Logging In..." : "Log In"}
                 </Button>
               </form>
             </Form>
