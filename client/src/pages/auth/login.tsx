@@ -37,7 +37,7 @@ export default function Login() {
   // Redirect if already authenticated
   useEffect(() => {
     if (isAuthenticated) {
-      setLocation('/app/dashboard');
+      setLocation('/dashboard');
     }
   }, [isAuthenticated, setLocation]);
 
@@ -59,7 +59,7 @@ export default function Login() {
         title: "Login successful",
         description: "Welcome back to SwiftLing!",
       });
-      setLocation('/app/dashboard');
+      setLocation('/dashboard');
     } catch (error) {
       toast({
         title: "Login failed",

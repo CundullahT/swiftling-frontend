@@ -47,7 +47,6 @@ function AppContent() {
 
   // Check if current path is an auth route, signup/login page, or legal page
   const isAuthRoute = location.startsWith('/auth/') || location === '/signup' || location === '/login' || location.startsWith('/legal/');
-  const isAppRoute = location.startsWith('/app/') || location === '/';
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50">
@@ -62,32 +61,32 @@ function AppContent() {
               <Dashboard />
             </ProtectedRoute>
           </Route>
-          <Route path="/app/dashboard">
+          <Route path="/dashboard">
             <ProtectedRoute>
               <Dashboard />
             </ProtectedRoute>
           </Route>
-          <Route path="/app/my-phrases">
+          <Route path="/my-phrases">
             <ProtectedRoute>
               <MyPhrases />
             </ProtectedRoute>
           </Route>
-          <Route path="/app/add-phrase">
+          <Route path="/add-phrase">
             <ProtectedRoute>
               <AddPhrase />
             </ProtectedRoute>
           </Route>
-          <Route path="/app/quiz">
+          <Route path="/quiz">
             <ProtectedRoute>
               <Quiz />
             </ProtectedRoute>
           </Route>
-          <Route path="/app/quiz-history">
+          <Route path="/quiz-history">
             <ProtectedRoute>
               <QuizHistory />
             </ProtectedRoute>
           </Route>
-          <Route path="/app/settings">
+          <Route path="/settings">
             <ProtectedRoute>
               <Settings />
             </ProtectedRoute>
