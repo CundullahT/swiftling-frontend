@@ -155,7 +155,10 @@ class AuthService {
   }
 
   public isAuthenticated(): boolean {
-    return !!this.tokens?.access_token;
+    const hasTokens = !!this.tokens?.access_token;
+    const localStorageTokens = localStorage.getItem('auth_tokens');
+    console.log('isAuthenticated check - this.tokens:', this.tokens, 'localStorage:', localStorageTokens, 'result:', hasTokens);
+    return hasTokens;
   }
 
   public getTokens(): AuthTokens | null {

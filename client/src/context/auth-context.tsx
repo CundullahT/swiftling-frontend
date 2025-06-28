@@ -38,6 +38,16 @@ export function AuthProvider({ children }: AuthProviderProps) {
     checkAuth();
   }, []);
 
+  // Helper function to refresh auth state
+  const refreshAuthState = () => {
+    const isAuth = authService.isAuthenticated();
+    const userTokens = authService.getTokens();
+    
+    console.log('Refreshing auth state - isAuth:', isAuth, 'tokens:', userTokens);
+    setIsAuthenticated(isAuth);
+    setTokens(userTokens);
+  };
+
   const login = async (credentials: LoginCredentials) => {
     try {
       setIsLoading(true);
@@ -61,9 +71,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
     console.log('Current auth state:', isAuthenticated);
     
     authService.logout();
-    setIsAuthenticated(false);
-    setTokens(null);
-    setError(null);
+    
+    // Force refresh auth state to ensure UI updates
+    refreshAuthState();
     
     console.log('Logout called - after cleanup, redirecting to login');
     
