@@ -54,11 +54,19 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   };
 
-  const logout = () => {
-    authService.logout();
-    setIsAuthenticated(false);
-    setTokens(null);
-    setError(null);
+  const logout = async () => {
+    try {
+      await authService.logout();
+      setIsAuthenticated(false);
+      setTokens(null);
+      setError(null);
+    } catch (error) {
+      console.warn('Logout process completed with warnings:', error);
+      // Still update state even if logout had issues
+      setIsAuthenticated(false);
+      setTokens(null);
+      setError(null);
+    }
   };
 
   return (

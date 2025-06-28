@@ -61,6 +61,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Logout endpoint to clear server-side session and cookies
+  app.post('/api/auth/logout', (req, res) => {
+    try {
+      // Clear session data if using express-session
+      if ((req as any).session) {
+        (req as any).session.destroy((err: any) => {
+          if (err) {
+            console.error('Session destruction error:', err);
+          }
+        });
+      }
+
+      // Clear authentication cookies
+      res.clearCookie('connect.sid'); // Default express-session cookie name
+      res.clearCookie('auth_token');
+      res.clearCookie('access_token');
+      res.clearCookie('refresh_token');
+      
+      // Clear any other potential auth cookies
+      res.clearCookie('sessionId');
+      res.clearCookie('JSESSIONID');
+
+      res.json({ success: true, message: 'Logout successful' });
+    } catch (error) {
+      console.error('Logout error:', error);
+      res.status(500).json({ 
+        error: 'Internal server error', 
+        message: 'Failed to logout' 
+      });
+    }
+  });
+
   const httpServer = createServer(app);
 
   return httpServer;

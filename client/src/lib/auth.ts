@@ -100,8 +100,62 @@ class AuthService {
     }
   }
 
-  public logout(): void {
+  public async logout(): Promise<void> {
+    try {
+      // Call backend logout endpoint to clear server-side session and cookies
+      const backendUrl = await getAPIURL('/auth/logout');
+      await fetch(backendUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...this.getAuthHeader()
+        }
+      });
+    } catch (error) {
+      console.warn('Backend logout failed:', error);
+      // Continue with client-side cleanup even if backend logout fails
+    }
+
+    // Clear all client-side authentication data
     this.clearTokens();
+    this.clearAllAuthData();
+  }
+
+  private clearAllAuthData(): void {
+    // Clear localStorage items related to authentication
+    const authKeys = [
+      'auth_tokens',
+      'access_token', 
+      'refresh_token',
+      'id_token',
+      'user_data',
+      'session_id',
+      'auth_state'
+    ];
+
+    authKeys.forEach(key => {
+      localStorage.removeItem(key);
+    });
+
+    // Clear sessionStorage items related to authentication
+    authKeys.forEach(key => {
+      sessionStorage.removeItem(key);
+    });
+
+    // Clear any other potential storage keys
+    for (let i = localStorage.length - 1; i >= 0; i--) {
+      const key = localStorage.key(i);
+      if (key && (key.includes('auth') || key.includes('token') || key.includes('session'))) {
+        localStorage.removeItem(key);
+      }
+    }
+
+    for (let i = sessionStorage.length - 1; i >= 0; i--) {
+      const key = sessionStorage.key(i);
+      if (key && (key.includes('auth') || key.includes('token') || key.includes('session'))) {
+        sessionStorage.removeItem(key);
+      }
+    }
   }
 
   public getAccessToken(): string | null {
