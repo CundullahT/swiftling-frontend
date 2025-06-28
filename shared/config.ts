@@ -81,6 +81,10 @@ async function getHostname(environment: Environment): Promise<string> {
     case 'local':
       return 'localhost';
     case 'dev':
+      // If we're in browser and on HTTPS (like Replit), use current hostname
+      if (typeof window !== 'undefined' && window.location.protocol === 'https:') {
+        return window.location.hostname;
+      }
       return 'cundi.onthewifi.com';
     case 'prod':
       return 'swiftlingapp.com';
@@ -101,11 +105,22 @@ export async function initializeConfig(): Promise<AppConfig> {
   const environment = getEnvironment();
   const hostname = await getHostname(environment);
   
-  // Use HTTPS for prod, HTTP for local, dev, and other
-  const protocol = (environment === 'prod') ? 'https' : 'http';
+  // Use HTTPS for prod, HTTP for local, auto-detect for dev and other based on current context
+  let protocol: 'http' | 'https';
+  let port: number | undefined;
   
-  // Default port for local and dev environments
-  const port = (environment === 'local' || environment === 'dev') ? 5000 : undefined;
+  if (environment === 'local') {
+    protocol = 'http';
+    port = 5000;
+  } else if (typeof window !== 'undefined' && window.location.protocol === 'https:') {
+    // If we're in browser on HTTPS, use HTTPS and current port
+    protocol = 'https';
+    port = undefined;
+  } else {
+    // Default to HTTP with port 5000
+    protocol = 'http';
+    port = 5000;
+  }
   
   // Build Keycloak URL based on environment
   let keycloakUrl: string;
