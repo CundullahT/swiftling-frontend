@@ -1,5 +1,4 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { useLocation } from 'wouter';
 import { authService, AuthTokens, LoginCredentials } from '@/lib/auth';
 
 interface AuthContextType {
@@ -22,7 +21,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [tokens, setTokens] = useState<AuthTokens | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [, setLocation] = useLocation();
 
   // Check authentication status on mount
   useEffect(() => {
@@ -37,16 +35,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
     checkAuth();
   }, []);
-
-  // Helper function to refresh auth state
-  const refreshAuthState = () => {
-    const isAuth = authService.isAuthenticated();
-    const userTokens = authService.getTokens();
-    
-    console.log('Refreshing auth state - isAuth:', isAuth, 'tokens:', userTokens);
-    setIsAuthenticated(isAuth);
-    setTokens(userTokens);
-  };
 
   const login = async (credentials: LoginCredentials) => {
     try {
@@ -67,33 +55,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
   };
 
   const logout = () => {
-    console.log('Logout called - before cleanup');
-    
-    // Step 1: Clear all localStorage and sessionStorage
-    localStorage.clear();
-    sessionStorage.clear();
-    
-    // Step 2: Clear all cookies
-    document.cookie.split(";").forEach(cookie => {
-      const eqPos = cookie.indexOf("=");
-      const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
-      document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/";
-      document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;domain=" + window.location.hostname;
-      document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;domain=." + window.location.hostname;
-    });
-    
-    // Step 3: Clear auth service
     authService.logout();
-    
-    // Step 4: Force immediate state update
     setIsAuthenticated(false);
     setTokens(null);
     setError(null);
-    
-    console.log('Logout complete - forcing redirect to login');
-    
-    // Step 5: Force hard reload to login page
-    window.location.replace('/login');
   };
 
   return (

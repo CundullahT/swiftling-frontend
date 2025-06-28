@@ -12,8 +12,6 @@ import {
   User 
 } from "lucide-react";
 import { GuardedLink } from "@/components/ui/guarded-link";
-import { useAuth } from "@/context/auth-context";
-import { useToast } from "@/hooks/use-toast";
 
 interface SidebarProps {
   onClose: () => void;
@@ -21,33 +19,10 @@ interface SidebarProps {
 
 export default function Sidebar({ onClose }: SidebarProps) {
   const [location] = useLocation();
-  const { logout } = useAuth();
-  const { toast } = useToast();
   
   const user = {
     name: "Alex Johnson",
     email: "alex@example.com",
-  };
-
-  const handleLogout = async () => {
-    console.log('Sidebar logout button clicked');
-    try {
-      console.log('Calling logout function...');
-      logout();
-      console.log('Logout function called, showing toast...');
-      toast({
-        title: "Logged out successfully",
-        description: "You have been logged out of SwiftLing.",
-      });
-      onClose(); // Close sidebar after logout
-    } catch (error) {
-      console.error('Logout error:', error);
-      toast({
-        title: "Logout error",
-        description: "There was an issue logging out. Please try again.",
-        variant: "destructive",
-      });
-    }
   };
 
   const navigationItems = [
@@ -129,14 +104,14 @@ export default function Sidebar({ onClose }: SidebarProps) {
       </div>
       
       <div className="border-t border-primary/20 px-4 py-4 bg-gradient-to-r from-primary/5 to-transparent">
-        <Button 
-          variant="ghost"
-          className="w-full flex items-center justify-start px-3 py-2.5 text-base font-medium rounded-md text-secondary/80 hover:bg-accent/10 hover:text-accent transition-all duration-200"
-          onClick={handleLogout}
+        <GuardedLink 
+          href="/dashboard"
+          className="w-full flex items-center px-3 py-2.5 text-base font-medium rounded-md text-secondary/80 hover:bg-accent/10 hover:text-accent transition-all duration-200"
+          onClick={onClose}
         >
           <LogOut className="h-5 w-5 mr-3 text-accent" />
           Logout
-        </Button>
+        </GuardedLink>
       </div>
     </nav>
   );

@@ -63,10 +63,8 @@ class AuthService {
   }
 
   private clearTokens(): void {
-    console.log('Clearing tokens from auth service');
     localStorage.removeItem('auth_tokens');
     this.tokens = null;
-    console.log('Tokens cleared, this.tokens is now:', this.tokens);
   }
 
   public async login(credentials: LoginCredentials): Promise<AuthTokens> {
@@ -103,56 +101,7 @@ class AuthService {
   }
 
   public logout(): void {
-    console.log('AuthService.logout() called');
-    
-    // Clear tokens from memory first
-    this.tokens = null;
-    
-    // Clear all possible authentication-related storage
-    this.clearAllAuthData();
-    
-    console.log('Logout complete - tokens cleared:', this.tokens);
-  }
-
-  private clearAllAuthData(): void {
-    // Clear localStorage items
-    localStorage.removeItem('auth_tokens');
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('refresh_token');
-    localStorage.removeItem('user_session');
-    localStorage.removeItem('session_id');
-    
-    // Clear sessionStorage items
-    sessionStorage.removeItem('auth_tokens');
-    sessionStorage.removeItem('access_token');
-    sessionStorage.removeItem('refresh_token');
-    sessionStorage.removeItem('user_session');
-    sessionStorage.removeItem('session_id');
-    
-    // Clear cookies by setting them to expire
-    this.clearAuthCookies();
-  }
-
-  private clearAuthCookies(): void {
-    const cookiesToClear = [
-      'access_token',
-      'refresh_token',
-      'session_id',
-      'auth_session',
-      'user_session',
-      'JSESSIONID',
-      'connect.sid',
-      'session'
-    ];
-    
-    cookiesToClear.forEach(cookieName => {
-      // Clear cookie for current domain
-      document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=${window.location.hostname};`;
-      // Clear cookie for parent domain (if any)
-      document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=.${window.location.hostname};`;
-      // Clear cookie without domain specification
-      document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
-    });
+    this.clearTokens();
   }
 
   public getAccessToken(): string | null {
@@ -160,10 +109,7 @@ class AuthService {
   }
 
   public isAuthenticated(): boolean {
-    const hasTokens = !!this.tokens?.access_token;
-    const localStorageTokens = localStorage.getItem('auth_tokens');
-    console.log('isAuthenticated check - this.tokens:', this.tokens, 'localStorage:', localStorageTokens, 'result:', hasTokens);
-    return hasTokens;
+    return !!this.tokens?.access_token;
   }
 
   public getTokens(): AuthTokens | null {
