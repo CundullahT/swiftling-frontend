@@ -112,7 +112,7 @@ export async function initializeConfig(): Promise<AppConfig> {
   if (environment === 'local') {
     keycloakUrl = 'http://localhost:8080';
   } else if (environment === 'dev') {
-    keycloakUrl = 'https://cundi.onthewifi.com:8080';
+    keycloakUrl = 'http://cundi.onthewifi.com:8080';
   } else if (environment === 'prod') {
     keycloakUrl = 'https://keycloak.swiftlingapp.com';
   } else {

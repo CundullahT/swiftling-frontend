@@ -1,5 +1,5 @@
 // Authentication service for Keycloak integration
-import { getConfig } from "@shared/config";
+import { getConfig, getAPIURL } from "@shared/config";
 
 export interface AuthTokens {
   access_token: string;
@@ -69,27 +69,21 @@ class AuthService {
 
   public async login(credentials: LoginCredentials): Promise<AuthTokens> {
     const config = await getConfig();
-    const tokenUrl = `${config.keycloakUrl}/realms/${KEYCLOAK_CONFIG.realm}/protocol/openid-connect/token`;
+    const backendUrl = await getAPIURL('/auth/login');
 
     console.log('Environment:', config.environment);
-    console.log('Keycloak URL:', config.keycloakUrl);
-    console.log('Full token URL:', tokenUrl);
-
-    const formData = new URLSearchParams();
-    formData.append('username', credentials.email);
-    formData.append('password', credentials.password);
-    formData.append('grant_type', KEYCLOAK_CONFIG.grantType);
-    formData.append('scope', KEYCLOAK_CONFIG.scope);
-    formData.append('client_id', KEYCLOAK_CONFIG.clientId);
-    formData.append('client_secret', KEYCLOAK_CONFIG.clientSecret);
+    console.log('Backend URL:', backendUrl);
 
     try {
-      const response = await fetch(tokenUrl, {
+      const response = await fetch(backendUrl, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
+          'Content-Type': 'application/json',
         },
-        body: formData.toString(),
+        body: JSON.stringify({
+          email: credentials.email,
+          password: credentials.password
+        }),
       });
 
       if (!response.ok) {
