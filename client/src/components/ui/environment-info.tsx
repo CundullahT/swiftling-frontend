@@ -13,19 +13,46 @@ interface EnvironmentInfo {
 function getEnvironmentInfo(): EnvironmentInfo {
   const currentHostname = window.location.hostname;
   
-  // Detect environment based on current hostname
+  // Check for explicit environment override from build-time environment variables
+  const explicitEnv = import.meta.env.VITE_APP_ENV;
+  
+  // Detect environment based on explicit env var first, then hostname
   let environment = 'other';
   let targetHostname = currentHostname;
   
-  if (currentHostname === 'localhost' || currentHostname === '127.0.0.1') {
-    environment = 'local';
-    targetHostname = 'localhost';
-  } else if (currentHostname.includes('cundi.onthewifi.com')) {
-    environment = 'dev';
-    targetHostname = 'cundi.onthewifi.com';
-  } else if (currentHostname.includes('swiftlingapp.com')) {
-    environment = 'prod';
-    targetHostname = 'swiftlingapp.com';
+  if (explicitEnv) {
+    // Use explicit environment if provided
+    switch (explicitEnv.toLowerCase()) {
+      case 'local':
+      case 'development':
+        environment = 'local';
+        targetHostname = 'localhost';
+        break;
+      case 'dev':
+        environment = 'dev';
+        targetHostname = 'cundi.onthewifi.com';
+        break;
+      case 'prod':
+      case 'production':
+        environment = 'prod';
+        targetHostname = 'swiftlingapp.com';
+        break;
+      default:
+        environment = 'other';
+        break;
+    }
+  } else {
+    // Fall back to hostname-based detection
+    if (currentHostname === 'localhost' || currentHostname === '127.0.0.1') {
+      environment = 'local';
+      targetHostname = 'localhost';
+    } else if (currentHostname.includes('cundi.onthewifi.com')) {
+      environment = 'dev';
+      targetHostname = 'cundi.onthewifi.com';
+    } else if (currentHostname.includes('swiftlingapp.com')) {
+      environment = 'prod';
+      targetHostname = 'swiftlingapp.com';
+    }
   }
   
   // Use HTTPS for prod, HTTP for local, dev, and other
