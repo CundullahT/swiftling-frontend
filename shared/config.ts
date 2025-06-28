@@ -97,8 +97,8 @@ export async function initializeConfig(): Promise<AppConfig> {
   // Use HTTPS for prod, HTTP for local, dev, and other
   const protocol = (environment === 'prod') ? 'https' : 'http';
   
-  // Default port for local and dev environments
-  const port = (environment === 'local' || environment === 'dev') ? 5000 : undefined;
+  // Spring Boot ports: 8080 for local/dev, none specified for prod
+  const port = (environment === 'local' || environment === 'dev') ? 8080 : undefined;
   
   const config: AppConfig = {
     environment,

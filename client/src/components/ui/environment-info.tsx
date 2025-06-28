@@ -58,8 +58,8 @@ function getEnvironmentInfo(): EnvironmentInfo {
   // Use HTTPS for prod, HTTP for local, dev, and other
   const protocol = (environment === 'prod') ? 'https' : 'http';
   
-  // Default port for local and dev environments
-  const port = (environment === 'local' || environment === 'dev') ? 5000 : undefined;
+  // Spring Boot ports: 8080 for local/dev, none specified for prod (uses default HTTPS port)
+  const port = (environment === 'local' || environment === 'dev') ? 8080 : undefined;
   
   return {
     environment,
