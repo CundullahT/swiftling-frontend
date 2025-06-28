@@ -22,6 +22,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [tokens, setTokens] = useState<AuthTokens | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [, setLocation] = useLocation();
 
   // Check authentication status on mount
   useEffect(() => {
@@ -60,6 +61,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
     setIsAuthenticated(false);
     setTokens(null);
     setError(null);
+    // Redirect to login page after logout
+    setLocation('/login');
   };
 
   return (
