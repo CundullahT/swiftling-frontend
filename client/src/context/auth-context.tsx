@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import { useLocation } from 'wouter';
 import { authService, AuthTokens, LoginCredentials } from '@/lib/auth';
 
 interface AuthContextType {

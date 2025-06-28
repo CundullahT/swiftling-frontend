@@ -102,6 +102,50 @@ class AuthService {
 
   public logout(): void {
     this.clearTokens();
+    
+    // Clear all possible authentication-related storage
+    this.clearAllAuthData();
+  }
+
+  private clearAllAuthData(): void {
+    // Clear localStorage items
+    localStorage.removeItem('auth_tokens');
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
+    localStorage.removeItem('user_session');
+    localStorage.removeItem('session_id');
+    
+    // Clear sessionStorage items
+    sessionStorage.removeItem('auth_tokens');
+    sessionStorage.removeItem('access_token');
+    sessionStorage.removeItem('refresh_token');
+    sessionStorage.removeItem('user_session');
+    sessionStorage.removeItem('session_id');
+    
+    // Clear cookies by setting them to expire
+    this.clearAuthCookies();
+  }
+
+  private clearAuthCookies(): void {
+    const cookiesToClear = [
+      'access_token',
+      'refresh_token',
+      'session_id',
+      'auth_session',
+      'user_session',
+      'JSESSIONID',
+      'connect.sid',
+      'session'
+    ];
+    
+    cookiesToClear.forEach(cookieName => {
+      // Clear cookie for current domain
+      document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=${window.location.hostname};`;
+      // Clear cookie for parent domain (if any)
+      document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=.${window.location.hostname};`;
+      // Clear cookie without domain specification
+      document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+    });
   }
 
   public getAccessToken(): string | null {
