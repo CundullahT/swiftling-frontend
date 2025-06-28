@@ -68,20 +68,32 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const logout = () => {
     console.log('Logout called - before cleanup');
-    console.log('Current auth state:', isAuthenticated);
     
-    // Clear auth service first
+    // Step 1: Clear all localStorage and sessionStorage
+    localStorage.clear();
+    sessionStorage.clear();
+    
+    // Step 2: Clear all cookies
+    document.cookie.split(";").forEach(cookie => {
+      const eqPos = cookie.indexOf("=");
+      const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+      document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/";
+      document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;domain=" + window.location.hostname;
+      document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;domain=." + window.location.hostname;
+    });
+    
+    // Step 3: Clear auth service
     authService.logout();
     
-    // Immediately update state
+    // Step 4: Force immediate state update
     setIsAuthenticated(false);
     setTokens(null);
     setError(null);
     
-    console.log('Logout called - after cleanup, redirecting to login');
+    console.log('Logout complete - forcing redirect to login');
     
-    // Force immediate redirect to login page
-    window.location.href = '/login';
+    // Step 5: Force hard reload to login page
+    window.location.replace('/login');
   };
 
   return (

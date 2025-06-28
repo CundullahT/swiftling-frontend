@@ -103,10 +103,15 @@ class AuthService {
   }
 
   public logout(): void {
-    this.clearTokens();
+    console.log('AuthService.logout() called');
+    
+    // Clear tokens from memory first
+    this.tokens = null;
     
     // Clear all possible authentication-related storage
     this.clearAllAuthData();
+    
+    console.log('Logout complete - tokens cleared:', this.tokens);
   }
 
   private clearAllAuthData(): void {
