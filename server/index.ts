@@ -31,7 +31,7 @@ app.use((req, res, next) => {
       }
 
       if (logLine.length > 80) {
-        logLine = logLine.slice(0, 79) + "…";
+        logLine = logLine.slice(0, 79) + "???";
       }
 
       log(logLine);
@@ -69,7 +69,7 @@ app.use((req, res, next) => {
   // this serves both the API and the client.
   // It is the only port that is not firewalled.
   const port = 5000;
-  const host = (process.platform === 'win32' || process.platform === 'darwin') ? 'localhost' : '0.0.0.0';
+  const host = '0.0.0.0'
   
   server.listen({
     port,
