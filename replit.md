@@ -134,6 +134,10 @@ Changelog:
   - Removed /app prefix from all frontend routes per user preference
   - Updated login redirects to use direct routes (/dashboard instead of /app/dashboard)
   - All app routes now use clean URLs: /dashboard, /my-phrases, /add-phrase, /quiz, /quiz-history, /settings
+- January 4, 2025. Updated authentication system with new Keycloak client secret
+  - Replaced client secret with: nImkIhxLdG0NKrvAkxBFBk88t7r08ltD
+  - Updated both frontend and backend configurations
+  - Implemented comprehensive logout system with /logout endpoint and quiz protection bypass
 ```
 
 ## User Preferences
