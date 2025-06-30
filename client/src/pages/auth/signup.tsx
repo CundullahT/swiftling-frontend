@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -52,6 +52,7 @@ export default function Signup() {
   const [successDialogOpen, setSuccessDialogOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   
   // Form setup with validation
   const form = useForm<SignupFormValues>({
@@ -65,10 +66,31 @@ export default function Signup() {
     },
     mode: "onChange", // Enable real-time validation
   });
+
+  // Cleanup timeout on component unmount
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
   
   // Handle form submission
   const onSubmit = async (data: SignupFormValues) => {
     setIsLoading(true);
+    
+    // Set up 20-second timeout
+    timeoutRef.current = setTimeout(() => {
+      if (isLoading) {
+        setIsLoading(false);
+        toast({
+          title: "Request Timeout",
+          description: "The sign up request is taking longer than expected. Please try again.",
+          variant: "destructive",
+        });
+      }
+    }, 20000); // 20 seconds
     
     try {
       // Get the quiz service URL for the current environment
@@ -94,6 +116,12 @@ export default function Signup() {
       
       const responseData = await response.json();
       
+      // Clear timeout since we got a response
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
+      }
+      
       // Check if the request was successful
       if (response.status === 201 || responseData.success) {
         // Show success dialog
@@ -109,6 +137,13 @@ export default function Signup() {
       }
     } catch (error) {
       console.error('Signup error:', error);
+      
+      // Clear timeout on error
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
+      }
+      
       toast({
         title: "Connection Error",
         description: "Unable to connect to the server. Please check your internet connection and try again.",
