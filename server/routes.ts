@@ -16,7 +16,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const KEYCLOAK_CONFIG = {
         realm: 'swiftling-realm',
         clientId: 'swiftling-client',
-        clientSecret: '3h3kzuPsEIhlVqkwOM86bELukqWk7UL9',
+        clientSecret: 'nImkIhxLdG0NKrvAkxBFBk88t7r08ltD',
         grantType: 'password',
         scope: 'openid profile email'
       };
