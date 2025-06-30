@@ -139,14 +139,14 @@ export async function initializeConfig(): Promise<AppConfig> {
   // Build Quiz Service URL based on environment
   let quizServiceUrl: string;
   if (environment === 'local') {
-    quizServiceUrl = 'http://localhost:8762/swiftling-quiz-service/api/v1';
+    quizServiceUrl = 'http://localhost:8762/swiftling-user-service/api/v1';
   } else if (environment === 'dev') {
-    quizServiceUrl = 'http://cundi.onthewifi.com:8762/swiftling-quiz-service/api/v1';
+    quizServiceUrl = 'http://cundi.onthewifi.com:8762/swiftling-user-service/api/v1';
   } else if (environment === 'prod') {
-    quizServiceUrl = 'https://swiftlingapp.com/swiftling-quiz-service/api/v1';
+    quizServiceUrl = 'https://swiftlingapp.com/swiftling-user-service/api/v1';
   } else {
     // For 'other' environment, use the same hostname as the app with port 8762
-    quizServiceUrl = `http://${hostname}:8762/swiftling-quiz-service/api/v1`;
+    quizServiceUrl = `http://${hostname}:8762/swiftling-user-service/api/v1`;
   }
   
   const config: AppConfig = {
