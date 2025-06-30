@@ -44,9 +44,9 @@ function getEnvironment(): Environment {
     const hostname = window.location.hostname;
     
     if (hostname === 'localhost' || hostname === '127.0.0.1') {
-      return 'dev';
-    } else if (hostname.includes('cundi.onthewifi.com')) {
       return 'local';
+    } else if (hostname.includes('cundi.onthewifi.com')) {
+      return 'dev';
     } else if (hostname.includes('swiftlingapp.com')) {
       return 'prod';
     } else {
@@ -80,9 +80,9 @@ function getEnvironment(): Environment {
 async function getHostname(environment: Environment): Promise<string> {
   switch (environment) {
     case 'dev':
-      return 'localhost';
-    case 'local':
       return 'cundi.onthewifi.com';
+    case 'local':
+      return 'localhost';
     case 'prod':
       return 'swiftlingapp.com';
     case 'other':
@@ -129,9 +129,9 @@ export async function initializeConfig(): Promise<AppConfig> {
   // Build Keycloak URL based on environment
   let keycloakUrl: string;
   if (environment === 'dev') {
-    keycloakUrl = 'http://localhost:8080';
-  } else if (environment === 'local') {
     keycloakUrl = 'http://cundi.onthewifi.com:8080';
+  } else if (environment === 'local') {
+    keycloakUrl = 'http://localhost:8080';
   } else if (environment === 'prod') {
     keycloakUrl = 'https://swiftlingapp.com';
   } else {
@@ -142,9 +142,9 @@ export async function initializeConfig(): Promise<AppConfig> {
   // Build User Service URL based on environment
   let quizServiceUrl: string;
   if (environment === 'dev') {
-    quizServiceUrl = 'http://localhost:8762/swiftling-user-service/api/v1';
-  } else if (environment === 'local') {
     quizServiceUrl = 'http://cundi.onthewifi.com:8762/swiftling-user-service/api/v1';
+  } else if (environment === 'local') {
+    quizServiceUrl = 'http://localhost:8762/swiftling-user-service/api/v1';
   } else if (environment === 'prod') {
     quizServiceUrl = 'https://swiftlingapp.com/swiftling-user-service/api/v1';
   } else {
