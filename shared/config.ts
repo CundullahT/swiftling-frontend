@@ -80,6 +80,15 @@ function getEnvironment(): Environment {
 async function getHostname(environment: Environment): Promise<string> {
   switch (environment) {
     case 'dev':
+      // In browser (frontend), use current hostname if on Replit, otherwise use cundi.onthewifi.com
+      if (typeof window !== 'undefined') {
+        const currentHostname = window.location.hostname;
+        if (currentHostname.includes('replit.dev') || currentHostname.includes('.replit.')) {
+          return currentHostname; // Use current Replit URL for frontend
+        }
+        return 'cundi.onthewifi.com';
+      }
+      // On server, use cundi.onthewifi.com for external API calls
       return 'cundi.onthewifi.com';
     case 'local':
       return 'localhost';
@@ -107,8 +116,22 @@ export async function initializeConfig(): Promise<AppConfig> {
   let port: number | undefined;
   
   if (environment === 'dev') {
-    protocol = 'http';
-    port = 5000;
+    // For dev environment, detect protocol and port based on context
+    if (typeof window !== 'undefined') {
+      // In browser, match current protocol and use no port for Replit
+      const currentHostname = window.location.hostname;
+      if (currentHostname.includes('replit.dev') || currentHostname.includes('.replit.')) {
+        protocol = window.location.protocol === 'https:' ? 'https' : 'http';
+        port = undefined; // Replit handles ports automatically
+      } else {
+        protocol = 'http';
+        port = 5000;
+      }
+    } else {
+      // On server, use HTTP with port for external calls
+      protocol = 'http';
+      port = 5000;
+    }
   } else if (environment === 'local') {
     protocol = 'http';
     port = 5000;
