@@ -44,9 +44,9 @@ function getEnvironment(): Environment {
     const hostname = window.location.hostname;
     
     if (hostname === 'localhost' || hostname === '127.0.0.1') {
-      return 'local';
-    } else if (hostname.includes('cundi.onthewifi.com')) {
       return 'dev';
+    } else if (hostname.includes('cundi.onthewifi.com')) {
+      return 'local';
     } else if (hostname.includes('swiftlingapp.com')) {
       return 'prod';
     } else {
@@ -79,13 +79,9 @@ function getEnvironment(): Environment {
 // Get hostname based on environment
 async function getHostname(environment: Environment): Promise<string> {
   switch (environment) {
-    case 'local':
-      return 'localhost';
     case 'dev':
-      // If we're in browser and on HTTPS (like Replit), use current hostname
-      if (typeof window !== 'undefined' && window.location.protocol === 'https:') {
-        return window.location.hostname;
-      }
+      return 'localhost';
+    case 'local':
       return 'cundi.onthewifi.com';
     case 'prod':
       return 'swiftlingapp.com';
@@ -106,41 +102,48 @@ export async function initializeConfig(): Promise<AppConfig> {
   const environment = getEnvironment();
   const hostname = await getHostname(environment);
   
-  // Use HTTPS for prod, HTTP for local, auto-detect for dev and other based on current context
+  // Use protocol and port based on environment
   let protocol: 'http' | 'https';
   let port: number | undefined;
   
-  if (environment === 'local') {
+  if (environment === 'dev') {
     protocol = 'http';
     port = 5000;
-  } else if (typeof window !== 'undefined' && window.location.protocol === 'https:') {
-    // If we're in browser on HTTPS, use HTTPS and current port
+  } else if (environment === 'local') {
+    protocol = 'http';
+    port = 5000;
+  } else if (environment === 'prod') {
     protocol = 'https';
-    port = undefined;
+    port = undefined; // No port for prod
   } else {
-    // Default to HTTP with port 5000
-    protocol = 'http';
-    port = 5000;
+    // For 'other' environment, detect from current context
+    if (typeof window !== 'undefined' && window.location.protocol === 'https:') {
+      protocol = 'https';
+      port = undefined;
+    } else {
+      protocol = 'http';
+      port = 5000;
+    }
   }
   
   // Build Keycloak URL based on environment
   let keycloakUrl: string;
-  if (environment === 'local') {
+  if (environment === 'dev') {
     keycloakUrl = 'http://localhost:8080';
-  } else if (environment === 'dev') {
+  } else if (environment === 'local') {
     keycloakUrl = 'http://cundi.onthewifi.com:8080';
   } else if (environment === 'prod') {
-    keycloakUrl = 'https://keycloak.swiftlingapp.com';
+    keycloakUrl = 'https://swiftlingapp.com';
   } else {
     // For 'other' environment, use the same hostname as the app with port 8080
     keycloakUrl = `http://${hostname}:8080`;
   }
   
-  // Build Quiz Service URL based on environment
+  // Build User Service URL based on environment
   let quizServiceUrl: string;
-  if (environment === 'local') {
+  if (environment === 'dev') {
     quizServiceUrl = 'http://localhost:8762/swiftling-user-service/api/v1';
-  } else if (environment === 'dev') {
+  } else if (environment === 'local') {
     quizServiceUrl = 'http://cundi.onthewifi.com:8762/swiftling-user-service/api/v1';
   } else if (environment === 'prod') {
     quizServiceUrl = 'https://swiftlingapp.com/swiftling-user-service/api/v1';
