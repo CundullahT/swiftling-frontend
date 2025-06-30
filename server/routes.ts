@@ -61,6 +61,66 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Account verification endpoint
+  app.get('/api/auth/verify', async (req, res) => {
+    try {
+      const { token } = req.query;
+      
+      if (!token || typeof token !== 'string') {
+        return res.status(400).json({ 
+          error: 'Verification token is required',
+          error_description: 'Token parameter must be provided in the query string'
+        });
+      }
+
+      // Get environment-specific configuration
+      const { getConfig } = await import('../shared/config');
+      const config = await getConfig();
+      
+      // Build user service URL for verification
+      const verificationUrl = config.environment === 'local' 
+        ? `http://localhost:8762/swiftling-user-service/api/v1/account/verify?token=${encodeURIComponent(token)}`
+        : config.environment === 'prod'
+        ? `https://swiftlingapp.com/swiftling-user-service/api/v1/account/verify?token=${encodeURIComponent(token)}`
+        : `http://cundi.onthewifi.com:8762/swiftling-user-service/api/v1/account/verify?token=${encodeURIComponent(token)}`;
+
+      console.log('Verifying account with URL:', verificationUrl);
+
+      const response = await fetch(verificationUrl, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        }
+      });
+
+      const responseData = await response.json();
+
+      if (!response.ok) {
+        return res.status(response.status).json({
+          error: responseData.message || 'Account verification failed',
+          error_description: responseData.error || `HTTP ${response.status}`,
+          success: false
+        });
+      }
+
+      // Return success response
+      res.json({
+        success: true,
+        message: responseData.message || 'Account verified successfully',
+        data: responseData.data || null
+      });
+      
+    } catch (error) {
+      console.error('Account verification error:', error);
+      res.status(500).json({ 
+        error: 'Internal server error', 
+        error_description: 'Failed to verify account',
+        success: false
+      });
+    }
+  });
+
   // Logout endpoint to clear server-side session and cookies
   app.post('/api/auth/logout', (req, res) => {
     try {
