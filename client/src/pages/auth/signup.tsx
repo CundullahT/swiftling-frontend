@@ -7,6 +7,8 @@ import { Link } from "wouter";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { getQuizServiceURL } from "@shared/config";
+import { useToast } from "@/hooks/use-toast";
 import {
   Form,
   FormControl,
@@ -48,6 +50,8 @@ type SignupFormValues = z.infer<typeof signupSchema>;
 
 export default function Signup() {
   const [successDialogOpen, setSuccessDialogOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useToast();
   
   // Form setup with validation
   const form = useForm<SignupFormValues>({
@@ -63,14 +67,56 @@ export default function Signup() {
   });
   
   // Handle form submission
-  const onSubmit = (data: SignupFormValues) => {
-    console.log("Form submitted:", data);
+  const onSubmit = async (data: SignupFormValues) => {
+    setIsLoading(true);
     
-    // Show success dialog after form submission
-    setSuccessDialogOpen(true);
-    
-    // In a real implementation, we would send the data to the backend
-    // and show the success dialog after receiving a successful response
+    try {
+      // Get the quiz service URL for the current environment
+      const signupUrl = await getQuizServiceURL('/account/signup');
+      
+      // Prepare the request payload (excluding confirmPassword as it's not needed by backend)
+      const requestPayload = {
+        firstName: data.firstName,
+        lastName: data.lastName,
+        email: data.email,
+        password: data.password
+      };
+      
+      // Make the API call
+      const response = await fetch(signupUrl, {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+          'accept': 'application/json'
+        },
+        body: JSON.stringify(requestPayload)
+      });
+      
+      const responseData = await response.json();
+      
+      // Check if the request was successful
+      if (response.status === 201 || responseData.success) {
+        // Show success dialog
+        setSuccessDialogOpen(true);
+      } else {
+        // Handle error response
+        const errorMessage = responseData.message || 'Sign up failed. Please try again.';
+        toast({
+          title: "Sign Up Failed",
+          description: errorMessage,
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error('Signup error:', error);
+      toast({
+        title: "Connection Error",
+        description: "Unable to connect to the server. Please check your internet connection and try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
   
   return (
@@ -191,9 +237,16 @@ export default function Signup() {
                 <Button 
                   type="submit" 
                   className="w-full mt-6"
-                  disabled={!form.formState.isValid || form.formState.isSubmitting}
+                  disabled={!form.formState.isValid || isLoading}
                 >
-                  Sign Up
+                  {isLoading ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                      Creating Account...
+                    </>
+                  ) : (
+                    "Sign Up"
+                  )}
                 </Button>
               </form>
             </Form>

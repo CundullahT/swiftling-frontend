@@ -7,6 +7,7 @@ export interface AppConfig {
   port?: number;
   protocol: 'http' | 'https';
   keycloakUrl: string;
+  quizServiceUrl: string;
 }
 
 // Get public IP address from AWS checkip service
@@ -135,12 +136,26 @@ export async function initializeConfig(): Promise<AppConfig> {
     keycloakUrl = `http://${hostname}:8080`;
   }
   
+  // Build Quiz Service URL based on environment
+  let quizServiceUrl: string;
+  if (environment === 'local') {
+    quizServiceUrl = 'http://localhost:8762/swiftling-quiz-service/api/v1';
+  } else if (environment === 'dev') {
+    quizServiceUrl = 'http://cundi.onthewifi.com:8762/swiftling-quiz-service/api/v1';
+  } else if (environment === 'prod') {
+    quizServiceUrl = 'https://swiftlingapp.com/swiftling-quiz-service/api/v1';
+  } else {
+    // For 'other' environment, use the same hostname as the app with port 8762
+    quizServiceUrl = `http://${hostname}:8762/swiftling-quiz-service/api/v1`;
+  }
+  
   const config: AppConfig = {
     environment,
     hostname,
     port,
     protocol,
     keycloakUrl,
+    quizServiceUrl,
   };
   
   console.log(`Environment: ${environment}, Backend URL: ${protocol}://${hostname}${port ? `:${port}` : ''}`);
@@ -169,6 +184,12 @@ export async function getBaseURL(): Promise<string> {
 export async function getAPIURL(path: string = ''): Promise<string> {
   const baseURL = await getBaseURL();
   return `${baseURL}/api${path}`;
+}
+
+// Get Quiz Service URL with path
+export async function getQuizServiceURL(path: string = ''): Promise<string> {
+  const config = await getConfig();
+  return `${config.quizServiceUrl}${path}`;
 }
 
 // Reset configuration (useful for testing or environment changes)
