@@ -114,26 +114,38 @@ export default function Signup() {
         body: JSON.stringify(requestPayload)
       });
       
-      const responseData = await response.json();
-      
       // Clear timeout since we got a response
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
         timeoutRef.current = null;
       }
       
-      // Check if the request was successful
-      if (response.status === 201 || responseData.success) {
-        // Show success dialog
+      console.log('Signup response status:', response.status);
+      console.log('Signup response headers:', response.headers);
+      
+      // Check if the request was successful first, before trying to parse JSON
+      if (response.status === 201) {
+        // Show success dialog immediately for 201 status
         setSuccessDialogOpen(true);
       } else {
-        // Handle error response
-        const errorMessage = responseData.message || 'Sign up failed. Please try again.';
-        toast({
-          title: "Sign Up Failed",
-          description: errorMessage,
-          variant: "destructive",
-        });
+        // Try to parse error response
+        try {
+          const responseData = await response.json();
+          const errorMessage = responseData.message || 'Sign up failed. Please try again.';
+          toast({
+            title: "Sign Up Failed",
+            description: errorMessage,
+            variant: "destructive",
+          });
+        } catch (jsonError) {
+          // If JSON parsing fails, show generic error
+          console.error('Failed to parse error response:', jsonError);
+          toast({
+            title: "Sign Up Failed",
+            description: `Server returned status ${response.status}. Please try again.`,
+            variant: "destructive",
+          });
+        }
       }
     } catch (error) {
       console.error('Signup error:', error);
