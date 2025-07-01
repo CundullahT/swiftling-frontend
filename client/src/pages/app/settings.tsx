@@ -73,6 +73,7 @@ export default function Settings() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [isChangingPassword, setIsChangingPassword] = useState(false);
   const [isUpdatingAccount, setIsUpdatingAccount] = useState(false);
+  const [isDeletingAccount, setIsDeletingAccount] = useState(false);
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -269,6 +270,78 @@ export default function Settings() {
       });
     } finally {
       setIsChangingPassword(false);
+    }
+  };
+
+  // Delete account function
+  const deleteAccount = async () => {
+    if (!tokens?.access_token) {
+      throw new Error("No authentication token available");
+    }
+
+    try {
+      const deleteAccountUrl = await getQuizServiceURL('/account/delete-account');
+      
+      const response = await fetch(deleteAccountUrl, {
+        method: 'DELETE',
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${tokens.access_token}`
+        }
+      });
+
+      if (response.status === 200) {
+        const responseData = await response.json();
+        
+        if (responseData.success) {
+          toast({
+            title: "Account Deleted",
+            description: "Your account has been successfully deleted.",
+          });
+          
+          // Close the dialog
+          setDeleteDialogOpen(false);
+          
+          // Redirect to logout endpoint
+          window.location.href = '/logout';
+          return;
+        }
+      }
+      
+      // Handle error response
+      const errorData = await response.json().catch(() => ({}));
+      const errorMessage = errorData.message || 'Failed to delete account. Please try again.';
+      
+      toast({
+        title: "Error",
+        description: errorMessage,
+        variant: "destructive",
+      });
+    } catch (error) {
+      // Network error
+      toast({
+        title: "Connection Error",
+        description: "Unable to connect to the server. Please check your internet connection and try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  // Handle delete account button click
+  const handleDeleteAccount = async () => {
+    setIsDeletingAccount(true);
+    
+    try {
+      await deleteAccount();
+    } catch (error) {
+      console.error('Delete account error:', error);
+      toast({
+        title: "Error",
+        description: "Something went wrong while deleting your account. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsDeletingAccount(false);
     }
   };
 
@@ -492,8 +565,17 @@ export default function Settings() {
             <Button 
               className="sm:flex-1 bg-rose-600 hover:bg-rose-600/90 text-white"
               variant="destructive"
+              onClick={handleDeleteAccount}
+              disabled={isDeletingAccount}
             >
-              Delete My Account
+              {isDeletingAccount ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                  Deleting Account...
+                </>
+              ) : (
+                "Delete My Account"
+              )}
             </Button>
           </AlertDialogFooter>
         </AlertDialogContent>
