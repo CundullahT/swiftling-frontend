@@ -1,5 +1,5 @@
 import { useAuthRedirect } from "@/hooks/use-auth-redirect";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,8 +22,9 @@ import {
   AlertDescription,
   AlertTitle,
 } from "@/components/ui/alert";
-import { SAMPLE_TAGS, LANGUAGES } from "@/lib/constants";
+import { LANGUAGES } from "@/lib/constants";
 import { GuardedLink } from "@/components/ui/guarded-link";
+import { getQuizServiceURL } from "@shared/config";
 import { CheckCircle2, X, Plus } from "lucide-react";
 
 export default function AddPhrase() {
@@ -39,6 +40,8 @@ export default function AddPhrase() {
   const [tagInput, setTagInput] = useState("");
   const [filteredSuggestions, setFilteredSuggestions] = useState<string[]>([]);
   const [isTagInputFocused, setIsTagInputFocused] = useState(false);
+  const [availableTags, setAvailableTags] = useState<string[]>([]);
+  const [isLoadingTags, setIsLoadingTags] = useState(true);
   
   // Language state
   const [sourceLanguage, setSourceLanguage] = useState("");
@@ -72,6 +75,45 @@ export default function AddPhrase() {
            !formErrors.tagLength;
   };
   
+  // Fetch tags from backend
+  const fetchTags = async () => {
+    try {
+      setIsLoadingTags(true);
+      const tagsUrl = await getQuizServiceURL('/phrase/tags');
+      
+      const response = await fetch(tagsUrl, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json'
+        }
+      });
+
+      if (response.status === 200) {
+        const responseData = await response.json();
+        
+        if (responseData.success && Array.isArray(responseData.data)) {
+          setAvailableTags(responseData.data);
+        } else {
+          console.error('Invalid response format:', responseData);
+          setAvailableTags([]);
+        }
+      } else {
+        console.error('Failed to fetch tags:', response.status);
+        setAvailableTags([]);
+      }
+    } catch (error) {
+      console.error('Error fetching tags:', error);
+      setAvailableTags([]);
+    } finally {
+      setIsLoadingTags(false);
+    }
+  };
+
+  // Load tags when component mounts
+  useEffect(() => {
+    fetchTags();
+  }, []);
+
   // Handle form validation
   const validateForm = () => {
     const errors = {
@@ -199,15 +241,15 @@ export default function AddPhrase() {
     
     if (value.trim()) {
       // Filter suggestions based on input
-      const filtered = SAMPLE_TAGS.filter(tag => 
+      const filtered = availableTags.filter(tag => 
         tag.toLowerCase().includes(value.toLowerCase()) && 
         !selectedTags.includes(tag)
       );
       setFilteredSuggestions(filtered);
     } else {
       // Show all available tags when input is empty
-      const availableTags = SAMPLE_TAGS.filter(tag => !selectedTags.includes(tag));
-      setFilteredSuggestions(availableTags);
+      const availableTagsFiltered = availableTags.filter(tag => !selectedTags.includes(tag));
+      setFilteredSuggestions(availableTagsFiltered);
     }
   };
   
