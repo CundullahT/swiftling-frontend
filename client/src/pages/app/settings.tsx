@@ -26,6 +26,8 @@ import {
   AlertDialogFooter,
 } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/context/auth-context";
+import { getQuizServiceURL } from "@shared/config";
 
 // Validation schema for account form
 const accountFormSchema = z.object({
@@ -60,8 +62,8 @@ type AccountFormValues = z.infer<typeof accountFormSchema>;
 type PasswordFormValues = z.infer<typeof passwordFormSchema>;
 
 export default function Settings() {
-  // Placeholder for auth check - would be tied to a real auth system in future
-  const isAuthenticated = true;
+  // Auth context
+  const { isAuthenticated, tokens } = useAuth();
   useAuthRedirect(!isAuthenticated, "/login");
   
   // Toast notifications
@@ -69,6 +71,7 @@ export default function Settings() {
   
   // State for delete account confirmation dialog
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -122,14 +125,76 @@ export default function Settings() {
     });
   };
   
-  // Handle password form submission - validation only, no actual functionality
-  const onPasswordSubmit = (data: PasswordFormValues) => {
-    // Form is valid if we get here
-    toast({
-      title: "Password Updated",
-      description: "Password validated successfully. (Functionality disabled)",
-    });
-    passwordForm.reset();
+  // Password change function
+  const changePassword = async (currentPassword: string, newPassword: string) => {
+    if (!tokens?.access_token) {
+      throw new Error("No authentication token available");
+    }
+
+    try {
+      const changePasswordUrl = await getQuizServiceURL('/account/change-pass');
+      
+      const response = await fetch(changePasswordUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${tokens.access_token}`
+        },
+        body: JSON.stringify({
+          currentPassword: currentPassword,
+          newPassword: newPassword
+        })
+      });
+
+      if (response.status === 200) {
+        const responseData = await response.json();
+        
+        if (responseData.success) {
+          toast({
+            title: "Password Changed",
+            description: "Your password has been successfully updated.",
+          });
+          passwordForm.reset();
+          return;
+        }
+      }
+      
+      // Handle error response
+      const errorData = await response.json().catch(() => ({}));
+      const errorMessage = errorData.message || 'Failed to change password. Please try again.';
+      
+      toast({
+        title: "Error",
+        description: errorMessage,
+        variant: "destructive",
+      });
+    } catch (error) {
+      // Network error
+      toast({
+        title: "Connection Error",
+        description: "Unable to connect to the server. Please check your internet connection and try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  // Handle password form submission
+  const onPasswordSubmit = async (data: PasswordFormValues) => {
+    setIsChangingPassword(true);
+    
+    try {
+      await changePassword(data.currentPassword, data.newPassword);
+    } catch (error) {
+      console.error('Password change error:', error);
+      toast({
+        title: "Error",
+        description: "Something went wrong while changing your password. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsChangingPassword(false);
+    }
   };
 
   return (
@@ -288,9 +353,16 @@ export default function Settings() {
               </Button>
               <Button 
                 type="submit"
-                disabled={!passwordForm.formState.isValid || passwordForm.formState.isSubmitting}
+                disabled={!passwordForm.formState.isValid || isChangingPassword}
               >
-                Save Changes
+                {isChangingPassword ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                    Changing Password...
+                  </>
+                ) : (
+                  "Save Changes"
+                )}
               </Button>
             </div>
           </Card>
