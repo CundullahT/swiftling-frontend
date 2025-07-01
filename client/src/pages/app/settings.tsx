@@ -72,17 +72,18 @@ export default function Settings() {
   // State for delete account confirmation dialog
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [isChangingPassword, setIsChangingPassword] = useState(false);
+  const [isUpdatingAccount, setIsUpdatingAccount] = useState(false);
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [accountFormChanged, setAccountFormChanged] = useState(false);
   
-  // Default account values
-  const defaultAccountValues = {
+  // Default account values - these will be updated after successful account updates
+  const [defaultAccountValues, setDefaultAccountValues] = useState({
     firstName: "Alex",
     lastName: "Johnson",
     email: "alex@example.com",
-  };
+  });
 
   // Account form setup
   const accountForm = useForm<AccountFormValues>({
@@ -116,13 +117,87 @@ export default function Settings() {
     mode: "onChange", // Show errors while typing
   });
   
-  // Handle account form submission - validation only, no actual functionality
-  const onAccountSubmit = (data: AccountFormValues) => {
-    // Form is valid if we get here
-    toast({
-      title: "Account Settings",
-      description: "Account information validated successfully. (Functionality disabled)",
-    });
+  // Account update function
+  const updateAccount = async (firstName: string, lastName: string, email: string) => {
+    if (!tokens?.access_token) {
+      throw new Error("No authentication token available");
+    }
+
+    try {
+      const updateAccountUrl = await getQuizServiceURL('/account/update-account');
+      
+      const response = await fetch(updateAccountUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${tokens.access_token}`
+        },
+        body: JSON.stringify({
+          firstName: firstName,
+          lastName: lastName,
+          email: email
+        })
+      });
+
+      if (response.status === 200) {
+        const responseData = await response.json();
+        
+        if (responseData.success) {
+          // Update the default values with the new data
+          const newDefaultValues = {
+            firstName: responseData.data.firstName,
+            lastName: responseData.data.lastName,
+            email: responseData.data.email
+          };
+          
+          // Update both the state and form
+          setDefaultAccountValues(newDefaultValues);
+          accountForm.reset(newDefaultValues);
+          
+          toast({
+            title: "Account Updated",
+            description: "Your account information has been successfully updated.",
+          });
+          return;
+        }
+      }
+      
+      // Handle error response
+      const errorData = await response.json().catch(() => ({}));
+      const errorMessage = errorData.message || 'Failed to update account information. Please try again.';
+      
+      toast({
+        title: "Error",
+        description: errorMessage,
+        variant: "destructive",
+      });
+    } catch (error) {
+      // Network error
+      toast({
+        title: "Connection Error",
+        description: "Unable to connect to the server. Please check your internet connection and try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  // Handle account form submission
+  const onAccountSubmit = async (data: AccountFormValues) => {
+    setIsUpdatingAccount(true);
+    
+    try {
+      await updateAccount(data.firstName, data.lastName, data.email);
+    } catch (error) {
+      console.error('Account update error:', error);
+      toast({
+        title: "Error",
+        description: "Something went wrong while updating your account. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsUpdatingAccount(false);
+    }
   };
   
   // Password change function
@@ -270,9 +345,16 @@ export default function Settings() {
               </Button>
               <Button 
                 type="submit"
-                disabled={!accountForm.formState.isValid || accountForm.formState.isSubmitting || !accountFormChanged}
+                disabled={!accountForm.formState.isValid || isUpdatingAccount || !accountFormChanged}
               >
-                Save Changes
+                {isUpdatingAccount ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                    Updating Account...
+                  </>
+                ) : (
+                  "Save Changes"
+                )}
               </Button>
             </div>
           </Card>
