@@ -341,8 +341,17 @@ export default function AddPhrase() {
     if (e.key === 'Enter') {
       e.preventDefault(); // Prevent form submission
       const value = type === 'source' ? sourceLanguageInput : targetLanguageInput;
+      
       if (value) {
-        setLanguage(type, value);
+        // Only allow selection of valid languages from the predefined list
+        const matchingLanguage = LANGUAGES.find(lang => 
+          lang.name.toLowerCase() === value.toLowerCase()
+        );
+        
+        if (matchingLanguage) {
+          setLanguage(type, matchingLanguage.id);
+        }
+        // If no matching language found, do nothing (don't set invalid language)
       }
     }
   };
