@@ -15,14 +15,16 @@ import {
 } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
+import { useLocation } from "wouter";
+import { getQuizServiceURL } from "@shared/config";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogAction,
+} from "@/components/ui/alert-dialog";
 
 // Validation schema for the forgot password form
 const forgotPasswordSchema = z.object({
@@ -35,8 +37,11 @@ type ForgotPasswordFormValues = z.infer<typeof forgotPasswordSchema>;
 
 export default function ForgotPassword() {
   const { toast } = useToast();
-  const [showDialog, setShowDialog] = useState(false);
+  const [, setLocation] = useLocation();
+  const [successDialogOpen, setSuccessDialogOpen] = useState(false);
   const [userEmail, setUserEmail] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
   
   // Setup form with validation
   const form = useForm<ForgotPasswordFormValues>({
@@ -46,25 +51,83 @@ export default function ForgotPassword() {
     },
   });
 
-  // Placeholder function for password reset - validation only, no actual functionality
-  const onSubmit = (data: ForgotPasswordFormValues) => {
-    // Store the email to display in the dialog
-    setUserEmail(data.email);
-    // Show the confirmation dialog
-    setShowDialog(true);
-    
-    // This would trigger the password reset email in a real implementation
-    // The toast is now shown when the dialog is closed
+  // Forgot password function
+  const sendResetEmail = async (email: string) => {
+    try {
+      const forgotPasswordUrl = await getQuizServiceURL(`/account/forgot-pass?email=${encodeURIComponent(email)}`);
+      
+      const response = await fetch(forgotPasswordUrl, {
+        method: 'GET',
+        headers: {
+          'accept': 'application/json'
+        }
+      });
+
+      if (response.status === 200) {
+        const responseData = await response.json();
+        
+        if (responseData.success) {
+          setUserEmail(email);
+          setSuccessDialogOpen(true);
+          return;
+        }
+      }
+      
+      // Handle error response
+      const errorData = await response.json().catch(() => ({}));
+      const errorMessage = errorData.message || 'Failed to send reset email. Please try again.';
+      
+      toast({
+        title: "Error",
+        description: errorMessage,
+        variant: "destructive",
+      });
+    } catch (error) {
+      // Network error
+      toast({
+        title: "Connection Error",
+        description: "Unable to connect to the server. Please check your internet connection and try again.",
+        variant: "destructive",
+      });
+    }
   };
 
-  // Handle dialog close
-  const handleDialogClose = () => {
-    setShowDialog(false);
-    toast({
-      title: "Email Sent",
-      description: "Check your inbox for the reset link",
-    });
-    form.reset();
+  // Submit handler for forgot password
+  const onSubmit = async (data: ForgotPasswordFormValues) => {
+    setIsSubmitting(true);
+    
+    // Set up timeout after 20 seconds
+    const timeoutTimer = setTimeout(() => {
+      toast({
+        title: "Request Timeout",
+        description: "The request is taking longer than expected. Please try again.",
+        variant: "destructive",
+      });
+      setIsSubmitting(false);
+    }, 20000);
+    
+    setTimeoutId(timeoutTimer);
+    
+    // Start forgot password process
+    const handleForgotPassword = async () => {
+      try {
+        await sendResetEmail(data.email);
+      } catch (error) {
+        console.error('Forgot password error caught:', error);
+        toast({
+          title: "Error",
+          description: "Something went wrong. Please try again.",
+          variant: "destructive",
+        });
+      } finally {
+        setIsSubmitting(false);
+        if (timeoutTimer) {
+          clearTimeout(timeoutTimer);
+        }
+      }
+    };
+    
+    handleForgotPassword();
   };
 
   return (
@@ -102,8 +165,15 @@ export default function ForgotPassword() {
                   )}
                 />
 
-                <Button type="submit" className="w-full">
-                  Send Reset Link
+                <Button type="submit" className="w-full" disabled={isSubmitting}>
+                  {isSubmitting ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                      Sending Reset Link...
+                    </>
+                  ) : (
+                    "Send Reset Link"
+                  )}
                 </Button>
               </form>
             </Form>
@@ -120,23 +190,26 @@ export default function ForgotPassword() {
         </Card>
       </div>
 
-      {/* Reset Password Confirmation Dialog */}
-      <Dialog open={showDialog} onOpenChange={setShowDialog}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>Reset Link Sent</DialogTitle>
-            <DialogDescription>
-              A password reset link has been sent to <span className="font-semibold">{userEmail}</span>.
-              Please check both your inbox and spam folders for the email.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter className="sm:justify-center">
-            <Button onClick={handleDialogClose}>
-              Got It
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      {/* Success Dialog */}
+      <AlertDialog open={successDialogOpen} onOpenChange={setSuccessDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Reset Link Sent Successfully</AlertDialogTitle>
+            <AlertDialogDescription className="space-y-4">
+              <span>A password reset link has been sent to <strong>{userEmail}</strong>.</span>
+              
+              <span className="block text-sm">Please check both your inbox and spam folders for the email, then follow the instructions to reset your password.</span>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <div className="flex justify-center">
+            <AlertDialogAction asChild>
+              <Button onClick={() => setLocation('/login')}>
+                Back to Login
+              </Button>
+            </AlertDialogAction>
+          </div>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
