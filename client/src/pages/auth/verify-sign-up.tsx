@@ -1,26 +1,120 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Link } from "wouter";
-import { CheckCircle2, XCircle, Loader2 } from "lucide-react";
+import { Link, useLocation } from "wouter";
+import { CheckCircle2, XCircle, Loader2, AlertCircle } from "lucide-react";
 import { useState, useEffect } from "react";
+import { getQuizServiceURL } from "@shared/config";
+import { useToast } from "@/hooks/use-toast";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogAction,
+} from "@/components/ui/alert-dialog";
 
-type VerificationState = "loading" | "success" | "error" | "timeout";
+type VerificationState = "loading" | "success" | "error" | "timeout" | "invalid-token";
 
 export default function SignUpVerification() {
   const [verificationState, setVerificationState] = useState<VerificationState>("loading");
-  
-  // Simulate a timeout after 10 seconds
+  const [successDialogOpen, setSuccessDialogOpen] = useState(false);
+  const [token, setToken] = useState<string | null>(null);
+  const { toast } = useToast();
+  const [, setLocation] = useLocation();
+
+  // UUID validation regex
+  const isValidUUID = (uuid: string) => {
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    return uuidRegex.test(uuid);
+  };
+
+  // Account verification function
+  const verifyAccount = async (verificationToken: string) => {
+    try {
+      const verifyUrl = await getQuizServiceURL(`/account/enable?token=${verificationToken}`);
+      
+      const response = await fetch(verifyUrl, {
+        method: 'GET',
+        headers: {
+          'accept': 'application/json'
+        }
+      });
+
+      console.log('Verification response status:', response.status);
+
+      if (response.status === 200) {
+        const responseData = await response.json();
+        console.log('Verification response data:', responseData);
+        
+        if (responseData.success) {
+          setVerificationState("success");
+          setSuccessDialogOpen(true);
+          return;
+        }
+      }
+      
+      // Handle error response
+      try {
+        const errorData = await response.json();
+        console.error('Verification error data:', errorData);
+        toast({
+          title: "Verification Failed",
+          description: errorData.message || "Account verification failed. Please try again.",
+          variant: "destructive",
+        });
+      } catch (jsonError) {
+        console.error('Failed to parse error response:', jsonError);
+        toast({
+          title: "Verification Failed",
+          description: "Account verification failed. Please try again.",
+          variant: "destructive",
+        });
+      }
+      
+      setVerificationState("error");
+    } catch (error) {
+      console.error('Verification request error:', error);
+      toast({
+        title: "Connection Error",
+        description: "Unable to connect to the server. Please check your connection and try again.",
+        variant: "destructive",
+      });
+      setVerificationState("error");
+    }
+  };
+
+  // Check for token and verify account on page load
   useEffect(() => {
-    // This timer simulates a timeout after 10 seconds
+    // Parse URL to get token parameter
+    const params = new URLSearchParams(window.location.search);
+    const tokenParam = params.get("token");
+    
+    if (!tokenParam) {
+      setVerificationState("invalid-token");
+      return;
+    }
+
+    // Validate UUID format
+    if (!isValidUUID(tokenParam)) {
+      setVerificationState("invalid-token");
+      return;
+    }
+
+    setToken(tokenParam);
+    
+    // Start verification process
+    verifyAccount(tokenParam);
+
+    // Set up timeout after 20 seconds
     const timeoutTimer = setTimeout(() => {
       if (verificationState === "loading") {
         setVerificationState("timeout");
       }
-    }, 10000);
+    }, 20000);
     
-    // Clean up the timer when the component unmounts
     return () => clearTimeout(timeoutTimer);
-  }, [verificationState]);
+  }, []);
   
   // Content to display based on the verification state
   const renderContent = () => {
@@ -41,6 +135,29 @@ export default function SignUpVerification() {
             </p>
           </>
         );
+
+      case "invalid-token":
+        return (
+          <>
+            <div className="mb-6 text-amber-500">
+              <AlertCircle size={64} />
+            </div>
+            
+            <h3 className="text-xl font-bold text-gray-900 mb-2">
+              Invalid or Missing Token
+            </h3>
+            
+            <p className="text-center text-base text-gray-700 mb-6">
+              The verification link appears to be invalid or missing the required token. Please make sure you're using the complete verification URL from your email.
+            </p>
+            
+            <Button asChild className="w-full">
+              <Link href="/signup">
+                Back to Sign Up
+              </Link>
+            </Button>
+          </>
+        );
         
       case "success":
         return (
@@ -56,12 +173,6 @@ export default function SignUpVerification() {
             <p className="text-center text-base text-gray-700 mb-6">
               Your account has been successfully verified. You can now log in and start using all features of SwiftLing.
             </p>
-            
-            <Button asChild className="w-full">
-              <Link href="/login">
-                Proceed to Login
-              </Link>
-            </Button>
           </>
         );
         
@@ -127,6 +238,27 @@ export default function SignUpVerification() {
           </p>
         </div>
       </div>
+      
+      {/* Success Dialog */}
+      <AlertDialog open={successDialogOpen} onOpenChange={setSuccessDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Account Verified Successfully</AlertDialogTitle>
+            <AlertDialogDescription className="space-y-4">
+              <span>Your account has been successfully verified! You can now log in and start using all features of SwiftLing.</span>
+              
+              <span className="block text-sm">Welcome to your language learning journey!</span>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <div className="flex justify-center">
+            <AlertDialogAction asChild>
+              <Button onClick={() => setLocation('/login')}>
+                Proceed to Login
+              </Button>
+            </AlertDialogAction>
+          </div>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
