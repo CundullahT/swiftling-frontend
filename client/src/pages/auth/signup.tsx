@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -53,6 +53,7 @@ export default function Signup() {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const [, setLocation] = useLocation();
   
   // Form setup with validation
   const form = useForm<SignupFormValues>({
@@ -329,10 +330,8 @@ export default function Signup() {
           </AlertDialogHeader>
           <div className="flex justify-center">
             <AlertDialogAction asChild>
-              <Button>
-                <Link href="/login">
-                  Proceed to Login
-                </Link>
+              <Button onClick={() => setLocation('/login')}>
+                Proceed to Login
               </Button>
             </AlertDialogAction>
           </div>
