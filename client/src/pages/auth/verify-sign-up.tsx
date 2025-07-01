@@ -20,6 +20,7 @@ export default function SignUpVerification() {
   const [verificationState, setVerificationState] = useState<VerificationState>("loading");
   const [successDialogOpen, setSuccessDialogOpen] = useState(false);
   const [token, setToken] = useState<string | null>(null);
+  const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
   const { toast } = useToast();
   const [, setLocation] = useLocation();
 
@@ -54,27 +55,18 @@ export default function SignUpVerification() {
         }
       }
       
-      // Handle error response
-      try {
-        const errorData = await response.json();
-        console.error('Verification error data:', errorData);
-        toast({
-          title: "Verification Failed",
-          description: errorData.message || "Account verification failed. Please try again.",
-          variant: "destructive",
-        });
-      } catch (jsonError) {
-        console.error('Failed to parse error response:', jsonError);
-        toast({
-          title: "Verification Failed",
-          description: "Account verification failed. Please try again.",
-          variant: "destructive",
-        });
-      }
+      // Handle error response - only show toast, don't throw
+      const errorData = await response.json().catch(() => ({ message: 'Account verification failed. Please try again.' }));
+      toast({
+        title: "Verification Failed",
+        description: errorData.message || "Account verification failed. Please try again.",
+        variant: "destructive",
+      });
       
       setVerificationState("error");
     } catch (error) {
       console.error('Verification request error:', error);
+      // Only show toast once
       toast({
         title: "Connection Error",
         description: "Unable to connect to the server. Please check your connection and try again.",
@@ -103,17 +95,31 @@ export default function SignUpVerification() {
 
     setToken(tokenParam);
     
-    // Start verification process
-    verifyAccount(tokenParam);
-
     // Set up timeout after 20 seconds
     const timeoutTimer = setTimeout(() => {
-      if (verificationState === "loading") {
-        setVerificationState("timeout");
-      }
+      setVerificationState("timeout");
     }, 20000);
     
-    return () => clearTimeout(timeoutTimer);
+    setTimeoutId(timeoutTimer);
+    
+    // Start verification process 
+    const handleVerification = async () => {
+      try {
+        await verifyAccount(tokenParam);
+      } catch (error) {
+        console.error('Verification error caught:', error);
+        setVerificationState("error");
+      }
+    };
+    
+    handleVerification();
+    
+    // Cleanup function
+    return () => {
+      if (timeoutTimer) {
+        clearTimeout(timeoutTimer);
+      }
+    };
   }, []);
   
   // Content to display based on the verification state
