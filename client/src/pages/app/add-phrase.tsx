@@ -79,7 +79,13 @@ export default function AddPhrase() {
   const fetchTags = async () => {
     try {
       setIsLoadingTags(true);
-      const tagsUrl = await getQuizServiceURL('/phrase/tags');
+      
+      // Build the phrase service URL manually since getQuizServiceURL is for user service
+      const config = await import('@shared/config').then(m => m.getConfig());
+      const baseUrl = (await config).quizServiceUrl.replace('/swiftling-user-service/api/v1', '');
+      const tagsUrl = `${baseUrl}/swiftling-phrase-service/api/v1/phrase/tags`;
+      
+      console.log('Fetching tags from:', tagsUrl);
       
       const response = await fetch(tagsUrl, {
         method: 'GET',
@@ -557,8 +563,8 @@ export default function AddPhrase() {
                       }
                     }}
                     onFocus={() => {
-                      const availableTags = SAMPLE_TAGS.filter(tag => !selectedTags.includes(tag));
-                      setFilteredSuggestions(availableTags);
+                      const availableTagsFiltered = availableTags.filter(tag => !selectedTags.includes(tag));
+                      setFilteredSuggestions(availableTagsFiltered);
                       setIsTagInputFocused(true);
                     }}
                     onBlur={() => {
