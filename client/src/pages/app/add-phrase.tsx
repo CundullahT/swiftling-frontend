@@ -765,6 +765,26 @@ export default function AddPhrase() {
           </form>
         </CardContent>
       </Card>
+
+      {/* Success Dialog */}
+      <Dialog open={showSuccessDialog} onOpenChange={setShowSuccessDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-green-600">
+              <CheckCircle2 className="h-5 w-5" />
+              Phrase Saved Successfully!
+            </DialogTitle>
+            <DialogDescription>
+              Your phrase has been added to your collection. You can continue adding more phrases or view your saved phrases.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button onClick={handleSuccessDialogClose} className="w-full">
+              OK
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
