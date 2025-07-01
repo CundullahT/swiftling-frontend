@@ -22,6 +22,14 @@ import {
   AlertDescription,
   AlertTitle,
 } from "@/components/ui/alert";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { LANGUAGES } from "@/lib/constants";
 import { GuardedLink } from "@/components/ui/guarded-link";
 import { getQuizServiceURL } from "@shared/config";
@@ -38,6 +46,8 @@ export default function AddPhrase() {
   
   const [, setLocation] = useLocation();
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  const [showSuccessDialog, setShowSuccessDialog] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string>("");
   
   // Form state
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
@@ -184,23 +194,12 @@ export default function AddPhrase() {
         body: JSON.stringify(requestBody)
       });
 
-      if (response.status === 200) {
+      if (response.ok) {
         const responseData = await response.json();
         
         if (responseData.success) {
-          // Show success message
-          setShowSuccessMessage(true);
-          
-          // Scroll to top of the page to show success message
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-          
-          // Hide the success message after 6 seconds
-          setTimeout(() => {
-            setShowSuccessMessage(false);
-          }, 6000);
-          
-          // Reset form completely for adding another phrase
-          resetForm();
+          // Show success dialog
+          setShowSuccessDialog(true);
           return;
         }
       }
@@ -213,17 +212,8 @@ export default function AddPhrase() {
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Failed to add phrase. Please try again.';
       
-      if (message.includes('already exists')) {
-        // Show error for duplicate phrase
-        alert(`Error: ${message}`);
-      } else if (message.includes('token') || message.includes('auth')) {
-        // Authentication error
-        alert('Authentication error. Please try logging in again.');
-      } else {
-        // Generic error
-        alert(`Error adding phrase: ${message}`);
-      }
-      
+      // For now, we'll log the error and let the calling function handle it
+      console.error('Error submitting phrase:', message);
       throw error;
     }
   };
@@ -264,15 +254,32 @@ export default function AddPhrase() {
     
     if (validateForm()) {
       setIsSubmitting(true);
+      setErrorMessage(""); // Clear any previous errors
       
       try {
         await submitPhrase();
       } catch (error) {
+        const message = error instanceof Error ? error.message : 'Failed to add phrase. Please try again.';
+        setErrorMessage(message);
         console.error('Submit phrase error:', error);
       } finally {
         setIsSubmitting(false);
       }
     }
+  };
+
+  // Handle success dialog close
+  const handleSuccessDialogClose = () => {
+    setShowSuccessDialog(false);
+    resetForm();
+    
+    // Focus on the first field for better user experience
+    setTimeout(() => {
+      const phraseInput = document.getElementById('phrase') as HTMLInputElement;
+      if (phraseInput) {
+        phraseInput.focus();
+      }
+    }, 100);
   };
 
   // Language management functions
@@ -421,6 +428,17 @@ export default function AddPhrase() {
           <AlertTitle className="text-green-800">Phrase Added Successfully!</AlertTitle>
           <AlertDescription className="text-green-700">
             Your new phrase has been saved. You can continue adding more phrases or you can view your newly added phrase in the <GuardedLink href="/my-phrases" className="text-primary hover:underline font-medium">My Phrases</GuardedLink> page.
+          </AlertDescription>
+        </Alert>
+      )}
+      
+      {/* Error Message */}
+      {errorMessage && (
+        <Alert className="mb-6 border-red-200 bg-red-50">
+          <X className="h-4 w-4 text-red-600" />
+          <AlertTitle className="text-red-800">Error</AlertTitle>
+          <AlertDescription className="text-red-700">
+            {errorMessage}
           </AlertDescription>
         </Alert>
       )}
