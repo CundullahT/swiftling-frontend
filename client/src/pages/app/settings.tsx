@@ -127,7 +127,7 @@ export default function Settings() {
       const updateAccountUrl = await getQuizServiceURL('/account/update-account');
       
       const response = await fetch(updateAccountUrl, {
-        method: 'PUT',
+        method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
