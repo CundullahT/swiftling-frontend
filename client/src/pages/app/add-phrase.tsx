@@ -25,9 +25,13 @@ import {
 import { LANGUAGES } from "@/lib/constants";
 import { GuardedLink } from "@/components/ui/guarded-link";
 import { getQuizServiceURL } from "@shared/config";
+import { useAuth } from "@/context/auth-context";
 import { CheckCircle2, X, Plus } from "lucide-react";
 
 export default function AddPhrase() {
+  // Get auth context for tokens
+  const { tokens } = useAuth();
+  
   // Placeholder for auth check - would be tied to a real auth system in future
   const isAuthenticated = true;
   useAuthRedirect(!isAuthenticated, "/login");
@@ -87,11 +91,18 @@ export default function AddPhrase() {
       
       console.log('Fetching tags from:', tagsUrl);
       
+      const headers: Record<string, string> = {
+        'Accept': 'application/json'
+      };
+      
+      // Add Authorization header if token is available
+      if (tokens?.access_token) {
+        headers['Authorization'] = `Bearer ${tokens.access_token}`;
+      }
+      
       const response = await fetch(tagsUrl, {
         method: 'GET',
-        headers: {
-          'Accept': 'application/json'
-        }
+        headers
       });
 
       if (response.status === 200) {
