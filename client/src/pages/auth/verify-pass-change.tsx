@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link, useLocation } from "wouter";
 import { CheckCircle2, XCircle, Loader2, AlertCircle } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Form,
   FormControl,
@@ -11,12 +11,20 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useToast } from "@/hooks/use-toast";
+import { getQuizServiceURL } from "@shared/config";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogAction,
+} from "@/components/ui/alert-dialog";
 
 type VerificationState = "loading" | "success" | "error" | "timeout" | "form" | "invalid-token";
 
@@ -36,9 +44,18 @@ type PasswordFormValues = z.infer<typeof passwordSchema>;
 
 export default function PasswordChangeVerification() {
   const [verificationState, setVerificationState] = useState<VerificationState>("loading");
+  const [successDialogOpen, setSuccessDialogOpen] = useState(false);
   const [token, setToken] = useState<string | null>(null);
+  const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
   const [, setLocation] = useLocation();
+  
+  // UUID validation regex
+  const isValidUUID = (uuid: string) => {
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    return uuidRegex.test(uuid);
+  };
   
   // Create form
   const form = useForm<PasswordFormValues>({
@@ -50,7 +67,41 @@ export default function PasswordChangeVerification() {
     mode: "onChange", // Show errors while typing
   });
 
-  // Check for token in URL on page load
+  // Password reset function
+  const resetPassword = async (resetToken: string, newPassword: string) => {
+    try {
+      const resetUrl = await getQuizServiceURL(`/account/reset-pass?token=${resetToken}`);
+      
+      const response = await fetch(resetUrl, {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+          'accept': 'application/json'
+        },
+        body: JSON.stringify({
+          newPassword: newPassword
+        })
+      });
+
+      if (response.status === 200) {
+        const responseData = await response.json();
+        
+        if (responseData.success) {
+          setVerificationState("success");
+          setSuccessDialogOpen(true);
+          return;
+        }
+      }
+      
+      // Handle error response
+      setVerificationState("error");
+    } catch (error) {
+      // Network error
+      setVerificationState("error");
+    }
+  };
+
+  // Check for token and validate on page load
   useEffect(() => {
     // Parse URL to get token parameter
     const params = new URLSearchParams(window.location.search);
@@ -58,25 +109,57 @@ export default function PasswordChangeVerification() {
     
     if (!tokenParam) {
       setVerificationState("invalid-token");
-    } else {
-      setToken(tokenParam);
-      setVerificationState("form");
+      return;
     }
+
+    // Validate UUID format
+    if (!isValidUUID(tokenParam)) {
+      setVerificationState("invalid-token");
+      return;
+    }
+
+    setToken(tokenParam);
+    setVerificationState("form");
+    
+    // Cleanup function
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+    };
   }, []);
 
   // Submit handler for password form
-  const onSubmit = (data: PasswordFormValues) => {
+  const onSubmit = async (data: PasswordFormValues) => {
+    if (!token) return;
+    
+    setIsSubmitting(true);
     setVerificationState("loading");
     
-    // Simulate API call with token and new password
-    // In actual implementation, you would make an API call here to the backend
-    console.log(`Submitting new password with token: ${token}`);
-    console.log(`New password: ${data.password}`);
-    
-    // Use setTimeout directly to change state after 10 seconds
-    setTimeout(() => {
+    // Set up timeout after 20 seconds
+    const timeoutTimer = setTimeout(() => {
       setVerificationState("timeout");
-    }, 10000);
+      setIsSubmitting(false);
+    }, 20000);
+    
+    setTimeoutId(timeoutTimer);
+    
+    // Start password reset process
+    const handlePasswordReset = async () => {
+      try {
+        await resetPassword(token, data.password);
+      } catch (error) {
+        console.error('Password reset error caught:', error);
+        setVerificationState("error");
+      } finally {
+        setIsSubmitting(false);
+        if (timeoutTimer) {
+          clearTimeout(timeoutTimer);
+        }
+      }
+    };
+    
+    handlePasswordReset();
   };
   
   // Content to display based on the verification state
@@ -94,7 +177,7 @@ export default function PasswordChangeVerification() {
             </h3>
             
             <p className="text-center text-base text-gray-700 mb-6">
-              The verification link appears to be invalid or expired. Please request a new password reset link.
+              The password reset link appears to be invalid or missing the required token. Please make sure you're using the complete reset URL from your email.
             </p>
             
             <Button asChild className="w-full">
@@ -160,9 +243,16 @@ export default function PasswordChangeVerification() {
                 <Button 
                   type="submit" 
                   className="w-full" 
-                  disabled={!form.formState.isValid || form.formState.isSubmitting}
+                  disabled={!form.formState.isValid || isSubmitting}
                 >
-                  Set New Password
+                  {isSubmitting ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                      Setting Password...
+                    </>
+                  ) : (
+                    "Set New Password"
+                  )}
                 </Button>
               </form>
             </Form>
@@ -200,12 +290,6 @@ export default function PasswordChangeVerification() {
             <p className="text-center text-base text-gray-700 mb-6">
               Your password has been successfully changed. You can now log in with your new password.
             </p>
-            
-            <Button asChild className="w-full">
-              <Link href="/login">
-                Back to Login
-              </Link>
-            </Button>
           </>
         );
         
@@ -271,6 +355,27 @@ export default function PasswordChangeVerification() {
           </p>
         </div>
       </div>
+      
+      {/* Success Dialog */}
+      <AlertDialog open={successDialogOpen} onOpenChange={setSuccessDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Password Reset Successfully</AlertDialogTitle>
+            <AlertDialogDescription className="space-y-4">
+              <span>Your password has been successfully changed! You can now log in with your new password.</span>
+              
+              <span className="block text-sm">Welcome back to your language learning journey!</span>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <div className="flex justify-center">
+            <AlertDialogAction asChild>
+              <Button onClick={() => setLocation('/login')}>
+                Proceed to Login
+              </Button>
+            </AlertDialogAction>
+          </div>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
