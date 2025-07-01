@@ -42,11 +42,8 @@ export default function SignUpVerification() {
         }
       });
 
-      console.log('Verification response status:', response.status);
-
       if (response.status === 200) {
         const responseData = await response.json();
-        console.log('Verification response data:', responseData);
         
         if (responseData.success) {
           setVerificationState("success");
@@ -55,23 +52,10 @@ export default function SignUpVerification() {
         }
       }
       
-      // Handle error response - only show toast, don't throw
-      const errorData = await response.json().catch(() => ({ message: 'Account verification failed. Please try again.' }));
-      toast({
-        title: "Verification Failed",
-        description: errorData.message || "Account verification failed. Please try again.",
-        variant: "destructive",
-      });
-      
+      // Handle error response - don't show toast, let the UI handle it
       setVerificationState("error");
     } catch (error) {
-      console.error('Verification request error:', error);
-      // Only show toast once
-      toast({
-        title: "Connection Error",
-        description: "Unable to connect to the server. Please check your connection and try again.",
-        variant: "destructive",
-      });
+      // Network error - don't show toast, let timeout handle it
       setVerificationState("error");
     }
   };
