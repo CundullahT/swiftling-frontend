@@ -46,6 +46,7 @@ export default function AddPhrase() {
   const [isTagInputFocused, setIsTagInputFocused] = useState(false);
   const [availableTags, setAvailableTags] = useState<string[]>([]);
   const [isLoadingTags, setIsLoadingTags] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   
   // Language state
   const [sourceLanguage, setSourceLanguage] = useState("");
@@ -145,44 +146,132 @@ export default function AddPhrase() {
     return !Object.values(errors).some(error => error);
   };
 
-  // Handle form submission - would connect to API in real implementation
-  const handleSubmit = (e: React.FormEvent) => {
+  // Submit phrase to backend
+  const submitPhrase = async () => {
+    if (!tokens?.access_token) {
+      throw new Error("No authentication token available");
+    }
+
+    try {
+      // Build the phrase service URL
+      const config = await import('@shared/config').then(m => m.getConfig());
+      const baseUrl = (await config).quizServiceUrl.replace('/swiftling-user-service/api/v1', '');
+      const addPhraseUrl = `${baseUrl}/swiftling-phrase-service/api/v1/phrase/add-phrase`;
+      
+      // Get notes from textarea
+      const notesInput = document.getElementById('notes') as HTMLTextAreaElement;
+      const notes = notesInput?.value?.trim() || '';
+      
+      // Prepare request body
+      const requestBody = {
+        originalPhrase: phraseValue.trim(),
+        originalLanguage: sourceLanguage,
+        meaning: translationValue.trim(),
+        meaningLanguage: targetLanguage,
+        phraseTags: selectedTags,
+        notes: notes
+      };
+      
+      console.log('Submitting phrase:', requestBody);
+      
+      const response = await fetch(addPhraseUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${tokens.access_token}`
+        },
+        body: JSON.stringify(requestBody)
+      });
+
+      if (response.status === 200) {
+        const responseData = await response.json();
+        
+        if (responseData.success) {
+          // Show success message
+          setShowSuccessMessage(true);
+          
+          // Scroll to top of the page to show success message
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+          
+          // Hide the success message after 6 seconds
+          setTimeout(() => {
+            setShowSuccessMessage(false);
+          }, 6000);
+          
+          // Reset form completely for adding another phrase
+          resetForm();
+          return;
+        }
+      }
+      
+      // Handle error response
+      const errorData = await response.json().catch(() => ({}));
+      const errorMessage = errorData.message || 'Failed to add phrase. Please try again.';
+      
+      throw new Error(errorMessage);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Failed to add phrase. Please try again.';
+      
+      if (message.includes('already exists')) {
+        // Show error for duplicate phrase
+        alert(`Error: ${message}`);
+      } else if (message.includes('token') || message.includes('auth')) {
+        // Authentication error
+        alert('Authentication error. Please try logging in again.');
+      } else {
+        // Generic error
+        alert(`Error adding phrase: ${message}`);
+      }
+      
+      throw error;
+    }
+  };
+
+  // Reset form to initial state
+  const resetForm = () => {
+    // Clear input field values
+    setPhraseValue("");
+    setTranslationValue("");
+    
+    // Clear notes field
+    const notesInput = document.getElementById('notes') as HTMLTextAreaElement;
+    if (notesInput) notesInput.value = '';
+    
+    // Clear tags
+    setSelectedTags([]);
+    setTagInput("");
+    
+    // Clear language selections
+    setSourceLanguage("");
+    setTargetLanguage("");
+    setSourceLanguageInput("");
+    setTargetLanguageInput("");
+    
+    // Reset form errors
+    setFormErrors({
+      phrase: false,
+      translation: false,
+      sourceLanguage: false,
+      targetLanguage: false,
+      tagLength: false
+    });
+  };
+
+  // Handle form submission
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (validateForm()) {
-      // This is a placeholder for the API call
-      // In a real implementation, we would save the phrase to the backend
-      // and then show the success message based on the response
+      setIsSubmitting(true);
       
-      // Show success message
-      setShowSuccessMessage(true);
-      
-      // Scroll to top of the page to show success message
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      
-      // Hide the success message after 6 seconds (longer display time)
-      setTimeout(() => {
-        setShowSuccessMessage(false);
-      }, 6000);
-      
-      // Reset form completely for adding another phrase
-      // Clear input field values
-      setPhraseValue("");
-      setTranslationValue("");
-      
-      // Clear notes field
-      const notesInput = document.getElementById('notes') as HTMLTextAreaElement;
-      if (notesInput) notesInput.value = '';
-      
-      // Clear language selections
-      setSourceLanguage("");
-      setTargetLanguage("");
-      setSourceLanguageInput("");
-      setTargetLanguageInput("");
-      
-      // Clear tags
-      setSelectedTags([]);
-      setTagInput("");
+      try {
+        await submitPhrase();
+      } catch (error) {
+        console.error('Submit phrase error:', error);
+      } finally {
+        setIsSubmitting(false);
+      }
     }
   };
 
@@ -629,49 +718,30 @@ export default function AddPhrase() {
                 type="button" 
                 variant="outline"
                 onClick={() => {
-                  // Reset form completely
-                  // Clear input field values
-                  setPhraseValue("");
-                  setTranslationValue("");
-                  
-                  // Clear notes field
-                  const notesInput = document.getElementById('notes') as HTMLTextAreaElement;
-                  if (notesInput) notesInput.value = '';
-                  
-                  // Clear tags
-                  setSelectedTags([]);
-                  setTagInput("");
-                  
-                  // Clear language selections
-                  setSourceLanguage("");
-                  setTargetLanguage("");
-                  setSourceLanguageInput("");
-                  setTargetLanguageInput("");
+                  resetForm();
                   
                   // Focus on the first field for better user experience
                   const phraseInput = document.getElementById('phrase') as HTMLInputElement;
                   if (phraseInput) {
                     phraseInput.focus();
                   }
-                  
-                  // Reset any errors
-                  setFormErrors({
-                    phrase: false,
-                    translation: false,
-                    sourceLanguage: false,
-                    targetLanguage: false,
-                    tagLength: false
-                  });
                 }}
               >
                 Clear
               </Button>
               <Button 
                 type="submit" 
-                disabled={!isFormValid()}
-                className={!isFormValid() ? "opacity-50 cursor-not-allowed" : ""}
+                disabled={!isFormValid() || isSubmitting}
+                className={(!isFormValid() || isSubmitting) ? "opacity-50 cursor-not-allowed" : ""}
               >
-                Save
+                {isSubmitting ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                    Saving...
+                  </>
+                ) : (
+                  "Save"
+                )}
               </Button>
             </div>
           </form>
