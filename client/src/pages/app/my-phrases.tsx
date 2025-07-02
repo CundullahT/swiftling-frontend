@@ -195,10 +195,58 @@ export default function MyPhrases() {
     }
   };
 
-  // Fetch phrases and languages on component mount
+  // Fetch available tags for filtering
+  const fetchTags = async () => {
+    if (!tokens?.access_token) return;
+    
+    try {
+      const config = await getConfig();
+      const baseUrl = config.quizServiceUrl.replace('/swiftling-user-service/api/v1', '');
+      const tagsUrl = `${baseUrl}/swiftling-phrase-service/api/v1/phrase/tags`;
+      
+      console.log('Fetching tags from:', tagsUrl);
+      
+      const response = await fetch(tagsUrl, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${tokens.access_token}`
+        }
+      });
+
+      console.log('Tags response status:', response.status);
+
+      if (response.ok) {
+        const result = await response.json();
+        console.log('Tags response:', result);
+        
+        if (result.success && Array.isArray(result.data)) {
+          setAvailableTags(result.data);
+        } else {
+          console.error('Tags fetch failed:', result.message);
+          // Fallback to empty array if the response format is unexpected
+          setAvailableTags([]);
+        }
+      } else {
+        const errorData = await response.json().catch(() => ({}));
+        const errorMessage = errorData.message || `Failed to fetch tags (${response.status})`;
+        console.error('Tags fetch error:', errorMessage);
+        
+        // Set empty array on error so the filter shows "No tags available"
+        setAvailableTags([]);
+      }
+    } catch (error) {
+      console.error('Error fetching tags:', error);
+      // Set empty array on error so the filter shows "No tags available"
+      setAvailableTags([]);
+    }
+  };
+
+  // Fetch phrases, languages, and tags on component mount
   useEffect(() => {
     fetchPhrases();
     fetchLanguages();
+    fetchTags();
   }, [tokens?.access_token]);
 
   // Get unique tags from user's phrases (for filtering)
