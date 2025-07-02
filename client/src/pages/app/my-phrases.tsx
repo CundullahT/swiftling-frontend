@@ -362,10 +362,22 @@ export default function MyPhrases() {
                     notes={phrase.notes}
                     sourceLanguage={phrase.originalLanguage}
                     targetLanguage={phrase.meaningLanguage}
-                    onEdit={() => console.log('Edit phrase:', phrase.externalPhraseId)}
-                    onDelete={() => console.log('Delete phrase:', phrase.externalPhraseId)}
-                    onSpeak={() => console.log('Speak phrase:', phrase.externalPhraseId)}
-                    onViewNotes={() => console.log('View notes:', phrase.externalPhraseId)}
+                    onEdit={() => {
+                      setSelectedPhrase(phrase);
+                      setIsEditDialogOpen(true);
+                    }}
+                    onDelete={() => {
+                      setSelectedPhrase(phrase);
+                      setIsDeleteDialogOpen(true);
+                    }}
+                    onSpeak={() => {
+                      setSelectedPhrase(phrase);
+                      setIsPronunciationDialogOpen(true);
+                    }}
+                    onViewNotes={() => {
+                      setSelectedPhrase(phrase);
+                      setIsNotesDialogOpen(true);
+                    }}
                   />
                 ))}
               </div>
@@ -373,6 +385,172 @@ export default function MyPhrases() {
           </Card>
         </>
       )}
+
+      {/* Notes Dialog */}
+      <Dialog open={isNotesDialogOpen} onOpenChange={setIsNotesDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <span className="text-primary">{selectedPhrase?.originalPhrase}</span>
+              <span className="text-sm font-normal text-gray-500">({selectedPhrase?.meaning})</span>
+            </DialogTitle>
+          </DialogHeader>
+          <div className="border-t border-gray-200 pt-4">
+            <div className="mb-4">
+              <h3 className="text-sm font-medium mb-2">Languages:</h3>
+              <div className="flex gap-2 items-center">
+                <Badge className="px-2 py-1 bg-primary/10 text-primary">
+                  {selectedPhrase?.originalLanguage?.charAt(0).toUpperCase() + selectedPhrase?.originalLanguage?.slice(1) || "Unknown"}
+                </Badge>
+                <span className="text-gray-400">→</span>
+                <Badge className="px-2 py-1 bg-primary/10 text-primary">
+                  {selectedPhrase?.meaningLanguage?.charAt(0).toUpperCase() + selectedPhrase?.meaningLanguage?.slice(1) || "Unknown"}
+                </Badge>
+              </div>
+            </div>
+            {selectedPhrase?.phraseTags && selectedPhrase.phraseTags.length > 0 && (
+              <div className="mb-4">
+                <h3 className="text-sm font-medium mb-2">Tags:</h3>
+                <div className="flex flex-wrap gap-1">
+                  {selectedPhrase.phraseTags.map((tag, index) => (
+                    <Badge key={index} variant="outline" className="text-xs">
+                      {tag}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+            )}
+            {selectedPhrase?.notes && (
+              <>
+                <h3 className="text-sm font-medium mb-2">Notes:</h3>
+                <p className="text-gray-700">{selectedPhrase.notes}</p>
+              </>
+            )}
+            {!selectedPhrase?.notes && (
+              <p className="text-gray-500 italic">No notes available for this phrase.</p>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Dialog */}
+      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Edit Phrase</DialogTitle>
+            <DialogDescription>
+              Update your phrase information below.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <Label htmlFor="edit-phrase">Phrase</Label>
+              <Input
+                id="edit-phrase"
+                defaultValue={selectedPhrase?.originalPhrase}
+                placeholder="Enter phrase..."
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="edit-meaning">Meaning</Label>
+              <Input
+                id="edit-meaning"
+                defaultValue={selectedPhrase?.meaning}
+                placeholder="Enter meaning..."
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="edit-notes">Notes</Label>
+              <Textarea
+                id="edit-notes"
+                defaultValue={selectedPhrase?.notes || ""}
+                placeholder="Add notes..."
+                rows={3}
+              />
+            </div>
+          </div>
+          <div className="flex justify-end gap-2">
+            <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button>Save Changes</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Pronunciation Dialog */}
+      <Dialog open={isPronunciationDialogOpen} onOpenChange={setIsPronunciationDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Pronunciation</DialogTitle>
+            <DialogDescription>
+              Listen to the pronunciation of your phrase and translation.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <Label>Original Phrase</Label>
+              <div className="flex items-center gap-2 p-3 border rounded-lg">
+                <span className="flex-1 font-medium">{selectedPhrase?.originalPhrase}</span>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={isPlayingOriginal}
+                  onClick={() => {
+                    setIsPlayingOriginal(true);
+                    // TODO: Add actual TTS functionality
+                    setTimeout(() => setIsPlayingOriginal(false), 2000);
+                  }}
+                >
+                  {isPlayingOriginal ? "Playing..." : "Play"}
+                </Button>
+              </div>
+            </div>
+            <div className="grid gap-2">
+              <Label>Translation</Label>
+              <div className="flex items-center gap-2 p-3 border rounded-lg">
+                <span className="flex-1">{selectedPhrase?.meaning}</span>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={isPlayingTranslation}
+                  onClick={() => {
+                    setIsPlayingTranslation(true);
+                    // TODO: Add actual TTS functionality
+                    setTimeout(() => setIsPlayingTranslation(false), 2000);
+                  }}
+                >
+                  {isPlayingTranslation ? "Playing..." : "Play"}
+                </Button>
+              </div>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Delete Phrase</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete this phrase? This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4">
+            <div className="p-3 bg-gray-50 rounded-lg">
+              <p className="font-medium text-gray-900">{selectedPhrase?.originalPhrase}</p>
+              <p className="text-gray-600">{selectedPhrase?.meaning}</p>
+            </div>
+          </div>
+          <div className="flex justify-end gap-2">
+            <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button variant="destructive">Delete Phrase</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
