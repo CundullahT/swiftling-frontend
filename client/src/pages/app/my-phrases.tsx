@@ -320,6 +320,75 @@ export default function MyPhrases() {
     }
   };
 
+  // Helper function to convert language names to codes
+  const convertLanguageNameToCode = (languageName: string): string => {
+    // If it's already a valid language code, return it
+    const existingLang = LANGUAGES.find(l => l.id === languageName);
+    if (existingLang) {
+      return languageName;
+    }
+    
+    // Try to find by name (case insensitive)
+    const langByName = LANGUAGES.find(l => 
+      l.name.toLowerCase() === languageName.toLowerCase()
+    );
+    
+    if (langByName) {
+      return langByName.id;
+    }
+    
+    // Handle common variations and mappings
+    const nameToCodeMap: { [key: string]: string } = {
+      'turkish': 'tr',
+      'french': 'fr',
+      'english': 'en',
+      'spanish': 'es',
+      'german': 'de',
+      'italian': 'it',
+      'portuguese': 'pt',
+      'russian': 'ru',
+      'chinese': 'zh-CN',
+      'japanese': 'ja',
+      'korean': 'ko',
+      'arabic': 'ar',
+      'hindi': 'hi',
+      'dutch': 'nl',
+      'swedish': 'sv',
+      'norwegian': 'no',
+      'danish': 'da',
+      'finnish': 'fi',
+      'polish': 'pl',
+      'czech': 'cs',
+      'hungarian': 'hu',
+      'romanian': 'ro',
+      'bulgarian': 'bg',
+      'greek': 'el',
+      'hebrew': 'he',
+      'thai': 'th',
+      'vietnamese': 'vi',
+      'indonesian': 'id',
+      'malay': 'ms',
+      'filipino': 'tl',
+      'ukrainian': 'uk',
+      'croatian': 'hr',
+      'serbian': 'sr',
+      'slovenian': 'sl',
+      'slovak': 'sk',
+      'estonian': 'et',
+      'latvian': 'lv',
+      'lithuanian': 'lt'
+    };
+    
+    const lowerName = languageName.toLowerCase();
+    if (nameToCodeMap[lowerName]) {
+      return nameToCodeMap[lowerName];
+    }
+    
+    // As a last resort, return the original value
+    console.warn(`Unknown language name: ${languageName}, returning as-is`);
+    return languageName;
+  };
+
   // Tag handling functions
   const handleTagInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -481,14 +550,29 @@ export default function MyPhrases() {
     setEditedNotes(phrase.notes || "");
     setSelectedTags(phrase.phraseTags || []);
     setTagInput("");
-    setSourceLanguage(phrase.originalLanguage);
-    setTargetLanguage(phrase.meaningLanguage);
+
+    console.log('Edit dialog - phrase languages from backend:', {
+      originalLanguage: phrase.originalLanguage,
+      meaningLanguage: phrase.meaningLanguage
+    });
+
+    // Convert language names to codes if needed
+    const sourceLanguageCode = convertLanguageNameToCode(phrase.originalLanguage);
+    const targetLanguageCode = convertLanguageNameToCode(phrase.meaningLanguage);
+    
+    console.log('Edit dialog - converted to codes:', {
+      sourceLanguageCode,
+      targetLanguageCode
+    });
+    
+    setSourceLanguage(sourceLanguageCode);
+    setTargetLanguage(targetLanguageCode);
     
     // Set input values
-    const sourceLang = LANGUAGES.find(l => l.id === phrase.originalLanguage);
-    const targetLang = LANGUAGES.find(l => l.id === phrase.meaningLanguage);
-    setSourceLanguageInput(sourceLang?.name || phrase.originalLanguage);
-    setTargetLanguageInput(targetLang?.name || phrase.meaningLanguage);
+    const sourceLang = LANGUAGES.find(l => l.id === sourceLanguageCode);
+    const targetLang = LANGUAGES.find(l => l.id === targetLanguageCode);
+    setSourceLanguageInput(sourceLang?.name || sourceLanguageCode);
+    setTargetLanguageInput(targetLang?.name || targetLanguageCode);
     
     // Reset errors and suggestions
     setFormErrors({
