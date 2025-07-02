@@ -26,6 +26,7 @@ import { LANGUAGES } from "@/lib/constants";
 import { useState, useEffect } from "react";
 import { GuardedLink } from "@/components/ui/guarded-link";
 import { useAuth } from "@/context/auth-context";
+import { useToast } from "@/hooks/use-toast";
 
 // Define phrase type based on API response
 interface Phrase {
@@ -42,6 +43,7 @@ interface Phrase {
 export default function MyPhrases() {
   // Get auth context for tokens
   const { tokens } = useAuth();
+  const { toast } = useToast();
   
   // Placeholder for auth check - would be tied to a real auth system in future
   const isAuthenticated = true;
@@ -80,6 +82,7 @@ export default function MyPhrases() {
     targetLanguage: false,
     tagLength: false
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
   
   // State for search, filter, and sort
   const [searchTerm, setSearchTerm] = useState("");
@@ -378,7 +381,7 @@ export default function MyPhrases() {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     // Validate form
@@ -395,18 +398,79 @@ export default function MyPhrases() {
     if (Object.values(errors).some(error => error)) {
       return;
     }
-    
-    // TODO: Implement actual edit functionality
-    console.log('Editing phrase:', {
-      phrase: editedPhrase,
-      translation: editedTranslation,
-      sourceLanguage,
-      targetLanguage,
-      notes: editedNotes,
-      tags: selectedTags
-    });
-    
-    setIsEditDialogOpen(false);
+
+    if (!selectedPhrase || !tokens?.access_token) {
+      console.error('No phrase selected or no auth token available');
+      return;
+    }
+
+    try {
+      setIsSubmitting(true);
+
+      // Build the phrase service URL for update
+      const config = await import('@shared/config').then(m => m.getConfig());
+      const baseUrl = (await config).quizServiceUrl.replace('/swiftling-user-service/api/v1', '');
+      const updateUrl = `${baseUrl}/swiftling-phrase-service/api/v1/phrase/update-phrase`;
+
+      // Prepare request body
+      const requestBody = {
+        externalPhraseId: selectedPhrase.externalPhraseId,
+        originalPhrase: editedPhrase.trim(),
+        originalLanguage: sourceLanguage,
+        meaning: editedTranslation.trim(),
+        meaningLanguage: targetLanguage,
+        phraseTags: selectedTags,
+        notes: editedNotes.trim() || undefined
+      };
+
+      console.log('Updating phrase with:', requestBody);
+
+      const response = await fetch(updateUrl, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${tokens.access_token}`
+        },
+        body: JSON.stringify(requestBody)
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        console.log('Phrase updated successfully:', result);
+
+        // Show success message
+        toast({
+          title: "Success",
+          description: "Phrase updated successfully!",
+        });
+
+        // Close dialog and refresh phrases
+        setIsEditDialogOpen(false);
+        await fetchPhrases(); // Refresh the phrases list
+      } else {
+        const errorData = await response.json().catch(() => ({}));
+        const errorMessage = errorData.message || `Failed to update phrase: ${response.status}`;
+        console.error('Failed to update phrase:', errorMessage);
+
+        toast({
+          title: "Error",
+          description: errorMessage,
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error('Error updating phrase:', error);
+      const message = error instanceof Error ? error.message : 'Failed to update phrase';
+      
+      toast({
+        title: "Error",
+        description: message,
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   // Initialize edit form when dialog opens
@@ -971,9 +1035,17 @@ export default function MyPhrases() {
               </Button>
               <Button 
                 type="submit"
+                disabled={isSubmitting}
                 className="bg-primary hover:bg-primary/90 text-white"
               >
-                Save Changes
+                {isSubmitting ? (
+                  <>
+                    <div className="h-4 w-4 rounded-full border-2 border-white/30 border-t-white animate-spin mr-2" />
+                    Updating...
+                  </>
+                ) : (
+                  'Save Changes'
+                )}
               </Button>
             </div>
           </form>
