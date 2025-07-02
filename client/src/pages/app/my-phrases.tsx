@@ -133,10 +133,10 @@ export default function MyPhrases() {
     try {
       setIsLoadingLanguages(true);
 
-      // Build the quiz service URL for languages
+      // Build the phrase service URL for languages
       const config = await import('@shared/config').then(m => m.getConfig());
       const baseUrl = (await config).quizServiceUrl.replace('/swiftling-user-service/api/v1', '');
-      const languagesUrl = `${baseUrl}/swiftling-quiz-service/api/v1/quiz/languages`;
+      const languagesUrl = `${baseUrl}/swiftling-phrase-service/api/v1/phrase/quiz-languages`;
       
       console.log('Fetching languages from:', languagesUrl);
       
