@@ -249,10 +249,10 @@ export default function MyPhrases() {
             </CardContent>
           </Card>
 
-          {/* Phrases Grid - only show when there are phrases */}
+          {/* Phrases List - only show when there are phrases */}
           <Card>
-            <CardContent className="pt-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+            <CardContent className="p-0">
+              <div className="divide-y divide-border">
                 {phrases.map((phrase) => (
                   <PhraseCard
                     key={phrase.externalPhraseId}
