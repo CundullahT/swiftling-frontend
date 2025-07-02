@@ -87,7 +87,7 @@ export default function MyPhrases() {
       // Build the phrase service URL
       const config = await import('@shared/config').then(m => m.getConfig());
       const baseUrl = (await config).quizServiceUrl.replace('/swiftling-user-service/api/v1', '');
-      const phrasesUrl = `${baseUrl}/swiftling-phrase-service/api/v1/phrase/get-phrases`;
+      const phrasesUrl = `${baseUrl}/swiftling-phrase-service/api/v1/phrase/phrases`;
       
       console.log('Fetching phrases from:', phrasesUrl);
       
