@@ -620,11 +620,11 @@ export default function MyPhrases() {
               <h3 className="text-sm font-medium mb-2">Languages:</h3>
               <div className="flex gap-2 items-center">
                 <Badge className="px-2 py-1 bg-primary/10 text-primary">
-                  {selectedPhrase?.originalLanguage?.charAt(0).toUpperCase() + selectedPhrase?.originalLanguage?.slice(1) || "Unknown"}
+                  {selectedPhrase && selectedPhrase.originalLanguage ? selectedPhrase.originalLanguage.charAt(0).toUpperCase() + selectedPhrase.originalLanguage.slice(1) : "Unknown"}
                 </Badge>
                 <span className="text-gray-400">→</span>
                 <Badge className="px-2 py-1 bg-primary/10 text-primary">
-                  {selectedPhrase?.meaningLanguage?.charAt(0).toUpperCase() + selectedPhrase?.meaningLanguage?.slice(1) || "Unknown"}
+                  {selectedPhrase && selectedPhrase.meaningLanguage ? selectedPhrase.meaningLanguage.charAt(0).toUpperCase() + selectedPhrase.meaningLanguage.slice(1) : "Unknown"}
                 </Badge>
               </div>
             </div>
