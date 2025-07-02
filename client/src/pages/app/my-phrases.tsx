@@ -704,6 +704,13 @@ export default function MyPhrases() {
                         }}
                         onFocus={() => {
                           setFilteredSourceLanguages(LANGUAGES);
+                          // Auto-scroll to bring the input into view
+                          setTimeout(() => {
+                            const element = document.getElementById('edit-sourceLanguage');
+                            if (element) {
+                              element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            }
+                          }, 100);
                         }}
                         onBlur={() => {
                           // Small delay to allow clicking on dropdown items
@@ -797,6 +804,13 @@ export default function MyPhrases() {
                         }}
                         onFocus={() => {
                           setFilteredTargetLanguages(LANGUAGES);
+                          // Auto-scroll to bring the input into view
+                          setTimeout(() => {
+                            const element = document.getElementById('edit-targetLanguage');
+                            if (element) {
+                              element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            }
+                          }, 100);
                         }}
                         onBlur={() => {
                           // Small delay to allow clicking on dropdown items
@@ -896,6 +910,13 @@ export default function MyPhrases() {
                         const availableTagsFiltered = allUserTags.filter(tag => !selectedTags.includes(tag));
                         setFilteredSuggestions(availableTagsFiltered);
                         setIsTagInputFocused(true);
+                        // Auto-scroll to bring the input into view
+                        setTimeout(() => {
+                          const element = document.getElementById('edit-tags');
+                          if (element) {
+                            element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                          }
+                        }, 100);
                       }}
                       onBlur={() => {
                         // Small delay to allow clicking on dropdown items
