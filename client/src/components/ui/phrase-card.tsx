@@ -102,17 +102,15 @@ export function PhraseCard({
             >
               <Volume2 className="h-5 w-5" />
             </Button>
-            {notes && (
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={onViewNotes}
-                className="mr-2 text-secondary hover:text-secondary/80 hover:bg-secondary/10"
-                title="View Notes"
-              >
-                <Info className="h-5 w-5" />
-              </Button>
-            )}
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={onViewNotes}
+              className="mr-2 text-secondary hover:text-secondary/80 hover:bg-secondary/10"
+              title="View Notes"
+            >
+              <Info className="h-5 w-5" />
+            </Button>
             <Button
               variant="ghost"
               size="icon"
