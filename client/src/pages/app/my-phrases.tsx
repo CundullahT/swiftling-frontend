@@ -22,11 +22,26 @@ import {
 } from "@/components/ui/select";
 import { PhraseCard } from "@/components/ui/phrase-card";
 import { SAMPLE_TAGS, LANGUAGES } from "@/lib/constants";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { GuardedLink } from "@/components/ui/guarded-link";
+import { useAuth } from "@/context/auth-context";
 
+// Define phrase type based on API response
+interface Phrase {
+  externalPhraseId: string;
+  originalPhrase: string;
+  originalLanguage: string;
+  meaning: string;
+  meaningLanguage: string;
+  phraseTags: string[];
+  status: 'IN_PROGRESS' | 'LEARNED';
+  notes?: string;
+}
 
 export default function MyPhrases() {
+  // Get auth context for tokens
+  const { tokens } = useAuth();
+  
   // Placeholder for auth check - would be tied to a real auth system in future
   const isAuthenticated = true;
   useAuthRedirect(!isAuthenticated, "/login");
@@ -36,16 +51,7 @@ export default function MyPhrases() {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isPronunciationDialogOpen, setIsPronunciationDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [selectedPhrase, setSelectedPhrase] = useState<{
-    id: number;
-    phrase: string;
-    translation: string;
-    notes?: string;
-    tags?: string[];
-    proficiency: number;
-    sourceLanguage?: string;
-    targetLanguage?: string;
-  } | null>(null);
+  const [selectedPhrase, setSelectedPhrase] = useState<Phrase | null>(null);
   
   // Audio states
   const [isPlayingOriginal, setIsPlayingOriginal] = useState(false);
@@ -61,8 +67,64 @@ export default function MyPhrases() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
   
-  // Phrases data - empty array to show empty state
-  const [phrases, setPhrases] = useState<any[]>([]);
+  // API state management
+  const [phrases, setPhrases] = useState<Phrase[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string>("");
+
+  // Fetch phrases from backend
+  const fetchPhrases = async () => {
+    if (!tokens?.access_token) {
+      setError("No authentication token available");
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      setError("");
+
+      // Build the phrase service URL
+      const config = await import('@shared/config').then(m => m.getConfig());
+      const baseUrl = (await config).quizServiceUrl.replace('/swiftling-user-service/api/v1', '');
+      const phrasesUrl = `${baseUrl}/swiftling-phrase-service/api/v1/phrase/get-phrases`;
+      
+      console.log('Fetching phrases from:', phrasesUrl);
+      
+      const response = await fetch(phrasesUrl, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${tokens.access_token}`
+        }
+      });
+
+      if (response.ok) {
+        const responseData = await response.json();
+        
+        if (responseData.success && Array.isArray(responseData.data)) {
+          setPhrases(responseData.data);
+        } else {
+          setError('Invalid response format from server');
+        }
+      } else {
+        const errorData = await response.json().catch(() => ({}));
+        const errorMessage = errorData.message || 'Failed to fetch phrases';
+        setError(errorMessage);
+      }
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Failed to fetch phrases';
+      setError(message);
+      console.error('Error fetching phrases:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Fetch phrases on component mount
+  useEffect(() => {
+    fetchPhrases();
+  }, [tokens?.access_token]);
 
   return (
     <div className="py-6 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto pb-20 md:pb-6">
@@ -76,8 +138,39 @@ export default function MyPhrases() {
         </GuardedLink>
       </div>
 
-      {/* Show empty state when no phrases */}
-      {phrases.length === 0 ? (
+      {/* Show loading state */}
+      {isLoading ? (
+        <Card className="mb-6">
+          <CardContent className="pt-8 pb-8">
+            <div className="flex flex-col items-center justify-center text-center py-12">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mb-4"></div>
+              <p className="text-secondary/70">Loading your phrases...</p>
+            </div>
+          </CardContent>
+        </Card>
+      ) : error ? (
+        /* Show error state */
+        <Card className="mb-6">
+          <CardContent className="pt-8 pb-8">
+            <div className="flex flex-col items-center justify-center text-center py-12">
+              <div className="h-16 w-16 rounded-full bg-red-100 flex items-center justify-center mb-4">
+                <X className="h-8 w-8 text-red-600" />
+              </div>
+              <h3 className="text-xl font-semibold text-secondary mb-2">Error Loading Phrases</h3>
+              <p className="text-secondary/70 mb-6 max-w-md">
+                {error}
+              </p>
+              <Button 
+                onClick={fetchPhrases}
+                className="bg-primary hover:bg-primary/90 text-white"
+              >
+                Try Again
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      ) : phrases.length === 0 ? (
+        /* Show empty state when no phrases */
         <Card className="mb-6">
           <CardContent className="pt-8 pb-8">
             <div className="flex flex-col items-center justify-center text-center py-12">
@@ -160,18 +253,18 @@ export default function MyPhrases() {
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
             {phrases.map((phrase) => (
               <PhraseCard
-                key={phrase.id}
-                phrase={phrase.phrase}
-                translation={phrase.translation}
-                tags={phrase.tags}
-                proficiency={phrase.proficiency}
+                key={phrase.externalPhraseId}
+                phrase={phrase.originalPhrase}
+                translation={phrase.meaning}
+                tags={phrase.phraseTags}
+                learned={phrase.status === 'LEARNED'}
                 notes={phrase.notes}
-                sourceLanguage={phrase.sourceLanguage}
-                targetLanguage={phrase.targetLanguage}
-                onEdit={() => console.log('Edit phrase:', phrase.id)}
-                onDelete={() => console.log('Delete phrase:', phrase.id)}
-                onSpeak={() => console.log('Speak phrase:', phrase.id)}
-                onViewNotes={() => console.log('View notes:', phrase.id)}
+                sourceLanguage={phrase.originalLanguage}
+                targetLanguage={phrase.meaningLanguage}
+                onEdit={() => console.log('Edit phrase:', phrase.externalPhraseId)}
+                onDelete={() => console.log('Delete phrase:', phrase.externalPhraseId)}
+                onSpeak={() => console.log('Speak phrase:', phrase.externalPhraseId)}
+                onViewNotes={() => console.log('View notes:', phrase.externalPhraseId)}
               />
             ))}
           </div>
