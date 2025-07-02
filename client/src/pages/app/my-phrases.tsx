@@ -407,10 +407,10 @@ export default function MyPhrases() {
     try {
       setIsSubmitting(true);
 
-      // Build the phrase service URL for update
+      // Build the phrase service URL for update with phrase-id query parameter
       const config = await import('@shared/config').then(m => m.getConfig());
       const baseUrl = (await config).quizServiceUrl.replace('/swiftling-user-service/api/v1', '');
-      const updateUrl = `${baseUrl}/swiftling-phrase-service/api/v1/phrase/update-phrase`;
+      const updateUrl = `${baseUrl}/swiftling-phrase-service/api/v1/phrase/update-phrase?phrase-id=${selectedPhrase.externalPhraseId}`;
 
       // Prepare request body
       const requestBody = {
