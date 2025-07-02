@@ -411,33 +411,46 @@ export default function MyPhrases() {
 
   // Initialize edit form when dialog opens
   const handleEditOpen = (phrase: Phrase) => {
-    setSelectedPhrase(phrase);
-    setEditedPhrase(phrase.originalPhrase);
-    setEditedTranslation(phrase.meaning);
-    setEditedNotes(phrase.notes || "");
-    setSelectedTags(phrase.phraseTags || []);
-    setTagInput("");
-    setSourceLanguage(phrase.originalLanguage);
-    setTargetLanguage(phrase.meaningLanguage);
-    
-    // Set input values
-    const sourceLang = LANGUAGES.find(l => l.id === phrase.originalLanguage);
-    const targetLang = LANGUAGES.find(l => l.id === phrase.meaningLanguage);
-    setSourceLanguageInput(sourceLang?.name || phrase.originalLanguage);
-    setTargetLanguageInput(targetLang?.name || phrase.meaningLanguage);
-    
-    // Reset errors and suggestions
-    setFormErrors({
-      phrase: false,
-      translation: false,
-      sourceLanguage: false,
-      targetLanguage: false,
-      tagLength: false
-    });
-    setFilteredSuggestions([]);
-    setIsTagInputFocused(false);
-    
-    setIsEditDialogOpen(true);
+    try {
+      setSelectedPhrase(phrase);
+      setEditedPhrase(phrase.originalPhrase || "");
+      setEditedTranslation(phrase.meaning || "");
+      setEditedNotes(phrase.notes || "");
+      setSelectedTags(phrase.phraseTags || []);
+      setTagInput("");
+      setSourceLanguage(phrase.originalLanguage || "");
+      setTargetLanguage(phrase.meaningLanguage || "");
+      
+      // Set input values with safe access
+      if (LANGUAGES && Array.isArray(LANGUAGES)) {
+        const sourceLang = LANGUAGES.find(l => l && l.id === phrase.originalLanguage);
+        const targetLang = LANGUAGES.find(l => l && l.id === phrase.meaningLanguage);
+        setSourceLanguageInput(sourceLang?.name || phrase.originalLanguage || "");
+        setTargetLanguageInput(targetLang?.name || phrase.meaningLanguage || "");
+      } else {
+        setSourceLanguageInput(phrase.originalLanguage || "");
+        setTargetLanguageInput(phrase.meaningLanguage || "");
+      }
+      
+      // Reset errors and suggestions
+      setFormErrors({
+        phrase: false,
+        translation: false,
+        sourceLanguage: false,
+        targetLanguage: false,
+        tagLength: false
+      });
+      setFilteredSuggestions([]);
+      setIsTagInputFocused(false);
+      
+      setIsEditDialogOpen(true);
+    } catch (error) {
+      console.error('Error opening edit dialog:', error);
+      console.error('Phrase object:', phrase);
+      console.error('LANGUAGES array:', LANGUAGES);
+      // Show user-friendly error message
+      alert('There was an issue opening the edit dialog. Please try again.');
+    }
   };
 
   return (
@@ -704,13 +717,17 @@ export default function MyPhrases() {
                         }}
                         onFocus={() => {
                           setFilteredSourceLanguages(LANGUAGES);
-                          // Auto-scroll to bring the input into view
-                          setTimeout(() => {
-                            const element = document.getElementById('edit-sourceLanguage');
-                            if (element) {
-                              element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                            }
-                          }, 100);
+                          // Auto-scroll to bring the input into view (mobile-safe)
+                          try {
+                            setTimeout(() => {
+                              const element = document.getElementById('edit-sourceLanguage');
+                              if (element && element.scrollIntoView) {
+                                element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                              }
+                            }, 100);
+                          } catch (error) {
+                            console.log('Scroll error (safe to ignore):', error);
+                          }
                         }}
                         onBlur={() => {
                           // Small delay to allow clicking on dropdown items
@@ -804,13 +821,17 @@ export default function MyPhrases() {
                         }}
                         onFocus={() => {
                           setFilteredTargetLanguages(LANGUAGES);
-                          // Auto-scroll to bring the input into view
-                          setTimeout(() => {
-                            const element = document.getElementById('edit-targetLanguage');
-                            if (element) {
-                              element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                            }
-                          }, 100);
+                          // Auto-scroll to bring the input into view (mobile-safe)
+                          try {
+                            setTimeout(() => {
+                              const element = document.getElementById('edit-targetLanguage');
+                              if (element && element.scrollIntoView) {
+                                element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                              }
+                            }, 100);
+                          } catch (error) {
+                            console.log('Scroll error (safe to ignore):', error);
+                          }
                         }}
                         onBlur={() => {
                           // Small delay to allow clicking on dropdown items
@@ -910,13 +931,17 @@ export default function MyPhrases() {
                         const availableTagsFiltered = allUserTags.filter(tag => !selectedTags.includes(tag));
                         setFilteredSuggestions(availableTagsFiltered);
                         setIsTagInputFocused(true);
-                        // Auto-scroll to bring the input into view
-                        setTimeout(() => {
-                          const element = document.getElementById('edit-tags');
-                          if (element) {
-                            element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                          }
-                        }, 100);
+                        // Auto-scroll to bring the input into view (mobile-safe)
+                        try {
+                          setTimeout(() => {
+                            const element = document.getElementById('edit-tags');
+                            if (element && element.scrollIntoView) {
+                              element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            }
+                          }, 100);
+                        } catch (error) {
+                          console.log('Scroll error (safe to ignore):', error);
+                        }
                       }}
                       onBlur={() => {
                         // Small delay to allow clicking on dropdown items
