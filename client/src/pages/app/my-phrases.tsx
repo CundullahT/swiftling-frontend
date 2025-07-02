@@ -477,7 +477,8 @@ export default function MyPhrases() {
       }
 
       const config = await getConfig();
-      const url = `${config.quizServiceUrl}/swiftling-phrase-service/api/v1/phrase/delete-phrase?phrase-id=${selectedPhrase.externalPhraseId}`;
+      const baseUrl = config.quizServiceUrl.replace('/swiftling-user-service/api/v1', '');
+      const url = `${baseUrl}/swiftling-phrase-service/api/v1/phrase/delete-phrase?phrase-id=${selectedPhrase.externalPhraseId}`;
 
       console.log('Delete request URL:', url);
 
