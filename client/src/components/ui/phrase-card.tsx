@@ -39,44 +39,24 @@ export function PhraseCard({
 
   return (
     <div className="px-4 py-4 sm:px-6 border-b border-primary/10">
-      <div className="flex items-start justify-between flex-wrap gap-2">
-        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 max-w-full sm:max-w-[60%]">
+      <div className="grid grid-cols-1 sm:grid-cols-12 gap-4 items-start">
+        {/* Phrase Column - 30% on desktop */}
+        <div className="sm:col-span-4">
           <p className="text-lg font-medium text-primary line-clamp-2 overflow-hidden break-words">{phrase}</p>
+        </div>
+        
+        {/* Translation Column - 35% on desktop */}
+        <div className="sm:col-span-4">
           <p className="text-md text-secondary/70 line-clamp-2 overflow-hidden break-words">{translation}</p>
         </div>
-        <div className="flex flex-wrap items-center gap-2">
-          {/* Tags section for desktop - fixed width column */}
-          <div className="hidden sm:block w-[180px]">
-            {tags && tags.length > 0 ? (
-              <div className="flex flex-row flex-wrap gap-1 mb-0.5">
-                {tags.map((tag, index) => (
-                  <Badge 
-                    key={index}
-                    variant="outline" 
-                    className="bg-accent/10 hover:bg-accent/20 text-xs text-center px-2 py-0.5 text-accent-foreground border-accent/20"
-                  >
-                    {tag}
-                  </Badge>
-                ))}
-              </div>
-            ) : category ? (
-              <div className="flex">
-                <Badge 
-                  variant="outline" 
-                  className="bg-accent/10 hover:bg-accent/20 text-xs text-center px-2 py-0.5 text-accent-foreground border-accent/20"
-                >
-                  {category}
-                </Badge>
-              </div>
-            ) : null}
-          </div>
-          
-          {/* Tags section for mobile */}
-          <div className="flex sm:hidden flex-wrap gap-1">
+        
+        {/* Tags Column - 20% on desktop */}
+        <div className="sm:col-span-2">
+          <div className="flex flex-wrap gap-1">
             {tags && tags.length > 0 ? (
               tags.map((tag, index) => (
                 <Badge 
-                  key={index} 
+                  key={index}
                   variant="outline" 
                   className="bg-accent/10 hover:bg-accent/20 text-xs text-center px-2 py-0.5 text-accent-foreground border-accent/20"
                 >
@@ -92,7 +72,11 @@ export function PhraseCard({
               </Badge>
             ) : null}
           </div>
-          <div className="flex-shrink-0 flex">
+        </div>
+        
+        {/* Actions Column - 15% on desktop */}
+        <div className="sm:col-span-2">
+          <div className="flex justify-end gap-1">
             <Button
               variant="ghost"
               size="icon"
@@ -132,20 +116,20 @@ export function PhraseCard({
           </div>
         </div>
       </div>
-      <div className="mt-2 sm:flex sm:justify-between">
-        <div className="mt-2 flex items-center text-sm text-secondary/80 sm:mt-0">
-          <div className="flex items-center">
-            <p className="mr-2 font-medium">Status:</p>
-            {isLearned ? (
-              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/20 text-primary-700 dark:text-primary-300 whitespace-nowrap">
-                Learned
-              </span>
-            ) : (
-              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-accent/20 text-amber-700 dark:text-amber-300 whitespace-nowrap">
-                In&nbsp;Progress
-              </span>
-            )}
-          </div>
+      
+      {/* Status Row */}
+      <div className="mt-3 pt-2 border-t border-primary/5">
+        <div className="flex items-center text-sm text-secondary/80">
+          <p className="mr-2 font-medium">Status:</p>
+          {isLearned ? (
+            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/20 text-primary-700 dark:text-primary-300 whitespace-nowrap">
+              Learned
+            </span>
+          ) : (
+            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-accent/20 text-amber-700 dark:text-amber-300 whitespace-nowrap">
+              In&nbsp;Progress
+            </span>
+          )}
         </div>
       </div>
     </div>
