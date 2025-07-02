@@ -71,6 +71,8 @@ export default function MyPhrases() {
   const [phrases, setPhrases] = useState<Phrase[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string>("");
+  const [languages, setLanguages] = useState<string[]>([]);
+  const [isLoadingLanguages, setIsLoadingLanguages] = useState(true);
 
   // Fetch phrases from backend
   const fetchPhrases = async () => {
@@ -121,10 +123,99 @@ export default function MyPhrases() {
     }
   };
 
-  // Fetch phrases on component mount
+  // Fetch languages from backend
+  const fetchLanguages = async () => {
+    if (!tokens?.access_token) {
+      setIsLoadingLanguages(false);
+      return;
+    }
+
+    try {
+      setIsLoadingLanguages(true);
+
+      // Build the quiz service URL for languages
+      const config = await import('@shared/config').then(m => m.getConfig());
+      const baseUrl = (await config).quizServiceUrl.replace('/swiftling-user-service/api/v1', '');
+      const languagesUrl = `${baseUrl}/swiftling-quiz-service/api/v1/quiz/languages`;
+      
+      console.log('Fetching languages from:', languagesUrl);
+      
+      const response = await fetch(languagesUrl, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${tokens.access_token}`
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch languages: ${response.status}`);
+      }
+
+      const result = await response.json();
+      
+      if (result.success && result.data) {
+        setLanguages(result.data);
+      } else {
+        console.error('Languages fetch failed:', result.message);
+      }
+    } catch (error) {
+      console.error('Error fetching languages:', error);
+    } finally {
+      setIsLoadingLanguages(false);
+    }
+  };
+
+  // Fetch phrases and languages on component mount
   useEffect(() => {
     fetchPhrases();
+    fetchLanguages();
   }, [tokens?.access_token]);
+
+  // Get unique tags from user's phrases
+  const availableTags = Array.from(new Set(phrases.flatMap(phrase => phrase.phraseTags))).sort();
+
+  // Filter and sort phrases based on user selections
+  const filteredPhrases = phrases.filter(phrase => {
+    // Search filter
+    if (searchTerm && !phrase.originalPhrase.toLowerCase().includes(searchTerm.toLowerCase()) && 
+        !phrase.meaning.toLowerCase().includes(searchTerm.toLowerCase())) {
+      return false;
+    }
+
+    // Language filter
+    if (languageFilter && languageFilter !== 'all') {
+      const originalLangMatch = phrase.originalLanguage.toLowerCase() === languageFilter.toLowerCase();
+      const meaningLangMatch = phrase.meaningLanguage.toLowerCase() === languageFilter.toLowerCase();
+      if (!originalLangMatch && !meaningLangMatch) {
+        return false;
+      }
+    }
+
+    // Tag filter
+    if (tagFilter && tagFilter !== 'all') {
+      if (!phrase.phraseTags.includes(tagFilter)) {
+        return false;
+      }
+    }
+
+    return true;
+  }).sort((a, b) => {
+    // Sort based on selected option
+    switch (sortOption) {
+      case 'alphabetical':
+        return a.originalPhrase.localeCompare(b.originalPhrase);
+      case 'proficiency':
+        // Sort by status: learned first, then in progress
+        if (a.status === 'LEARNED' && b.status === 'IN_PROGRESS') return -1;
+        if (a.status === 'IN_PROGRESS' && b.status === 'LEARNED') return 1;
+        return 0;
+      case 'recent':
+      default:
+        // Keep original order (assumed to be recent first)
+        return 0;
+    }
+  });
 
   return (
     <div className="py-6 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto pb-20 md:pb-6">
@@ -214,11 +305,15 @@ export default function MyPhrases() {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="all">All Languages</SelectItem>
-                      {LANGUAGES.map((lang) => (
-                        <SelectItem key={lang.id} value={lang.id}>
-                          {lang.name}
-                        </SelectItem>
-                      ))}
+                      {isLoadingLanguages ? (
+                        <SelectItem value="loading" disabled>Loading...</SelectItem>
+                      ) : (
+                        languages.map((language) => (
+                          <SelectItem key={language} value={language.toLowerCase()}>
+                            {language}
+                          </SelectItem>
+                        ))
+                      )}
                     </SelectContent>
                   </Select>
                   <Select value={tagFilter} onValueChange={setTagFilter}>
@@ -253,7 +348,7 @@ export default function MyPhrases() {
           <Card>
             <CardContent className="p-0">
               <div className="divide-y divide-border">
-                {phrases.map((phrase) => (
+                {filteredPhrases.map((phrase) => (
                   <PhraseCard
                     key={phrase.externalPhraseId}
                     phrase={phrase.originalPhrase}
