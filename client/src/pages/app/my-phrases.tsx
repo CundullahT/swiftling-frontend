@@ -21,7 +21,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { PhraseCard } from "@/components/ui/phrase-card";
-import { SAMPLE_TAGS, LANGUAGES } from "@/lib/constants";
+
 import { useState, useEffect } from "react";
 import { GuardedLink } from "@/components/ui/guarded-link";
 import { useAuth } from "@/context/auth-context";
@@ -322,11 +322,15 @@ export default function MyPhrases() {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="all">All Tags</SelectItem>
-                      {SAMPLE_TAGS.map((tag) => (
-                        <SelectItem key={tag} value={tag}>
-                          {tag}
-                        </SelectItem>
-                      ))}
+                      {availableTags.length === 0 ? (
+                        <SelectItem value="no-tags" disabled>No tags available</SelectItem>
+                      ) : (
+                        availableTags.map((tag) => (
+                          <SelectItem key={tag} value={tag}>
+                            {tag}
+                          </SelectItem>
+                        ))
+                      )}
                     </SelectContent>
                   </Select>
                   <Select value={sortOption} onValueChange={setSortOption}>
