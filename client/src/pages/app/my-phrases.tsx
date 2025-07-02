@@ -480,48 +480,87 @@ export default function MyPhrases() {
 
       {/* Pronunciation Dialog */}
       <Dialog open={isPronunciationDialogOpen} onOpenChange={setIsPronunciationDialogOpen}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-md rounded-xl overflow-hidden">
           <DialogHeader>
-            <DialogTitle>Pronunciation</DialogTitle>
+            <DialogTitle className="text-xl font-semibold">
+              Pronunciation <span className="text-xs bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full ml-2">Coming Soon</span>
+            </DialogTitle>
             <DialogDescription>
-              Listen to the pronunciation of your phrase and translation.
+              This feature will allow you to listen to phrase pronunciations in a future update
             </DialogDescription>
           </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid gap-2">
-              <Label>Original Phrase</Label>
-              <div className="flex items-center gap-2 p-3 border rounded-lg">
-                <span className="flex-1 font-medium">{selectedPhrase?.originalPhrase}</span>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  disabled={isPlayingOriginal}
-                  onClick={() => {
-                    setIsPlayingOriginal(true);
-                    // TODO: Add actual TTS functionality
-                    setTimeout(() => setIsPlayingOriginal(false), 2000);
-                  }}
-                >
-                  {isPlayingOriginal ? "Playing..." : "Play"}
-                </Button>
+          <div className="border-t border-gray-200 pt-4">
+            <div className="space-y-6">
+              {/* Original phrase pronunciation */}
+              <div className="space-y-2">
+                <div className="flex justify-between items-center">
+                  <div>
+                    <h3 className="text-sm font-medium">Original Phrase</h3>
+                    <p className="text-lg mt-1 text-gray-800">
+                      {selectedPhrase?.originalPhrase}
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      {selectedPhrase?.originalLanguage && 
+                        selectedPhrase.originalLanguage.charAt(0).toUpperCase() + 
+                        selectedPhrase.originalLanguage.slice(1)}
+                    </p>
+                  </div>
+                  <Button 
+                    variant="outline" 
+                    size="icon"
+                    className="h-10 w-10"
+                    disabled={isPlayingOriginal}
+                    onClick={() => {
+                      setIsPlayingOriginal(true);
+                      // TODO: Add actual TTS functionality
+                      setTimeout(() => setIsPlayingOriginal(false), 2000);
+                    }}
+                    title="Pronunciation feature coming soon"
+                  >
+                    {isPlayingOriginal ? (
+                      <div className="h-5 w-5 rounded-full border-2 border-primary border-t-transparent animate-spin" />
+                    ) : (
+                      <span className="text-lg">🔊</span>
+                    )}
+                  </Button>
+                </div>
+                <p className="text-xs text-gray-500 italic">Pronunciation will be available in a future update</p>
               </div>
-            </div>
-            <div className="grid gap-2">
-              <Label>Translation</Label>
-              <div className="flex items-center gap-2 p-3 border rounded-lg">
-                <span className="flex-1">{selectedPhrase?.meaning}</span>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  disabled={isPlayingTranslation}
-                  onClick={() => {
-                    setIsPlayingTranslation(true);
-                    // TODO: Add actual TTS functionality
-                    setTimeout(() => setIsPlayingTranslation(false), 2000);
-                  }}
-                >
-                  {isPlayingTranslation ? "Playing..." : "Play"}
-                </Button>
+
+              {/* Translation pronunciation */}
+              <div className="space-y-2">
+                <div className="flex justify-between items-center">
+                  <div>
+                    <h3 className="text-sm font-medium">Translation</h3>
+                    <p className="text-lg mt-1 text-gray-800">
+                      {selectedPhrase?.meaning}
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      {selectedPhrase?.meaningLanguage && 
+                        selectedPhrase.meaningLanguage.charAt(0).toUpperCase() + 
+                        selectedPhrase.meaningLanguage.slice(1)}
+                    </p>
+                  </div>
+                  <Button 
+                    variant="outline" 
+                    size="icon"
+                    className="h-10 w-10"
+                    disabled={isPlayingTranslation}
+                    onClick={() => {
+                      setIsPlayingTranslation(true);
+                      // TODO: Add actual TTS functionality
+                      setTimeout(() => setIsPlayingTranslation(false), 2000);
+                    }}
+                    title="Pronunciation feature coming soon"
+                  >
+                    {isPlayingTranslation ? (
+                      <div className="h-5 w-5 rounded-full border-2 border-primary border-t-transparent animate-spin" />
+                    ) : (
+                      <span className="text-lg">🔊</span>
+                    )}
+                  </Button>
+                </div>
+                <p className="text-xs text-gray-500 italic">Pronunciation will be available in a future update</p>
               </div>
             </div>
           </div>
