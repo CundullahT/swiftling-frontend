@@ -323,15 +323,15 @@ export default function MyPhrases() {
     setTagInput(value);
     
     if (value.trim()) {
-      // Filter suggestions based on input
-      const filtered = availableTags.filter(tag => 
+      // Filter suggestions based on input using allUserTags
+      const filtered = allUserTags.filter(tag => 
         tag.toLowerCase().includes(value.toLowerCase()) && 
         !selectedTags.includes(tag)
       );
       setFilteredSuggestions(filtered);
     } else {
       // Show all available tags when input is empty
-      const availableTagsFiltered = availableTags.filter(tag => !selectedTags.includes(tag));
+      const availableTagsFiltered = allUserTags.filter(tag => !selectedTags.includes(tag));
       setFilteredSuggestions(availableTagsFiltered);
     }
   };
