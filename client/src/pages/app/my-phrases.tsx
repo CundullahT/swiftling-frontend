@@ -669,7 +669,7 @@ export default function MyPhrases() {
                 {/* Row 1: Phrase & Source Language */}
                 <div className="sm:col-span-3">
                   <div className="space-y-2">
-                    <Label htmlFor="edit-phrase">Phrase</Label>
+                    <Label htmlFor="edit-phrase">Phrase to Learn</Label>
                     <Input 
                       id="edit-phrase"
                       name="phrase"
@@ -690,7 +690,7 @@ export default function MyPhrases() {
                 </div>
                 <div className="sm:col-span-1">
                   <div className="space-y-2">
-                    <Label htmlFor="edit-sourceLanguage">Source Language</Label>
+                    <Label htmlFor="edit-sourceLanguage">Language of the Phrase</Label>
                     <div className="relative">
                       <Input 
                         id="edit-sourceLanguage"
@@ -761,7 +761,7 @@ export default function MyPhrases() {
                 {/* Row 2: Translation & Target Language */}
                 <div className="sm:col-span-3">
                   <div className="space-y-2">
-                    <Label htmlFor="edit-translation">Translation</Label>
+                    <Label htmlFor="edit-translation">Meaning of the Phrase</Label>
                     <Input 
                       id="edit-translation"
                       name="translation"
@@ -772,7 +772,7 @@ export default function MyPhrases() {
                           setFormErrors({...formErrors, translation: false});
                         }
                       }}
-                      placeholder="Enter translation in your language"
+                      placeholder="Enter meaning in your language"
                       className={formErrors.translation ? "border-red-500" : ""}
                     />
                     {formErrors.translation && (
@@ -783,7 +783,7 @@ export default function MyPhrases() {
                 
                 <div className="sm:col-span-1">
                   <div className="space-y-2">
-                    <Label htmlFor="edit-targetLanguage">Target Language</Label>
+                    <Label htmlFor="edit-targetLanguage">Language of the Meaning</Label>
                     <div className="relative">
                       <Input 
                         id="edit-targetLanguage"
