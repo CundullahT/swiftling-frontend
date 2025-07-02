@@ -655,7 +655,7 @@ export default function MyPhrases() {
 
       {/* Edit Dialog */}
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent className="sm:max-w-3xl rounded-xl">
+        <DialogContent className="sm:max-w-4xl rounded-xl">
           <DialogHeader>
             <DialogTitle>Edit Phrase</DialogTitle>
             <DialogDescription>
@@ -664,7 +664,7 @@ export default function MyPhrases() {
           </DialogHeader>
           
           <form onSubmit={handleSubmit} className="flex flex-col">
-            <div className="space-y-5 overflow-y-auto h-[50vh] max-h-[50vh] sm:h-auto sm:max-h-full pr-3 -mr-3 sm:pr-0 sm:mr-0 -mt-1">
+            <div className="space-y-5 overflow-y-auto h-[50vh] max-h-[50vh] sm:h-auto sm:max-h-full px-1 py-2">
               <div className="grid grid-cols-1 gap-y-5 gap-x-4 sm:grid-cols-4">
                 {/* Row 1: Phrase & Source Language */}
                 <div className="sm:col-span-3">
