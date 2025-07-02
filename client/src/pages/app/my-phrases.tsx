@@ -27,6 +27,8 @@ import { useState, useEffect } from "react";
 import { GuardedLink } from "@/components/ui/guarded-link";
 import { useAuth } from "@/context/auth-context";
 import { useToast } from "@/hooks/use-toast";
+import { authService } from "@/lib/auth";
+import { getConfig } from "@shared/config";
 
 // Define phrase type based on API response
 interface Phrase {
@@ -447,6 +449,84 @@ export default function MyPhrases() {
     } else if (e.key === 'Escape') {
       setFilteredSuggestions([]);
       setIsTagInputFocused(false);
+    }
+  };
+
+  // Delete phrase handler
+  const handleDeletePhrase = async () => {
+    if (!selectedPhrase?.externalPhraseId) {
+      toast({
+        title: "Error",
+        description: "Unable to delete phrase: missing phrase ID",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const tokens = authService.getTokens();
+      if (!tokens) {
+        toast({
+          title: "Authentication Error",
+          description: "Please log in again to delete phrases",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      const config = await getConfig();
+      const url = `${config.quizServiceUrl}/swiftling-phrase-service/api/v1/phrase/delete-phrase?phrase-id=${selectedPhrase.externalPhraseId}`;
+
+      console.log('Delete request URL:', url);
+
+      const response = await fetch(url, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${tokens.access_token}`,
+          'Accept': 'application/json'
+        }
+      });
+
+      console.log('Delete response status:', response.status);
+
+      if (response.status === 204) {
+        // Success - no response body expected
+        toast({
+          title: "Success",
+          description: "Phrase deleted successfully",
+        });
+
+        // Remove the phrase from local state
+        setPhrases(phrases.filter(p => p.externalPhraseId !== selectedPhrase.externalPhraseId));
+        
+        setIsDeleteDialogOpen(false);
+        setSelectedPhrase(null);
+      } else {
+        // Error response
+        const errorData = await response.json().catch(() => ({}));
+        const errorMessage = errorData.message || `Failed to delete phrase (${response.status})`;
+        
+        console.error('Delete error:', errorData);
+        
+        toast({
+          title: "Delete Failed",
+          description: errorMessage,
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error('Delete request failed:', error);
+      const message = error instanceof Error ? error.message : 'Network error occurred';
+      
+      toast({
+        title: "Delete Failed",
+        description: message,
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -1235,10 +1315,27 @@ export default function MyPhrases() {
             </DialogDescription>
           </DialogHeader>
           <div className="flex justify-end gap-2 pt-4">
-            <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)}>
+            <Button 
+              variant="outline" 
+              onClick={() => setIsDeleteDialogOpen(false)}
+              disabled={isSubmitting}
+            >
               Cancel
             </Button>
-            <Button variant="destructive">Delete Phrase</Button>
+            <Button 
+              variant="destructive" 
+              onClick={handleDeletePhrase}
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? (
+                <>
+                  <div className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
+                  Deleting...
+                </>
+              ) : (
+                'Delete Phrase'
+              )}
+            </Button>
           </div>
         </DialogContent>
       </Dialog>
