@@ -338,6 +338,31 @@ export default function MyPhrases() {
     setIsEditDialogOpen(false);
   };
 
+  // Initialize edit form when dialog opens
+  const handleEditOpen = (phrase: Phrase) => {
+    setSelectedPhrase(phrase);
+    setEditedPhrase(phrase.originalPhrase);
+    setEditedTranslation(phrase.meaning);
+    setSourceLanguage(phrase.originalLanguage);
+    setTargetLanguage(phrase.meaningLanguage);
+    
+    // Set input values
+    const sourceLang = LANGUAGES.find(l => l.id === phrase.originalLanguage);
+    const targetLang = LANGUAGES.find(l => l.id === phrase.meaningLanguage);
+    setSourceLanguageInput(sourceLang?.name || phrase.originalLanguage);
+    setTargetLanguageInput(targetLang?.name || phrase.meaningLanguage);
+    
+    // Reset errors
+    setFormErrors({
+      phrase: false,
+      translation: false,
+      sourceLanguage: false,
+      targetLanguage: false
+    });
+    
+    setIsEditDialogOpen(true);
+  };
+
   return (
     <div className="py-6 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto pb-20 md:pb-6">
       <div className="flex items-center justify-between mb-6">
