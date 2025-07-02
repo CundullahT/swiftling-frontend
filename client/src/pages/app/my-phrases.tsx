@@ -608,9 +608,9 @@ export default function MyPhrases() {
 
       {/* Notes Dialog */}
       <Dialog open={isNotesDialogOpen} onOpenChange={setIsNotesDialogOpen}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-md rounded-xl overflow-hidden">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
+            <DialogTitle className="text-xl font-semibold flex items-center gap-2">
               <span className="text-primary">{selectedPhrase?.originalPhrase}</span>
               <span className="text-sm font-normal text-gray-500">({selectedPhrase?.meaning})</span>
             </DialogTitle>
@@ -1071,9 +1071,9 @@ export default function MyPhrases() {
 
       {/* Delete Confirmation Dialog */}
       <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-md rounded-xl overflow-hidden">
           <DialogHeader>
-            <DialogTitle>Delete Phrase</DialogTitle>
+            <DialogTitle className="text-xl font-semibold">Delete Phrase</DialogTitle>
             <DialogDescription>
               Are you sure you want to delete this phrase? This action cannot be undone.
             </DialogDescription>
