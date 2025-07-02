@@ -1078,13 +1078,7 @@ export default function MyPhrases() {
               Are you sure you want to delete this phrase? This action cannot be undone.
             </DialogDescription>
           </DialogHeader>
-          <div className="py-4">
-            <div className="p-3 bg-gray-50 rounded-lg">
-              <p className="font-medium text-gray-900">{selectedPhrase?.originalPhrase}</p>
-              <p className="text-gray-600">{selectedPhrase?.meaning}</p>
-            </div>
-          </div>
-          <div className="flex justify-end gap-2">
+          <div className="flex justify-end gap-2 pt-4">
             <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)}>
               Cancel
             </Button>
