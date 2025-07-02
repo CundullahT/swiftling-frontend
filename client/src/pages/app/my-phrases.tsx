@@ -21,6 +21,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { PhraseCard } from "@/components/ui/phrase-card";
+import { LANGUAGES } from "@/lib/constants";
 
 import { useState, useEffect } from "react";
 import { GuardedLink } from "@/components/ui/guarded-link";
@@ -56,6 +57,22 @@ export default function MyPhrases() {
   // Audio states
   const [isPlayingOriginal, setIsPlayingOriginal] = useState(false);
   const [isPlayingTranslation, setIsPlayingTranslation] = useState(false);
+  
+  // Edit dialog states
+  const [editedPhrase, setEditedPhrase] = useState("");
+  const [editedTranslation, setEditedTranslation] = useState("");
+  const [sourceLanguage, setSourceLanguage] = useState("");
+  const [targetLanguage, setTargetLanguage] = useState("");
+  const [sourceLanguageInput, setSourceLanguageInput] = useState("");
+  const [targetLanguageInput, setTargetLanguageInput] = useState("");
+  const [filteredSourceLanguages, setFilteredSourceLanguages] = useState<any[]>([]);
+  const [filteredTargetLanguages, setFilteredTargetLanguages] = useState<any[]>([]);
+  const [formErrors, setFormErrors] = useState({
+    phrase: false,
+    translation: false,
+    sourceLanguage: false,
+    targetLanguage: false
+  });
   
   // State for search, filter, and sort
   const [searchTerm, setSearchTerm] = useState("");
@@ -217,6 +234,110 @@ export default function MyPhrases() {
     }
   });
 
+  // Edit dialog handlers
+  const handleSourceLanguageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSourceLanguageInput(value);
+    
+    if (value.trim() === '') {
+      setFilteredSourceLanguages(LANGUAGES);
+      setSourceLanguage('');
+    } else {
+      const filtered = LANGUAGES.filter(lang => 
+        lang.name.toLowerCase().includes(value.toLowerCase())
+      );
+      setFilteredSourceLanguages(filtered);
+      
+      // Check if exact match exists
+      const exactMatch = LANGUAGES.find(lang => 
+        lang.name.toLowerCase() === value.toLowerCase()
+      );
+      if (exactMatch) {
+        setSourceLanguage(exactMatch.id);
+      } else {
+        setSourceLanguage('');
+      }
+    }
+  };
+
+  const handleTargetLanguageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setTargetLanguageInput(value);
+    
+    if (value.trim() === '') {
+      setFilteredTargetLanguages(LANGUAGES);
+      setTargetLanguage('');
+    } else {
+      const filtered = LANGUAGES.filter(lang => 
+        lang.name.toLowerCase().includes(value.toLowerCase())
+      );
+      setFilteredTargetLanguages(filtered);
+      
+      // Check if exact match exists
+      const exactMatch = LANGUAGES.find(lang => 
+        lang.name.toLowerCase() === value.toLowerCase()
+      );
+      if (exactMatch) {
+        setTargetLanguage(exactMatch.id);
+      } else {
+        setTargetLanguage('');
+      }
+    }
+  };
+
+  const setLanguage = (type: 'source' | 'target', languageId: string) => {
+    const language = LANGUAGES.find(l => l.id === languageId);
+    if (language) {
+      if (type === 'source') {
+        setSourceLanguage(languageId);
+        setSourceLanguageInput(language.name);
+        setFilteredSourceLanguages([]);
+      } else {
+        setTargetLanguage(languageId);
+        setTargetLanguageInput(language.name);
+        setFilteredTargetLanguages([]);
+      }
+    }
+  };
+
+  const handleLanguageKeyDown = (type: 'source' | 'target', e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Escape') {
+      if (type === 'source') {
+        setFilteredSourceLanguages([]);
+      } else {
+        setFilteredTargetLanguages([]);
+      }
+    }
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    // Validate form
+    const errors = {
+      phrase: !editedPhrase.trim(),
+      translation: !editedTranslation.trim(),
+      sourceLanguage: !sourceLanguage,
+      targetLanguage: !targetLanguage
+    };
+    
+    setFormErrors(errors);
+    
+    if (Object.values(errors).some(error => error)) {
+      return;
+    }
+    
+    // TODO: Implement actual edit functionality
+    console.log('Editing phrase:', {
+      phrase: editedPhrase,
+      translation: editedTranslation,
+      sourceLanguage,
+      targetLanguage
+    });
+    
+    setIsEditDialogOpen(false);
+  };
+
   return (
     <div className="py-6 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto pb-20 md:pb-6">
       <div className="flex items-center justify-between mb-6">
@@ -362,10 +483,7 @@ export default function MyPhrases() {
                     notes={phrase.notes}
                     sourceLanguage={phrase.originalLanguage}
                     targetLanguage={phrase.meaningLanguage}
-                    onEdit={() => {
-                      setSelectedPhrase(phrase);
-                      setIsEditDialogOpen(true);
-                    }}
+                    onEdit={() => handleEditOpen(phrase)}
                     onDelete={() => {
                       setSelectedPhrase(phrase);
                       setIsDeleteDialogOpen(true);
@@ -435,46 +553,220 @@ export default function MyPhrases() {
 
       {/* Edit Dialog */}
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent className="sm:max-w-lg">
+        <DialogContent className="sm:max-w-3xl rounded-xl">
           <DialogHeader>
             <DialogTitle>Edit Phrase</DialogTitle>
             <DialogDescription>
-              Update your phrase information below.
+              Make changes to your phrase below.
             </DialogDescription>
           </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid gap-2">
-              <Label htmlFor="edit-phrase">Phrase</Label>
-              <Input
-                id="edit-phrase"
-                defaultValue={selectedPhrase?.originalPhrase}
-                placeholder="Enter phrase..."
-              />
+          
+          <form onSubmit={handleSubmit} className="flex flex-col">
+            <div className="space-y-5 overflow-y-auto h-[50vh] max-h-[50vh] sm:h-auto sm:max-h-full pr-3 -mr-3 sm:pr-0 sm:mr-0 -mt-1">
+              <div className="grid grid-cols-1 gap-y-5 gap-x-4 sm:grid-cols-4">
+                {/* Row 1: Phrase & Source Language */}
+                <div className="sm:col-span-3">
+                  <div className="space-y-2">
+                    <Label htmlFor="edit-phrase">Phrase</Label>
+                    <Input 
+                      id="edit-phrase"
+                      name="phrase"
+                      value={editedPhrase}
+                      onChange={(e) => {
+                        setEditedPhrase(e.target.value);
+                        if (formErrors.phrase) {
+                          setFormErrors({...formErrors, phrase: false});
+                        }
+                      }}
+                      placeholder="Enter phrase to learn"
+                      className={formErrors.phrase ? "border-red-500" : ""}
+                    />
+                    {formErrors.phrase && (
+                      <p className="text-sm text-red-500">Phrase is required</p>
+                    )}
+                  </div>
+                </div>
+                <div className="sm:col-span-1">
+                  <div className="space-y-2">
+                    <Label htmlFor="edit-sourceLanguage">Source Language</Label>
+                    <div className="relative">
+                      <Input 
+                        id="edit-sourceLanguage"
+                        placeholder="Type or select language"
+                        value={sourceLanguageInput}
+                        onChange={(e) => {
+                          handleSourceLanguageChange(e);
+                          if (formErrors.sourceLanguage) {
+                            setFormErrors({...formErrors, sourceLanguage: false});
+                          }
+                        }}
+                        onFocus={() => {
+                          setFilteredSourceLanguages(LANGUAGES);
+                        }}
+                        onBlur={() => {
+                          // Small delay to allow clicking on dropdown items
+                          setTimeout(() => setFilteredSourceLanguages([]), 200);
+                        }}
+                        onKeyDown={(e) => handleLanguageKeyDown('source', e)}
+                        className={formErrors.sourceLanguage && !sourceLanguage ? "border-red-500" : ""}
+                      />
+
+                      {/* Source language suggestions */}
+                      {filteredSourceLanguages.length > 0 && (
+                        <div className="absolute z-20 mt-1 w-full bg-white shadow-lg max-h-40 rounded-md py-1 text-base overflow-auto focus:outline-none sm:text-sm">
+                          <ul className="divide-y divide-gray-200">
+                            {filteredSourceLanguages.map((language) => (
+                              <li
+                                key={language.id}
+                                className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                                onClick={() => {
+                                  setLanguage('source', language.id);
+                                  if (formErrors.sourceLanguage) {
+                                    setFormErrors({...formErrors, sourceLanguage: false});
+                                  }
+                                }}
+                              >
+                                {language.name}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
+                    {sourceLanguage && (
+                      <div className="mt-2">
+                        <Badge className="px-2 py-1 bg-primary-500/10 text-primary-700 hover:bg-primary-500/20 transition-colors duration-200">
+                          {LANGUAGES.find(l => l.id === sourceLanguage)?.name || sourceLanguage}
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setSourceLanguage("");
+                              setFormErrors({...formErrors, sourceLanguage: true});
+                            }}
+                            className="ml-1 rounded-full outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+                          >
+                            <X className="h-3 w-3" />
+                          </button>
+                        </Badge>
+                      </div>
+                    )}
+                    {formErrors.sourceLanguage && !sourceLanguage && (
+                      <p className="text-sm text-red-500">Source language is required</p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Row 2: Translation & Target Language */}
+                <div className="sm:col-span-3">
+                  <div className="space-y-2">
+                    <Label htmlFor="edit-translation">Translation</Label>
+                    <Input 
+                      id="edit-translation"
+                      name="translation"
+                      value={editedTranslation}
+                      onChange={(e) => {
+                        setEditedTranslation(e.target.value);
+                        if (formErrors.translation) {
+                          setFormErrors({...formErrors, translation: false});
+                        }
+                      }}
+                      placeholder="Enter translation in your language"
+                      className={formErrors.translation ? "border-red-500" : ""}
+                    />
+                    {formErrors.translation && (
+                      <p className="text-sm text-red-500">Translation is required</p>
+                    )}
+                  </div>
+                </div>
+                
+                <div className="sm:col-span-1">
+                  <div className="space-y-2">
+                    <Label htmlFor="edit-targetLanguage">Target Language</Label>
+                    <div className="relative">
+                      <Input 
+                        id="edit-targetLanguage"
+                        placeholder="Type or select language"
+                        value={targetLanguageInput}
+                        onChange={(e) => {
+                          handleTargetLanguageChange(e);
+                          if (formErrors.targetLanguage) {
+                            setFormErrors({...formErrors, targetLanguage: false});
+                          }
+                        }}
+                        onFocus={() => {
+                          setFilteredTargetLanguages(LANGUAGES);
+                        }}
+                        onBlur={() => {
+                          // Small delay to allow clicking on dropdown items
+                          setTimeout(() => setFilteredTargetLanguages([]), 200);
+                        }}
+                        onKeyDown={(e) => handleLanguageKeyDown('target', e)}
+                        className={formErrors.targetLanguage && !targetLanguage ? "border-red-500" : ""}
+                      />
+
+                      {/* Target language suggestions */}
+                      {filteredTargetLanguages.length > 0 && (
+                        <div className="absolute z-20 mt-1 w-full bg-white shadow-lg max-h-40 rounded-md py-1 text-base overflow-auto focus:outline-none sm:text-sm">
+                          <ul className="divide-y divide-gray-200">
+                            {filteredTargetLanguages.map((language) => (
+                              <li
+                                key={language.id}
+                                className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                                onClick={() => {
+                                  setLanguage('target', language.id);
+                                  if (formErrors.targetLanguage) {
+                                    setFormErrors({...formErrors, targetLanguage: false});
+                                  }
+                                }}
+                              >
+                                {language.name}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
+                    {targetLanguage && (
+                      <div className="mt-2">
+                        <Badge className="px-2 py-1 bg-primary-500/10 text-primary-700 hover:bg-primary-500/20 transition-colors duration-200">
+                          {LANGUAGES.find(l => l.id === targetLanguage)?.name || targetLanguage}
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setTargetLanguage("");
+                              setFormErrors({...formErrors, targetLanguage: true});
+                            }}
+                            className="ml-1 rounded-full outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+                          >
+                            <X className="h-3 w-3" />
+                          </button>
+                        </Badge>
+                      </div>
+                    )}
+                    {formErrors.targetLanguage && !targetLanguage && (
+                      <p className="text-sm text-red-500">Target language is required</p>
+                    )}
+                  </div>
+                </div>
+              </div>
             </div>
-            <div className="grid gap-2">
-              <Label htmlFor="edit-meaning">Meaning</Label>
-              <Input
-                id="edit-meaning"
-                defaultValue={selectedPhrase?.meaning}
-                placeholder="Enter meaning..."
-              />
+            
+            <div className="flex items-center justify-end gap-2 pt-4 border-t border-gray-200 mt-6">
+              <Button 
+                type="button" 
+                variant="outline" 
+                onClick={() => setIsEditDialogOpen(false)}
+              >
+                Cancel
+              </Button>
+              <Button 
+                type="submit"
+                className="bg-primary hover:bg-primary/90 text-white"
+              >
+                Save Changes
+              </Button>
             </div>
-            <div className="grid gap-2">
-              <Label htmlFor="edit-notes">Notes</Label>
-              <Textarea
-                id="edit-notes"
-                defaultValue={selectedPhrase?.notes || ""}
-                placeholder="Add notes..."
-                rows={3}
-              />
-            </div>
-          </div>
-          <div className="flex justify-end gap-2">
-            <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>
-              Cancel
-            </Button>
-            <Button>Save Changes</Button>
-          </div>
+          </form>
         </DialogContent>
       </Dialog>
 
