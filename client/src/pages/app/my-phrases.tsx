@@ -250,24 +250,28 @@ export default function MyPhrases() {
           </Card>
 
           {/* Phrases Grid - only show when there are phrases */}
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-            {phrases.map((phrase) => (
-              <PhraseCard
-                key={phrase.externalPhraseId}
-                phrase={phrase.originalPhrase}
-                translation={phrase.meaning}
-                tags={phrase.phraseTags}
-                learned={phrase.status === 'LEARNED'}
-                notes={phrase.notes}
-                sourceLanguage={phrase.originalLanguage}
-                targetLanguage={phrase.meaningLanguage}
-                onEdit={() => console.log('Edit phrase:', phrase.externalPhraseId)}
-                onDelete={() => console.log('Delete phrase:', phrase.externalPhraseId)}
-                onSpeak={() => console.log('Speak phrase:', phrase.externalPhraseId)}
-                onViewNotes={() => console.log('View notes:', phrase.externalPhraseId)}
-              />
-            ))}
-          </div>
+          <Card>
+            <CardContent className="pt-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                {phrases.map((phrase) => (
+                  <PhraseCard
+                    key={phrase.externalPhraseId}
+                    phrase={phrase.originalPhrase}
+                    translation={phrase.meaning}
+                    tags={phrase.phraseTags}
+                    learned={phrase.status === 'LEARNED'}
+                    notes={phrase.notes}
+                    sourceLanguage={phrase.originalLanguage}
+                    targetLanguage={phrase.meaningLanguage}
+                    onEdit={() => console.log('Edit phrase:', phrase.externalPhraseId)}
+                    onDelete={() => console.log('Delete phrase:', phrase.externalPhraseId)}
+                    onSpeak={() => console.log('Speak phrase:', phrase.externalPhraseId)}
+                    onViewNotes={() => console.log('View notes:', phrase.externalPhraseId)}
+                  />
+                ))}
+              </div>
+            </CardContent>
+          </Card>
         </>
       )}
     </div>
