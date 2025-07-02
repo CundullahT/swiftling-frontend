@@ -61,17 +61,24 @@ export default function MyPhrases() {
   // Edit dialog states
   const [editedPhrase, setEditedPhrase] = useState("");
   const [editedTranslation, setEditedTranslation] = useState("");
+  const [editedNotes, setEditedNotes] = useState("");
   const [sourceLanguage, setSourceLanguage] = useState("");
   const [targetLanguage, setTargetLanguage] = useState("");
   const [sourceLanguageInput, setSourceLanguageInput] = useState("");
   const [targetLanguageInput, setTargetLanguageInput] = useState("");
   const [filteredSourceLanguages, setFilteredSourceLanguages] = useState<any[]>([]);
   const [filteredTargetLanguages, setFilteredTargetLanguages] = useState<any[]>([]);
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [tagInput, setTagInput] = useState("");
+  const [filteredSuggestions, setFilteredSuggestions] = useState<string[]>([]);
+  const [isTagInputFocused, setIsTagInputFocused] = useState(false);
+  const [availableTags, setAvailableTags] = useState<string[]>([]);
   const [formErrors, setFormErrors] = useState({
     phrase: false,
     translation: false,
     sourceLanguage: false,
-    targetLanguage: false
+    targetLanguage: false,
+    tagLength: false
   });
   
   // State for search, filter, and sort
@@ -189,8 +196,8 @@ export default function MyPhrases() {
     fetchLanguages();
   }, [tokens?.access_token]);
 
-  // Get unique tags from user's phrases
-  const availableTags = Array.from(new Set(phrases.flatMap(phrase => phrase.phraseTags))).sort();
+  // Get unique tags from user's phrases (for filtering)
+  const allUserTags = Array.from(new Set(phrases.flatMap(phrase => phrase.phraseTags))).sort();
 
   // Filter and sort phrases based on user selections
   const filteredPhrases = phrases.filter(phrase => {
@@ -310,6 +317,67 @@ export default function MyPhrases() {
     }
   };
 
+  // Tag handling functions
+  const handleTagInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setTagInput(value);
+    
+    if (value.trim()) {
+      // Filter suggestions based on input
+      const filtered = availableTags.filter(tag => 
+        tag.toLowerCase().includes(value.toLowerCase()) && 
+        !selectedTags.includes(tag)
+      );
+      setFilteredSuggestions(filtered);
+    } else {
+      // Show all available tags when input is empty
+      const availableTagsFiltered = availableTags.filter(tag => !selectedTags.includes(tag));
+      setFilteredSuggestions(availableTagsFiltered);
+    }
+  };
+
+  const addTag = (tag: string) => {
+    const trimmedTag = tag.trim();
+    if (!trimmedTag) return;
+    
+    // Check if tag length is within limits (3-16 characters)
+    if (trimmedTag.length < 3 || trimmedTag.length > 16) {
+      setFormErrors({
+        ...formErrors,
+        tagLength: true
+      });
+      return;
+    }
+    
+    // Check if we've reached the maximum tags limit
+    if (selectedTags.length >= 3) return;
+    
+    if (!selectedTags.includes(trimmedTag)) {
+      setSelectedTags([...selectedTags, trimmedTag]);
+      setTagInput("");
+      setFilteredSuggestions([]);
+    }
+  };
+
+  const removeTag = (tagToRemove: string) => {
+    setSelectedTags(selectedTags.filter(tag => tag !== tagToRemove));
+    if (formErrors.tagLength) {
+      setFormErrors({...formErrors, tagLength: false});
+    }
+  };
+
+  const handleTagKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      if (tagInput.trim()) {
+        addTag(tagInput);
+      }
+    } else if (e.key === 'Escape') {
+      setFilteredSuggestions([]);
+      setIsTagInputFocused(false);
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -318,7 +386,8 @@ export default function MyPhrases() {
       phrase: !editedPhrase.trim(),
       translation: !editedTranslation.trim(),
       sourceLanguage: !sourceLanguage,
-      targetLanguage: !targetLanguage
+      targetLanguage: !targetLanguage,
+      tagLength: false
     };
     
     setFormErrors(errors);
@@ -332,7 +401,9 @@ export default function MyPhrases() {
       phrase: editedPhrase,
       translation: editedTranslation,
       sourceLanguage,
-      targetLanguage
+      targetLanguage,
+      notes: editedNotes,
+      tags: selectedTags
     });
     
     setIsEditDialogOpen(false);
@@ -343,6 +414,9 @@ export default function MyPhrases() {
     setSelectedPhrase(phrase);
     setEditedPhrase(phrase.originalPhrase);
     setEditedTranslation(phrase.meaning);
+    setEditedNotes(phrase.notes || "");
+    setSelectedTags(phrase.phraseTags || []);
+    setTagInput("");
     setSourceLanguage(phrase.originalLanguage);
     setTargetLanguage(phrase.meaningLanguage);
     
@@ -352,13 +426,16 @@ export default function MyPhrases() {
     setSourceLanguageInput(sourceLang?.name || phrase.originalLanguage);
     setTargetLanguageInput(targetLang?.name || phrase.meaningLanguage);
     
-    // Reset errors
+    // Reset errors and suggestions
     setFormErrors({
       phrase: false,
       translation: false,
       sourceLanguage: false,
-      targetLanguage: false
+      targetLanguage: false,
+      tagLength: false
     });
+    setFilteredSuggestions([]);
+    setIsTagInputFocused(false);
     
     setIsEditDialogOpen(true);
   };
@@ -770,6 +847,93 @@ export default function MyPhrases() {
                     )}
                     {formErrors.targetLanguage && !targetLanguage && (
                       <p className="text-sm text-red-500">Target language is required</p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Row 3: Notes & Tags */}
+                <div className="sm:col-span-2">
+                  <Label htmlFor="edit-notes">Notes (optional)</Label>
+                  <Textarea 
+                    id="edit-notes"
+                    name="notes"
+                    value={editedNotes}
+                    onChange={(e) => setEditedNotes(e.target.value)}
+                    placeholder="Add explanations, context, or example sentences."
+                    rows={3}
+                  />
+                </div>
+
+                <div className="sm:col-span-2">
+                  <Label htmlFor="edit-tags">Tags (optional, max 3)</Label>
+                  <div className="flex flex-wrap gap-2 mb-2">
+                    {selectedTags.map(tag => (
+                      <Badge key={tag} className="px-2 py-1 bg-primary-500/10 text-primary-700 hover:bg-primary-500/20 transition-colors duration-200">
+                        {tag}
+                        <button
+                          type="button"
+                          onClick={() => removeTag(tag)}
+                          className="ml-1 rounded-full outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+                        >
+                          <X className="h-3 w-3" />
+                        </button>
+                      </Badge>
+                    ))}
+                  </div>
+                  
+                  <div className="relative">
+                    <Input
+                      id="edit-tags"
+                      placeholder={selectedTags.length >= 3 ? "Maximum tags reached" : "Type or select a tag..."}
+                      value={tagInput}
+                      onChange={(e) => {
+                        handleTagInputChange(e);
+                        if (formErrors.tagLength) {
+                          setFormErrors({...formErrors, tagLength: false});
+                        }
+                      }}
+                      onFocus={() => {
+                        const availableTagsFiltered = allUserTags.filter(tag => !selectedTags.includes(tag));
+                        setFilteredSuggestions(availableTagsFiltered);
+                        setIsTagInputFocused(true);
+                      }}
+                      onBlur={() => {
+                        // Small delay to allow clicking on dropdown items
+                        setTimeout(() => setIsTagInputFocused(false), 200);
+                      }}
+                      onKeyDown={handleTagKeyDown}
+                      disabled={selectedTags.length >= 3}
+                      className={`pr-8 ${formErrors.tagLength ? "border-red-500" : ""}`}
+                    />
+                    {formErrors.tagLength && (
+                      <p className="text-sm text-red-500">Tags must be between 3-16 characters</p>
+                    )}
+                    {tagInput && (
+                      <button
+                        type="button"
+                        className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+                        onClick={() => addTag(tagInput)}
+                        disabled={selectedTags.length >= 3}
+                      >
+                        <Plus className="h-4 w-4" />
+                      </button>
+                    )}
+                    
+                    {/* Tag suggestions */}
+                    {filteredSuggestions.length > 0 && selectedTags.length < 3 && isTagInputFocused && (
+                      <div className="absolute z-20 mt-1 w-full bg-white shadow-lg max-h-40 rounded-md py-1 text-base overflow-auto focus:outline-none sm:text-sm">
+                        <ul className="divide-y divide-gray-200">
+                          {filteredSuggestions.map((tag) => (
+                            <li
+                              key={tag}
+                              className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                              onClick={() => addTag(tag)}
+                            >
+                              {tag}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
                     )}
                   </div>
                 </div>
