@@ -14,9 +14,9 @@ export function TokenValidator({ children }: TokenValidatorProps) {
   const [isValid, setIsValid] = useState(false);
 
   // Keycloak client credentials
-  const KEYCLOAK_CLIENT_ID = 'swiftling-frontend';
+  const KEYCLOAK_CLIENT_ID = 'swiftling-client';
   const KEYCLOAK_CLIENT_SECRET = 'nImkIhxLdG0NKrvAkxBFBk88t7r08ltD';
-  const KEYCLOAK_REALM = 'swiftling';
+  const KEYCLOAK_REALM = 'swiftling-realm';
 
   const validateToken = async () => {
     if (!tokens?.access_token) {
