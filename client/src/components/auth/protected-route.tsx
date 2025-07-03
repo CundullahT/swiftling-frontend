@@ -1,6 +1,7 @@
 import { useAuth } from '@/context/auth-context';
 import { useLocation } from 'wouter';
 import { useEffect } from 'react';
+import { TokenValidator } from './token-validator';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -30,5 +31,10 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
     return null;
   }
 
-  return <>{children}</>;
+  // Wrap authenticated routes with token validation
+  return (
+    <TokenValidator>
+      {children}
+    </TokenValidator>
+  );
 }

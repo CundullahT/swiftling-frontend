@@ -37,6 +37,7 @@ import { QuizProvider } from "@/context/quiz-context";
 import { QuizNavigationGuard } from "@/components/quiz/quiz-navigation-dialog";
 import { AuthProvider, useAuth } from "@/context/auth-context";
 import { ProtectedRoute } from "@/components/auth/protected-route";
+import { TokenValidator } from "@/components/auth/token-validator";
 
 // Logout Handler Component
 function LogoutHandler() {
