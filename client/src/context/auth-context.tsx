@@ -8,7 +8,6 @@ interface AuthContextType {
   login: (credentials: LoginCredentials) => Promise<void>;
   logout: () => void;
   error: string | null;
-  validateToken: () => Promise<boolean>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -23,22 +22,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [tokens, setTokens] = useState<AuthTokens | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  // Check authentication status on mount and validate token
+  // Check authentication status on mount
   useEffect(() => {
-    const checkAuth = async () => {
+    const checkAuth = () => {
       const isAuth = authService.isAuthenticated();
       const userTokens = authService.getTokens();
       
-      if (isAuth && userTokens) {
-        // Validate token with Keycloak
-        const isValid = await authService.validateToken();
-        setIsAuthenticated(isValid);
-        setTokens(isValid ? userTokens : null);
-      } else {
-        setIsAuthenticated(false);
-        setTokens(null);
-      }
-      
+      setIsAuthenticated(isAuth);
+      setTokens(userTokens);
       setIsLoading(false);
     };
 
@@ -78,24 +69,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   };
 
-  const validateToken = async (): Promise<boolean> => {
-    try {
-      const isValid = await authService.validateToken();
-      if (!isValid) {
-        setIsAuthenticated(false);
-        setTokens(null);
-        setError('Session expired');
-      }
-      return isValid;
-    } catch (error) {
-      console.error('Token validation error:', error);
-      setIsAuthenticated(false);
-      setTokens(null);
-      setError('Authentication error');
-      return false;
-    }
-  };
-
   return (
     <AuthContext.Provider
       value={{
@@ -105,7 +78,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
         login,
         logout,
         error,
-        validateToken,
       }}
     >
       {children}
