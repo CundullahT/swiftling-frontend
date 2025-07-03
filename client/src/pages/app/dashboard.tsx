@@ -712,9 +712,11 @@ export default function Dashboard() {
                     showCenterNumber={false}
                   />
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="text-xl font-bold text-primary">
-                      {progressStats.daily.total > 0 ? Math.round((progressStats.daily.learned / progressStats.daily.total) * 100) : 0}%
-                    </span>
+                    <div className="bg-white rounded-full flex items-center justify-center w-12 h-12 shadow-sm">
+                      <span className="text-xl font-bold text-primary">
+                        {progressStats.daily.total > 0 ? Math.round((progressStats.daily.learned / progressStats.daily.total) * 100) : 0}%
+                      </span>
+                    </div>
                   </div>
                 </div>
                 <div className="mt-3 flex gap-4 text-center">
@@ -744,9 +746,11 @@ export default function Dashboard() {
                     showCenterNumber={false}
                   />
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="text-xl font-bold" style={{ color: '#FFA726' }}>
-                      {progressStats.weekly.total > 0 ? Math.round((progressStats.weekly.learned / progressStats.weekly.total) * 100) : 0}%
-                    </span>
+                    <div className="bg-white rounded-full flex items-center justify-center w-12 h-12 shadow-sm">
+                      <span className="text-xl font-bold" style={{ color: '#FFA726' }}>
+                        {progressStats.weekly.total > 0 ? Math.round((progressStats.weekly.learned / progressStats.weekly.total) * 100) : 0}%
+                      </span>
+                    </div>
                   </div>
                 </div>
                 <div className="mt-3 flex gap-4 text-center">
@@ -776,9 +780,11 @@ export default function Dashboard() {
                     showCenterNumber={false}
                   />
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="text-xl font-bold text-accent">
-                      {progressStats.monthly.total > 0 ? Math.round((progressStats.monthly.learned / progressStats.monthly.total) * 100) : 0}%
-                    </span>
+                    <div className="bg-white rounded-full flex items-center justify-center w-12 h-12 shadow-sm">
+                      <span className="text-xl font-bold text-accent">
+                        {progressStats.monthly.total > 0 ? Math.round((progressStats.monthly.learned / progressStats.monthly.total) * 100) : 0}%
+                      </span>
+                    </div>
                   </div>
                 </div>
                 <div className="mt-3 flex gap-4 text-center">
@@ -808,9 +814,11 @@ export default function Dashboard() {
                     showCenterNumber={false}
                   />
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="text-xl font-bold text-chart-5">
-                      {progressStats.total.total > 0 ? Math.round((progressStats.total.learned / progressStats.total.total) * 100) : 0}%
-                    </span>
+                    <div className="bg-white rounded-full flex items-center justify-center w-12 h-12 shadow-sm">
+                      <span className="text-xl font-bold text-chart-5">
+                        {progressStats.total.total > 0 ? Math.round((progressStats.total.learned / progressStats.total.total) * 100) : 0}%
+                      </span>
+                    </div>
                   </div>
                 </div>
                 <div className="mt-3 flex gap-4 text-center">
