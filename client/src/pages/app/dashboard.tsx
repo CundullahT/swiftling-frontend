@@ -88,10 +88,10 @@ function PieChart({ data, size = 120, className = "", showLabels = false }: PieC
     }
     
     if (slice.percentage >= 100) {
-      // For 100%, draw a complete circle
+      // For 100%, draw a complete circle using a simpler approach
       return {
         ...slice,
-        path: `M ${radius},${radius} m 0,-${radius} A ${radius},${radius} 0 1,1 0,${radius * 2} A ${radius},${radius} 0 1,1 0,-${radius * 2} Z`
+        path: `M ${radius},0 A ${radius},${radius} 0 1,1 ${radius},${size} A ${radius},${radius} 0 1,1 ${radius},0 Z`
       };
     }
     
@@ -126,15 +126,38 @@ function PieChart({ data, size = 120, className = "", showLabels = false }: PieC
   return (
     <div className={`relative ${className}`} style={{ width: size, height: size }}>
       <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
-        {slicesWithPaths.map((slice, i) => (
-          <path 
-            key={i} 
-            d={slice.path} 
-            fill={slice.color} 
-            stroke="white" 
-            strokeWidth="1"
-          />
-        ))}
+        {slicesWithPaths.map((slice, i) => {
+          // For 100% values, use a circle element instead of path
+          if (slice.percentage >= 100) {
+            return (
+              <circle
+                key={i}
+                cx={size / 2}
+                cy={size / 2}
+                r={size / 2}
+                fill={slice.color}
+                stroke="white"
+                strokeWidth="1"
+              />
+            );
+          }
+          
+          // For 0% values, don't render anything
+          if (slice.percentage === 0) {
+            return null;
+          }
+          
+          // For partial values, use the path
+          return (
+            <path 
+              key={i} 
+              d={slice.path} 
+              fill={slice.color} 
+              stroke="white" 
+              strokeWidth="1"
+            />
+          );
+        })}
       </svg>
       
       {/* Center circle (optional) */}
