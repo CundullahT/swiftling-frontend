@@ -90,9 +90,10 @@ interface PieChartProps {
   size?: number;
   className?: string;
   showLabels?: boolean;
+  showCenterNumber?: boolean;
 }
 
-function PieChart({ data, size = 120, className = "", showLabels = false }: PieChartProps) {
+function PieChart({ data, size = 120, className = "", showLabels = false, showCenterNumber = true }: PieChartProps) {
   const total = data.reduce((sum, item) => sum + item.value, 0);
   
   // Calculate each slice's percentage of the whole
@@ -188,18 +189,20 @@ function PieChart({ data, size = 120, className = "", showLabels = false }: PieC
       </svg>
       
       {/* Center circle (optional) */}
-      <div 
-        className="absolute bg-white rounded-full flex items-center justify-center"
-        style={{ 
-          top: '25%', 
-          left: '25%', 
-          width: '50%', 
-          height: '50%',
-          boxShadow: '0 0 0 3px white'
-        }}
-      >
-        <span className="text-sm font-semibold">{total}</span>
-      </div>
+      {showCenterNumber && (
+        <div 
+          className="absolute bg-white rounded-full flex items-center justify-center"
+          style={{ 
+            top: '25%', 
+            left: '25%', 
+            width: '50%', 
+            height: '50%',
+            boxShadow: '0 0 0 3px white'
+          }}
+        >
+          <span className="text-sm font-semibold">{total}</span>
+        </div>
+      )}
       
       {/* Labels */}
       {showLabels && (
@@ -706,6 +709,7 @@ export default function Dashboard() {
                       { value: progressStats.daily.total - progressStats.daily.learned, color: 'hsl(var(--muted))' } // Muted for not learned
                     ]}
                     size={100}
+                    showCenterNumber={false}
                   />
                   <div className="absolute inset-0 flex items-center justify-center">
                     <span className="text-xl font-bold text-primary">
@@ -737,6 +741,7 @@ export default function Dashboard() {
                       { value: progressStats.weekly.total - progressStats.weekly.learned, color: 'hsl(var(--muted))' } // Gray like other charts for non-learned
                     ]}
                     size={100}
+                    showCenterNumber={false}
                   />
                   <div className="absolute inset-0 flex items-center justify-center">
                     <span className="text-xl font-bold" style={{ color: '#FFA726' }}>
@@ -768,6 +773,7 @@ export default function Dashboard() {
                       { value: progressStats.monthly.total - progressStats.monthly.learned, color: 'hsl(var(--muted))' } // Muted for not learned
                     ]}
                     size={100}
+                    showCenterNumber={false}
                   />
                   <div className="absolute inset-0 flex items-center justify-center">
                     <span className="text-xl font-bold text-accent">
@@ -799,6 +805,7 @@ export default function Dashboard() {
                       { value: progressStats.total.total - progressStats.total.learned, color: 'hsl(var(--muted))' } // Muted for not learned
                     ]}
                     size={100}
+                    showCenterNumber={false}
                   />
                   <div className="absolute inset-0 flex items-center justify-center">
                     <span className="text-xl font-bold text-chart-5">
