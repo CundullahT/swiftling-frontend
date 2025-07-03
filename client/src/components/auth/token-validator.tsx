@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'wouter';
 import { useAuth } from '@/context/auth-context';
-import { getConfig } from '../../../../shared/config';
+import { getAPIURL } from '../../../../shared/config';
 
 interface TokenValidatorProps {
   children: React.ReactNode;
@@ -13,11 +13,6 @@ export function TokenValidator({ children }: TokenValidatorProps) {
   const [isValidating, setIsValidating] = useState(true);
   const [isValid, setIsValid] = useState(false);
 
-  // Keycloak client credentials
-  const KEYCLOAK_CLIENT_ID = 'swiftling-client';
-  const KEYCLOAK_CLIENT_SECRET = 'nImkIhxLdG0NKrvAkxBFBk88t7r08ltD';
-  const KEYCLOAK_REALM = 'swiftling-realm';
-
   const validateToken = async () => {
     if (!tokens?.access_token) {
       console.log('No access token found, redirecting to login');
@@ -28,32 +23,24 @@ export function TokenValidator({ children }: TokenValidatorProps) {
 
     try {
       setIsValidating(true);
-      const config = await getConfig();
       
-      // Build the introspect URL
-      const introspectUrl = `${config.keycloakUrl}/realms/${KEYCLOAK_REALM}/protocol/openid-connect/token/introspect`;
+      // Use backend API endpoint for token validation
+      const validateUrl = await getAPIURL('/auth/validate-token');
       
-      console.log('Validating token with Keycloak:', introspectUrl);
+      console.log('Validating token with backend:', validateUrl);
       
-      // Prepare the request body
-      const body = new URLSearchParams({
-        token: tokens.access_token,
-      });
-
-      // Create Basic Auth header
-      const credentials = btoa(`${KEYCLOAK_CLIENT_ID}:${KEYCLOAK_CLIENT_SECRET}`);
-      
-      const response = await fetch(introspectUrl, {
+      const response = await fetch(validateUrl, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'Authorization': `Basic ${credentials}`,
+          'Content-Type': 'application/json',
         },
-        body: body.toString(),
+        body: JSON.stringify({
+          token: tokens.access_token,
+        }),
       });
 
       if (!response.ok) {
-        console.error(`Token validation failed: ${response.status}`);
+        console.error(`Token validation request failed: ${response.status}`);
         // If validation call fails, assume token is invalid
         logout();
         setLocation('/login');

@@ -61,6 +61,73 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Token validation endpoint
+  app.post('/api/auth/validate-token', async (req, res) => {
+    try {
+      const { token } = req.body;
+      
+      if (!token) {
+        return res.status(400).json({ 
+          error: 'Token is required',
+          active: false
+        });
+      }
+
+      // Keycloak configuration (use the corrected values)
+      const KEYCLOAK_CONFIG = {
+        realm: 'swiftling-realm',
+        clientId: 'swiftling-client',
+        clientSecret: 'nImkIhxLdG0NKrvAkxBFBk88t7r08ltD'
+      };
+
+      // Build the introspect URL
+      const introspectUrl = `http://cundi.onthewifi.com:8080/realms/${KEYCLOAK_CONFIG.realm}/protocol/openid-connect/token/introspect`;
+      
+      // Prepare the request body
+      const body = new URLSearchParams({
+        token: token,
+      });
+
+      // Create Basic Auth header
+      const credentials = Buffer.from(`${KEYCLOAK_CONFIG.clientId}:${KEYCLOAK_CONFIG.clientSecret}`).toString('base64');
+      
+      const response = await fetch(introspectUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Authorization': `Basic ${credentials}`,
+        },
+        body: body.toString(),
+      });
+
+      if (!response.ok) {
+        console.error(`Token validation failed: ${response.status}`);
+        return res.status(200).json({ 
+          active: false,
+          error: `Token validation failed: ${response.status}`
+        });
+      }
+
+      const result = await response.json();
+      
+      // Return the validation result
+      res.json({
+        active: result.active || false,
+        exp: result.exp,
+        iat: result.iat,
+        sub: result.sub,
+        username: result.username
+      });
+      
+    } catch (error) {
+      console.error('Token validation error:', error);
+      res.status(200).json({ 
+        active: false,
+        error: 'Token validation failed'
+      });
+    }
+  });
+
   // Logout endpoint to clear server-side session and cookies
   app.post('/api/auth/logout', (req, res) => {
     try {
