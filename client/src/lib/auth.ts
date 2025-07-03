@@ -175,6 +175,56 @@ class AuthService {
     const token = this.getAccessToken();
     return token ? { Authorization: `Bearer ${token}` } : {};
   }
+
+  // Validate token with Keycloak introspection endpoint
+  public async validateToken(): Promise<boolean> {
+    const accessToken = this.getAccessToken();
+    if (!accessToken) {
+      return false;
+    }
+
+    try {
+      const config = await getConfig();
+      const introspectionUrl = `${config.keycloakUrl}/realms/${KEYCLOAK_CONFIG.realm}/protocol/openid-connect/token/introspect`;
+      
+      // Create form data for the introspection request
+      const formData = new URLSearchParams();
+      formData.append('token', accessToken);
+      
+      // Create basic auth header for client credentials
+      const credentials = btoa(`${KEYCLOAK_CONFIG.clientId}:${KEYCLOAK_CONFIG.clientSecret}`);
+      
+      const response = await fetch(introspectionUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Authorization': `Basic ${credentials}`
+        },
+        body: formData
+      });
+
+      if (!response.ok) {
+        console.error('Token validation failed:', response.status);
+        return false;
+      }
+
+      const result = await response.json();
+      
+      // Check if token is active
+      if (result.active === true) {
+        return true;
+      } else {
+        // Token is not active, clear it
+        this.clearTokens();
+        return false;
+      }
+    } catch (error) {
+      console.error('Error validating token:', error);
+      // Clear tokens on validation error
+      this.clearTokens();
+      return false;
+    }
+  }
 }
 
 export const authService = AuthService.getInstance();
