@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useLocation } from 'wouter';
 import { useAuth } from '@/context/auth-context';
 import { getAPIURL } from '../../../../shared/config';
@@ -12,10 +12,11 @@ export function TokenValidator({ children }: TokenValidatorProps) {
   const [, setLocation] = useLocation();
   const [isValidating, setIsValidating] = useState(true);
   const [isValid, setIsValid] = useState(false);
+  const isLoggingOutRef = useRef(false);
 
   const validateToken = async () => {
-    if (!tokens?.access_token) {
-      console.log('No access token found, redirecting to login');
+    if (!tokens?.access_token || isLoggingOutRef.current) {
+      console.log('No access token found or already logging out, redirecting to login');
       setIsValidating(false);
       setLocation('/login');
       return;
@@ -42,8 +43,7 @@ export function TokenValidator({ children }: TokenValidatorProps) {
       if (!response.ok) {
         console.error(`Token validation request failed: ${response.status}`);
         // If validation call fails, assume token is invalid
-        logout();
-        setLocation('/login');
+        handleLogout();
         return;
       }
 
@@ -54,45 +54,72 @@ export function TokenValidator({ children }: TokenValidatorProps) {
       if (result.active === true) {
         setIsValid(true);
       } else {
-        console.log('Token is not active, logging out');
-        logout();
-        setLocation('/login');
+        console.log('Token is not active, redirecting to login');
+        handleLogout();
       }
     } catch (error) {
       console.error('Error validating token:', error);
-      // On validation error, log out for security
-      logout();
-      setLocation('/login');
+      // On validation error, redirect for security
+      handleLogout();
     } finally {
       setIsValidating(false);
     }
   };
 
+  const handleLogout = () => {
+    if (isLoggingOutRef.current) return; // Prevent multiple logout calls
+    
+    isLoggingOutRef.current = true;
+    setIsValid(false);
+    logout();
+    setLocation('/login');
+  };
+
   // Get current location to detect route changes
   const [currentLocation] = useLocation();
 
+  // Main validation effect - triggers on token change OR route change
   useEffect(() => {
-    validateToken();
-  }, [tokens?.access_token, currentLocation]); // Validate on token change OR route change
+    // Skip validation if we're already validating or logging out
+    if (isValidating || isLoggingOutRef.current) return;
+    
+    // Check localStorage first - if token is missing, redirect immediately
+    const storedTokens = localStorage.getItem('auth_tokens');
+    if (!storedTokens) {
+      console.log('No token in localStorage, redirecting to login');
+      setIsValidating(false);
+      setLocation('/login');
+      return;
+    }
 
-  // Also validate token periodically (every 5 minutes) while user is active
+    // If we have tokens, validate them
+    if (tokens?.access_token) {
+      validateToken();
+    }
+  }, [tokens?.access_token, currentLocation]);
+
+  // Periodic validation (every 5 minutes) - only when user is active
   useEffect(() => {
     if (!tokens?.access_token) return;
 
     const interval = setInterval(() => {
-      console.log('Performing periodic token validation...');
-      validateToken();
+      const storedTokens = localStorage.getItem('auth_tokens');
+      if (storedTokens) {
+        console.log('Performing periodic token validation...');
+        validateToken();
+      }
     }, 5 * 60 * 1000); // 5 minutes
 
     return () => clearInterval(interval);
   }, [tokens?.access_token]);
 
-  // Monitor localStorage changes to detect manual token removal
+  // Monitor localStorage changes (cross-tab detection)
   useEffect(() => {
     const handleStorageChange = (e: StorageEvent) => {
       if (e.key === 'auth_tokens' && e.newValue === null) {
-        console.log('Token removed from localStorage, redirecting to login');
-        logout();
+        console.log('Token removed from localStorage (cross-tab), redirecting to login');
+        setIsValid(false);
+        setIsValidating(false);
         setLocation('/login');
       }
     };
@@ -100,20 +127,6 @@ export function TokenValidator({ children }: TokenValidatorProps) {
     window.addEventListener('storage', handleStorageChange);
     return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
-
-  // Also check localStorage directly on each validation
-  useEffect(() => {
-    const checkLocalStorage = () => {
-      const storedTokens = localStorage.getItem('auth_tokens');
-      if (!storedTokens && tokens?.access_token) {
-        console.log('Token missing from localStorage but still in state, logging out');
-        logout();
-        setLocation('/login');
-      }
-    };
-
-    checkLocalStorage();
-  }, [currentLocation, tokens?.access_token]);
 
   // Show loading state while validating
   if (isValidating) {
