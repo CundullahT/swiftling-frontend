@@ -30,6 +30,33 @@ interface ApiPhrase {
   notes?: string;
 }
 
+// Interface for progress statistics from API
+interface ProgressStats {
+  'total-progress': {
+    learned: number;
+    added: number;
+  };
+  'monthly-progress': {
+    learned: number;
+    added: number;
+  };
+  'weekly-progress': {
+    learned: number;
+    added: number;
+  };
+  'daily-progress': {
+    learned: number;
+    added: number;
+  };
+}
+
+interface ProgressApiResponse {
+  success: boolean;
+  statusCode: string;
+  message: string;
+  data: ProgressStats;
+}
+
 // PieChart component
 interface PieChartProps {
   data: { value: number; color: string }[];
@@ -135,6 +162,16 @@ export default function Dashboard() {
   const [recentPhrases, setRecentPhrases] = useState<ApiPhrase[]>([]);
   const [isLoadingPhrases, setIsLoadingPhrases] = useState(true);
   const [phrasesError, setPhrasesError] = useState<string>("");
+  
+  // State for progress statistics
+  const [progressStats, setProgressStats] = useState({
+    daily: { total: 0, learned: 0 },
+    weekly: { total: 0, learned: 0 },
+    monthly: { total: 0, learned: 0 },
+    total: { total: 0, learned: 0 }
+  });
+  const [isLoadingProgress, setIsLoadingProgress] = useState(true);
+  const [progressError, setProgressError] = useState<string>("");
   
   // Dialog state
   const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false);
@@ -244,13 +281,93 @@ export default function Dashboard() {
     }
   };
 
-  // Dummy data for progress metrics
-  const progressStats = {
-    daily: { total: 5, learned: 3 },
-    weekly: { total: 18, learned: 12 },
-    monthly: { total: 45, learned: 32 },
-    total: { total: 120, learned: 85 }
+  // Fetch progress statistics from backend
+  const fetchProgressStats = async () => {
+    if (!tokens?.access_token) return;
+    
+    try {
+      setIsLoadingProgress(true);
+      setProgressError("");
+
+      const config = await getConfig();
+      const baseUrl = config.quizServiceUrl.replace('/swiftling-user-service/api/v1', '');
+      const progressUrl = `${baseUrl}/swiftling-phrase-service/api/v1/phrase/progress`;
+      
+      console.log('Fetching progress stats from:', progressUrl);
+      
+      const response = await fetch(progressUrl, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${tokens.access_token}`
+        }
+      });
+
+      console.log('Progress response status:', response.status);
+
+      if (response.status === 200) {
+        const data: ProgressApiResponse = await response.json();
+        console.log('Progress data received:', data);
+        
+        if (data.success && data.data) {
+          // Map API response to component state structure
+          setProgressStats({
+            daily: { 
+              total: data.data['daily-progress'].added, 
+              learned: data.data['daily-progress'].learned 
+            },
+            weekly: { 
+              total: data.data['weekly-progress'].added, 
+              learned: data.data['weekly-progress'].learned 
+            },
+            monthly: { 
+              total: data.data['monthly-progress'].added, 
+              learned: data.data['monthly-progress'].learned 
+            },
+            total: { 
+              total: data.data['total-progress'].added, 
+              learned: data.data['total-progress'].learned 
+            }
+          });
+        } else {
+          console.error('Invalid progress data structure:', data);
+          setProgressError('Invalid data received from server');
+        }
+      } else {
+        // Handle error response
+        const errorData = await response.json().catch(() => ({}));
+        const errorMessage = errorData.message || `Failed to load progress data (${response.status})`;
+        console.error('Progress fetch error:', errorData);
+        setProgressError(errorMessage);
+        
+        toast({
+          title: "Error Loading Progress",
+          description: errorMessage,
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error('Error fetching progress stats:', error);
+      const message = error instanceof Error ? error.message : 'Network error occurred';
+      setProgressError(message);
+      
+      toast({
+        title: "Error Loading Progress",
+        description: message,
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoadingProgress(false);
+    }
   };
+
+  // Load data on component mount
+  useEffect(() => {
+    fetchRecentPhrases();
+    fetchProgressStats();
+  }, [tokens]);
+
+
 
 
 
