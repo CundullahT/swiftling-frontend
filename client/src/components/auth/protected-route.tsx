@@ -1,7 +1,7 @@
 import { useAuth } from '@/context/auth-context';
 import { useLocation } from 'wouter';
 import { useEffect } from 'react';
-import { TokenValidator } from './token-validator';
+import { RouteTokenValidator } from './route-token-validator';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -31,16 +31,10 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
     return null;
   }
 
-  // If authenticated and has token, validate it with Keycloak
-  if (tokens?.access_token) {
-    return (
-      <TokenValidator>
-        {children}
-      </TokenValidator>
-    );
-  }
-
-  // If authenticated but no token, redirect to login
-  setLocation('/login');
-  return null;
+  // If authenticated, wrap with route-based token validator
+  return (
+    <RouteTokenValidator>
+      {children}
+    </RouteTokenValidator>
+  );
 }

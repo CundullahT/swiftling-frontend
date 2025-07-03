@@ -22,7 +22,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [tokens, setTokens] = useState<AuthTokens | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  // Check authentication status on mount and monitor localStorage changes
+  // Check authentication status on mount
   useEffect(() => {
     const checkAuth = () => {
       const isAuth = authService.isAuthenticated();
@@ -34,34 +34,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     };
 
     checkAuth();
-
-    // Monitor localStorage changes to sync token state
-    const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === 'auth_tokens') {
-        console.log('localStorage auth_tokens changed, re-checking auth state');
-        checkAuth();
-      }
-    };
-
-    // Also periodically check localStorage to catch manual changes
-    const interval = setInterval(() => {
-      const storedTokens = localStorage.getItem('auth_tokens');
-      const currentHasTokens = !!tokens?.access_token;
-      const storageHasTokens = !!storedTokens;
-      
-      if (currentHasTokens !== storageHasTokens) {
-        console.log('Token state mismatch detected, syncing...');
-        checkAuth();
-      }
-    }, 1000); // Check every second
-
-    window.addEventListener('storage', handleStorageChange);
-    
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-      clearInterval(interval);
-    };
-  }, [tokens?.access_token]);
+  }, []);
 
   const login = async (credentials: LoginCredentials) => {
     try {
