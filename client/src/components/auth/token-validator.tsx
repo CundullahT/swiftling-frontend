@@ -21,6 +21,7 @@ export function TokenValidator({ children }: TokenValidatorProps) {
   const validateToken = async () => {
     if (!tokens?.access_token) {
       console.log('No access token found, redirecting to login');
+      setIsValidating(false);
       setLocation('/login');
       return;
     }
@@ -52,7 +53,11 @@ export function TokenValidator({ children }: TokenValidatorProps) {
       });
 
       if (!response.ok) {
-        throw new Error(`Token validation failed: ${response.status}`);
+        console.error(`Token validation failed: ${response.status}`);
+        // If validation call fails, assume token is invalid
+        logout();
+        setLocation('/login');
+        return;
       }
 
       const result = await response.json();

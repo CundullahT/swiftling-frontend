@@ -8,7 +8,7 @@ interface ProtectedRouteProps {
 }
 
 export function ProtectedRoute({ children }: ProtectedRouteProps) {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading, tokens } = useAuth();
   const [, setLocation] = useLocation();
 
   useEffect(() => {
@@ -31,6 +31,16 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
     return null;
   }
 
-  // Temporarily disable TokenValidator to debug auth flow
-  return <>{children}</>;
+  // If authenticated and has token, validate it with Keycloak
+  if (tokens?.access_token) {
+    return (
+      <TokenValidator>
+        {children}
+      </TokenValidator>
+    );
+  }
+
+  // If authenticated but no token, redirect to login
+  setLocation('/login');
+  return null;
 }
