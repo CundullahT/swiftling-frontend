@@ -10,18 +10,46 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Menu, User } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Sidebar from "./sidebar";
 import { GuardedLink } from "@/components/ui/guarded-link";
+import { useAuth } from "@/context/auth-context";
+
+// Function to decode JWT token and extract user information
+function decodeJWT(token: string) {
+  try {
+    const payload = token.split('.')[1];
+    const decoded = JSON.parse(atob(payload));
+    return decoded;
+  } catch (error) {
+    console.error('Error decoding JWT:', error);
+    return null;
+  }
+}
 
 export default function Header() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [location] = useLocation();
+  const { tokens } = useAuth();
 
-  const user = {
-    name: "Alex Johnson",
-    email: "alex@example.com",
-  };
+  // Extract user information from JWT token
+  const [user, setUser] = useState({
+    name: "",
+    email: "",
+  });
+
+  useEffect(() => {
+    if (tokens?.access_token) {
+      const decoded = decodeJWT(tokens.access_token);
+      if (decoded) {
+        const userInfo = {
+          name: decoded.name || `${decoded.given_name || ''} ${decoded.family_name || ''}`.trim() || decoded.preferred_username || decoded.username || "User",
+          email: decoded.email || decoded.username || "",
+        };
+        setUser(userInfo);
+      }
+    }
+  }, [tokens]);
 
   const navigationItems = [
     { name: "Dashboard", href: "/dashboard" },
@@ -77,7 +105,7 @@ export default function Header() {
                 <Button variant="ghost" className="relative h-8 w-8 rounded-full">
                   <Avatar className="h-8 w-8">
                     <AvatarFallback>
-                      <User className="h-4 w-4" />
+                      {user.name ? user.name.split(' ').map(n => n[0]).join('').toUpperCase() : <User className="h-4 w-4" />}
                     </AvatarFallback>
                   </Avatar>
                 </Button>
