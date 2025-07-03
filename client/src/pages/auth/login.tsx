@@ -58,6 +58,7 @@ export default function Login() {
       toast({
         title: "Login successful",
         description: "Welcome back to SwiftLing!",
+        variant: "success",
       });
       setLocation('/dashboard');
     } catch (error) {

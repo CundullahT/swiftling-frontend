@@ -496,6 +496,7 @@ export default function MyPhrases() {
         toast({
           title: "Success",
           description: "Phrase deleted successfully",
+          variant: "success",
         });
 
         // Remove the phrase from local state
@@ -592,6 +593,7 @@ export default function MyPhrases() {
         toast({
           title: "Success",
           description: "Phrase updated successfully!",
+          variant: "success",
         });
 
         // Close dialog and refresh phrases

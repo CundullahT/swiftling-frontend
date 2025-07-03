@@ -159,6 +159,7 @@ export default function Settings() {
           toast({
             title: "Account Updated",
             description: "Your account information has been successfully updated.",
+            variant: "success",
           });
           return;
         }
@@ -230,6 +231,7 @@ export default function Settings() {
           toast({
             title: "Password Changed",
             description: "Your password has been successfully updated.",
+            variant: "success",
           });
           passwordForm.reset();
           return;
@@ -297,6 +299,7 @@ export default function Settings() {
           toast({
             title: "Account Deleted",
             description: "Your account has been successfully deleted.",
+            variant: "success",
           });
           
           // Close the dialog
