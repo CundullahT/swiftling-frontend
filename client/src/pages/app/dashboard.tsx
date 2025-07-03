@@ -471,11 +471,15 @@ export default function Dashboard() {
         const data: DailyStreakResponse = await response.json();
         console.log('Daily streak data received:', data);
         
-        if (data.success && data.data) {
+        if (data.success) {
+          // Handle case where data object exists but dailyStreak is missing/undefined
+          const dailyStreak = data.data?.dailyStreak ?? 0;
+          const updatedToday = data.data?.updatedToday ?? false;
+          
           setDashboardStats(prev => ({
             ...prev,
-            dailyStreak: data.data.dailyStreak,
-            updatedToday: data.data.updatedToday
+            dailyStreak: dailyStreak,
+            updatedToday: updatedToday
           }));
         } else {
           console.error('Invalid daily streak data structure:', data);
@@ -532,14 +536,21 @@ export default function Dashboard() {
         console.log('Quiz stats data received:', data);
         
         if (data.success && data.data) {
+          // Convert -1 values to 0 as per backend specification
+          const overallBestTime = data.data.overallBestTimeInSeconds < 0 ? 0 : data.data.overallBestTimeInSeconds;
+          const latestBestTime = data.data.latestBestTimeInSeconds < 0 ? 0 : data.data.latestBestTimeInSeconds;
+          const correct = data.data.latestQuizResults.correctAnswerAmount < 0 ? 0 : data.data.latestQuizResults.correctAnswerAmount;
+          const wrong = data.data.latestQuizResults.wrongAnswerAmount < 0 ? 0 : data.data.latestQuizResults.wrongAnswerAmount;
+          const timedOut = data.data.latestQuizResults.timedOutAnswerAmount < 0 ? 0 : data.data.latestQuizResults.timedOutAnswerAmount;
+          
           setDashboardStats(prev => ({
             ...prev,
-            overallBestTime: data.data.overallBestTimeInSeconds,
-            latestBestTime: data.data.latestBestTimeInSeconds,
+            overallBestTime: overallBestTime,
+            latestBestTime: latestBestTime,
             latestQuizResults: {
-              correct: data.data.latestQuizResults.correctAnswerAmount,
-              wrong: data.data.latestQuizResults.wrongAnswerAmount,
-              timedOut: data.data.latestQuizResults.timedOutAnswerAmount
+              correct: correct,
+              wrong: wrong,
+              timedOut: timedOut
             }
           }));
         } else {
