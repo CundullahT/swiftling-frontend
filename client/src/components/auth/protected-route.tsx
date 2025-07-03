@@ -31,10 +31,6 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
     return null;
   }
 
-  // Wrap authenticated routes with token validation
-  return (
-    <TokenValidator>
-      {children}
-    </TokenValidator>
-  );
+  // Temporarily disable TokenValidator to debug auth flow
+  return <>{children}</>;
 }
