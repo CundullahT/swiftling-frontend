@@ -129,9 +129,19 @@ export function TokenValidator({ children }: TokenValidatorProps) {
     return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
 
-  // Don't show loading state - make validation seamless
-  // Only render children if token is valid or if we're still validating
-  if (isValid || isValidating) {
+  // Check if we have tokens first
+  if (!tokens?.access_token) {
+    // No token, will be redirected by useEffect
+    return null;
+  }
+
+  // If we're validating, show content (seamless experience)
+  if (isValidating) {
+    return <>{children}</>;
+  }
+
+  // Only render children if token is valid
+  if (isValid) {
     return <>{children}</>;
   }
 
