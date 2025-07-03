@@ -1,0 +1,130 @@
+{
+  "success": true,
+  "statusCode": "OK",
+  "message": "The last 10 phrases have been retrieved successfully.",
+  "data": [
+    {
+      "externalPhraseId": "550e8400-e29b-41d4-a716-446655440000",
+      "originalPhrase": "Bonjour",
+      "originalLanguage": "French",
+      "meaning": "Hello",
+      "meaningLanguage": "English",
+      "phraseTags": [
+        "greeting",
+        "basic"
+      ],
+      "status": "IN_PROGRESS",
+      "notes": "Common French greeting."
+    },
+    {
+      "externalPhraseId": "660e8400-e29b-41d4-a716-446655440111",
+      "originalPhrase": "Guten Morgen",
+      "originalLanguage": "German",
+      "meaning": "Good morning",
+      "meaningLanguage": "English",
+      "phraseTags": [
+        "greeting"
+      ],
+      "status": "LEARNED",
+      "notes": "Used in the morning hours."
+    },
+    {
+      "externalPhraseId": "770e8400-e29b-41d4-a716-446655440222",
+      "originalPhrase": "Gracias",
+      "originalLanguage": "Spanish",
+      "meaning": "Thank you",
+      "meaningLanguage": "English",
+      "phraseTags": [
+        "gratitude"
+      ],
+      "status": "IN_PROGRESS",
+      "notes": "Expressing thanks."
+    },
+    {
+      "externalPhraseId": "880e8400-e29b-41d4-a716-446655440333",
+      "originalPhrase": "Ciao",
+      "originalLanguage": "Italian",
+      "meaning": "Hello/Goodbye",
+      "meaningLanguage": "English",
+      "phraseTags": [
+        "greeting",
+        "farewell"
+      ],
+      "status": "LEARNED",
+      "notes": "Used both for hello and goodbye."
+    },
+    {
+      "externalPhraseId": "990e8400-e29b-41d4-a716-446655440444",
+      "originalPhrase": "ありがとう",
+      "originalLanguage": "Japanese",
+      "meaning": "Thank you",
+      "meaningLanguage": "English",
+      "phraseTags": [
+        "gratitude"
+      ],
+      "status": "LEARNED",
+      "notes": "Formal thanks in Japanese."
+    },
+    {
+      "externalPhraseId": "aa0e8400-e29b-41d4-a716-446655440555",
+      "originalPhrase": "Olá",
+      "originalLanguage": "Portuguese",
+      "meaning": "Hello",
+      "meaningLanguage": "English",
+      "phraseTags": [
+        "greeting"
+      ],
+      "status": "IN_PROGRESS",
+      "notes": "Common greeting in Portuguese."
+    },
+    {
+      "externalPhraseId": "bb0e8400-e29b-41d4-a716-446655440666",
+      "originalPhrase": "Hallo",
+      "originalLanguage": "Dutch",
+      "meaning": "Hello",
+      "meaningLanguage": "English",
+      "phraseTags": [
+        "greeting"
+      ],
+      "status": "IN_PROGRESS",
+      "notes": "Dutch greeting."
+    },
+    {
+      "externalPhraseId": "cc0e8400-e29b-41d4-a716-446655440777",
+      "originalPhrase": "Salam",
+      "originalLanguage": "Arabic",
+      "meaning": "Peace/Hello",
+      "meaningLanguage": "English",
+      "phraseTags": [
+        "greeting"
+      ],
+      "status": "LEARNED",
+      "notes": "Common Arabic greeting."
+    },
+    {
+      "externalPhraseId": "dd0e8400-e29b-41d4-a716-446655440888",
+      "originalPhrase": "Привет",
+      "originalLanguage": "Russian",
+      "meaning": "Hi",
+      "meaningLanguage": "English",
+      "phraseTags": [
+        "greeting"
+      ],
+      "status": "LEARNED",
+      "notes": "Informal Russian greeting."
+    },
+    {
+      "externalPhraseId": "ee0e8400-e29b-41d4-a716-446655440999",
+      "originalPhrase": "Namaste",
+      "originalLanguage": "Hindi",
+      "meaning": "Greetings",
+      "meaningLanguage": "English",
+      "phraseTags": [
+        "greeting",
+        "formal"
+      ],
+      "status": "LEARNED",
+      "notes": "Traditional Indian greeting."
+    }
+  ]
+}

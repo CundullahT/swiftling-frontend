@@ -3,8 +3,12 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { BookOpen, Star, Clock, Check, X, AlertCircle, Timer, Plus } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { GuardedLink } from "@/components/ui/guarded-link";
+import { useAuth } from "@/context/auth-context";
+import { authService } from "@/lib/auth";
+import { getConfig } from "@shared/config";
+import { useToast } from "@/hooks/use-toast";
 import {
   Dialog,
   DialogContent,
@@ -13,6 +17,18 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
+
+// Interface for phrase data from API
+interface ApiPhrase {
+  externalPhraseId: string;
+  originalPhrase: string;
+  originalLanguage: string;
+  meaning: string;
+  meaningLanguage: string;
+  phraseTags: string[];
+  status: 'IN_PROGRESS' | 'LEARNED';
+  notes?: string;
+}
 
 // PieChart component
 interface PieChartProps {
@@ -107,9 +123,18 @@ function PieChart({ data, size = 120, className = "", showLabels = false }: PieC
 }
 
 export default function Dashboard() {
+  // Get auth context for tokens
+  const { tokens } = useAuth();
+  const { toast } = useToast();
+  
   // Placeholder for auth check - would be tied to a real auth system in future
   const isAuthenticated = true;
   useAuthRedirect(!isAuthenticated, "/login");
+  
+  // State for recent phrases
+  const [recentPhrases, setRecentPhrases] = useState<ApiPhrase[]>([]);
+  const [isLoadingPhrases, setIsLoadingPhrases] = useState(true);
+  const [phrasesError, setPhrasesError] = useState<string>("");
   
   // Dialog state
   const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false);
@@ -124,9 +149,86 @@ export default function Dashboard() {
     tags?: string[];
   } | null>(null);
 
+  // Fetch last 10 phrases from backend
+  const fetchRecentPhrases = async () => {
+    if (!tokens?.access_token) return;
+    
+    try {
+      setIsLoadingPhrases(true);
+      setPhrasesError("");
+
+      const config = await getConfig();
+      const baseUrl = config.quizServiceUrl.replace('/swiftling-user-service/api/v1', '');
+      const phrasesUrl = `${baseUrl}/swiftling-phrase-service/api/v1/phrase/last-ten-phrases`;
+      
+      console.log('Fetching recent phrases from:', phrasesUrl);
+      
+      const response = await fetch(phrasesUrl, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${tokens.access_token}`
+        }
+      });
+
+      console.log('Recent phrases response status:', response.status);
+
+      if (response.ok) {
+        const result = await response.json();
+        console.log('Recent phrases response:', result);
+        
+        if (result.success && Array.isArray(result.data)) {
+          setRecentPhrases(result.data);
+        } else {
+          console.error('Recent phrases fetch failed:', result.message);
+          setPhrasesError(result.message || 'Failed to load recent phrases');
+        }
+      } else {
+        const errorData = await response.json().catch(() => ({}));
+        const errorMessage = errorData.message || `Failed to fetch recent phrases (${response.status})`;
+        console.error('Recent phrases fetch error:', errorMessage);
+        setPhrasesError(errorMessage);
+        
+        toast({
+          title: "Error Loading Phrases",
+          description: errorMessage,
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error('Error fetching recent phrases:', error);
+      const message = error instanceof Error ? error.message : 'Network error occurred';
+      setPhrasesError(message);
+      
+      toast({
+        title: "Error Loading Phrases",
+        description: message,
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoadingPhrases(false);
+    }
+  };
+
+  // Fetch recent phrases on component mount
+  useEffect(() => {
+    fetchRecentPhrases();
+  }, [tokens?.access_token]);
+
   // Handle clicking on a phrase row
-  const handlePhraseClick = (phrase: any) => {
-    setSelectedPhrase(phrase);
+  const handlePhraseClick = (phrase: ApiPhrase) => {
+    // Convert API phrase to dialog format
+    const dialogPhrase = {
+      id: Math.random(), // Generate temporary ID for dialog
+      phrase: phrase.originalPhrase,
+      translation: phrase.meaning,
+      learned: phrase.status === 'LEARNED',
+      notes: phrase.notes,
+      sourceLanguage: phrase.originalLanguage.toLowerCase(),
+      targetLanguage: phrase.meaningLanguage.toLowerCase(),
+      tags: phrase.phraseTags
+    };
+    setSelectedPhrase(dialogPhrase);
     setIsDetailsDialogOpen(true);
   };
   
@@ -150,109 +252,7 @@ export default function Dashboard() {
     total: { total: 120, learned: 85 }
   };
 
-  // Last 10 phrases data from My List (id 41-50), converted to use learned flag instead of proficiency
-  const recentPhrases = [
-    { 
-      id: 41, 
-      phrase: 'Здравствуйте (Zdravstvuyte)', 
-      translation: 'Hello', 
-      learned: false, // Converted from proficiency 60
-      tags: ['Greetings', 'Beginner'], 
-      notes: 'Formal greeting. "Привет" (Privet) is the informal version.',
-      sourceLanguage: 'russian',
-      targetLanguage: 'english'
-    },
-    { 
-      id: 42, 
-      phrase: 'Как дела? (Kak dela?)', 
-      translation: 'How are you?', 
-      learned: false, // Converted from proficiency 65
-      tags: ['Greetings', 'Questions', 'Beginner'], 
-      notes: 'The common way to ask how someone is doing.',
-      sourceLanguage: 'russian',
-      targetLanguage: 'english'
-    },
-    { 
-      id: 43, 
-      phrase: 'Спасибо (Spasibo)', 
-      translation: 'Thank you', 
-      learned: true, // Converted from proficiency 80
-      tags: ['Common phrases', 'Beginner'], 
-      notes: 'Basic way to express thanks in Russian.',
-      sourceLanguage: 'russian',
-      targetLanguage: 'english'
-    },
-    { 
-      id: 44, 
-      phrase: 'Пожалуйста (Pozhaluysta)', 
-      translation: 'Please/You\'re welcome', 
-      learned: false, // Converted from proficiency 70
-      tags: ['Common phrases', 'Beginner'], 
-      notes: 'Like German "bitte", this can mean both "please" and "you\'re welcome".',
-      sourceLanguage: 'russian',
-      targetLanguage: 'english'
-    },
-    { 
-      id: 45, 
-      phrase: 'Извините (Izvinite)', 
-      translation: 'I\'m sorry/Excuse me', 
-      learned: false, // Converted from proficiency 55
-      tags: ['Common phrases', 'Expressions', 'Beginner'], 
-      notes: 'Formal way to apologize or get someone\'s attention.',
-      sourceLanguage: 'russian',
-      targetLanguage: 'english'
-    },
-    { 
-      id: 46, 
-      phrase: '안녕하세요 (Annyeong haseyo) - 만나서 반갑습니다. 저는 한국어를 공부하고 있습니다. 천천히 말해 주세요.', 
-      translation: 'Hello - Nice to meet you. I am studying Korean. Please speak slowly.', 
-      learned: false, // Converted from proficiency 75
-      tags: ['Greetings', 'Beginner'], 
-      notes: 'Standard greeting in Korean. "안녕" (Annyeong) is casual. Extended with useful phrases for language learners when meeting native speakers.',
-      sourceLanguage: 'korean',
-      targetLanguage: 'english'
-    },
-    { 
-      id: 47, 
-      phrase: '어떻게 지내세요? (Eotteoke jinaeseyo?)', 
-      translation: 'How are you?', 
-      learned: false, // Converted from proficiency 50
-      tags: ['Greetings', 'Questions', 'Intermediate'], 
-      notes: 'Formal way to ask how someone has been doing.',
-      sourceLanguage: 'korean',
-      targetLanguage: 'english'
-    },
-    { 
-      id: 48, 
-      phrase: '감사합니다 (Gamsahamnida)', 
-      translation: 'Thank you', 
-      learned: true, // Converted from proficiency 85
-      tags: ['Common phrases', 'Beginner'], 
-      notes: 'Formal way to say thank you. "고마워" (Gomawo) is casual.',
-      sourceLanguage: 'korean',
-      targetLanguage: 'english'
-    },
-    { 
-      id: 49, 
-      phrase: '주세요 (Juseyo)', 
-      translation: 'Please give me', 
-      learned: false, // Converted from proficiency 70
-      tags: ['Common phrases', 'Beginner'], 
-      notes: 'Used when asking for something. Add the item before "주세요".',
-      sourceLanguage: 'korean',
-      targetLanguage: 'english'
-    },
-    { 
-      id: 50, 
-      phrase: '죄송합니다 (Joesonghamnida)', 
-      translation: 'I\'m sorry', 
-      learned: false, // Converted from proficiency 65
-      tags: ['Common phrases', 'Expressions', 'Beginner'], 
-      notes: 'Formal apology. "미안해" (Mianhae) is the casual version.',
-      sourceLanguage: 'korean',
-      targetLanguage: 'english'
-    }
-  ];
+
 
   return (
     <div className="py-6 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto pb-20 md:pb-6">
@@ -455,31 +455,54 @@ export default function Dashboard() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {recentPhrases.map((phrase) => (
-                    <TableRow 
-                      key={phrase.id} 
-                      onClick={() => handlePhraseClick(phrase)}
-                      className="cursor-pointer hover:bg-secondary/5 transition-colors"
-                    >
-                      <TableCell className="font-medium">
-                        <div className="line-clamp-2 overflow-hidden break-words">{phrase.phrase}</div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="line-clamp-2 overflow-hidden break-words">{phrase.translation}</div>
-                      </TableCell>
-                      <TableCell className="text-right sm:whitespace-nowrap">
-                        {phrase.learned ? (
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/20 text-primary-700 dark:text-primary-300 whitespace-nowrap">
-                            Learned
-                          </span>
-                        ) : (
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-accent/20 text-amber-700 dark:text-amber-300 whitespace-nowrap">
-                            In&nbsp;Progress
-                          </span>
-                        )}
+                  {isLoadingPhrases ? (
+                    <TableRow>
+                      <TableCell colSpan={3} className="text-center py-8">
+                        <div className="flex items-center justify-center gap-2">
+                          <div className="h-4 w-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                          Loading recent phrases...
+                        </div>
                       </TableCell>
                     </TableRow>
-                  ))}
+                  ) : phrasesError ? (
+                    <TableRow>
+                      <TableCell colSpan={3} className="text-center py-8 text-red-500">
+                        Error loading phrases: {phrasesError}
+                      </TableCell>
+                    </TableRow>
+                  ) : recentPhrases.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={3} className="text-center py-8 text-gray-500">
+                        No recent phrases found
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    recentPhrases.map((phrase) => (
+                      <TableRow 
+                        key={phrase.externalPhraseId} 
+                        onClick={() => handlePhraseClick(phrase)}
+                        className="cursor-pointer hover:bg-secondary/5 transition-colors"
+                      >
+                        <TableCell className="font-medium">
+                          <div className="line-clamp-2 overflow-hidden break-words">{phrase.originalPhrase}</div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="line-clamp-2 overflow-hidden break-words">{phrase.meaning}</div>
+                        </TableCell>
+                        <TableCell className="text-right sm:whitespace-nowrap">
+                          {phrase.status === 'LEARNED' ? (
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/20 text-primary-700 dark:text-primary-300 whitespace-nowrap">
+                              Learned
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-accent/20 text-amber-700 dark:text-amber-300 whitespace-nowrap">
+                              In&nbsp;Progress
+                            </span>
+                          )}
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
                 </TableBody>
               </Table>
             </div>
