@@ -77,13 +77,30 @@ function PieChart({ data, size = 120, className = "", showLabels = false }: PieC
   // Calculate the SVG arc parameters
   let cumulativePercentage = 0;
   const slicesWithPaths = slices.map(slice => {
+    const radius = size / 2;
+    
+    // Handle edge cases for 0% and 100%
+    if (slice.percentage === 0) {
+      return {
+        ...slice,
+        path: '' // Empty path for 0%
+      };
+    }
+    
+    if (slice.percentage >= 100) {
+      // For 100%, draw a complete circle
+      return {
+        ...slice,
+        path: `M ${radius},${radius} m 0,-${radius} A ${radius},${radius} 0 1,1 0,${radius * 2} A ${radius},${radius} 0 1,1 0,-${radius * 2} Z`
+      };
+    }
+    
     // Convert percentages to coordinates on the circle
     const startAngle = (cumulativePercentage / 100) * 2 * Math.PI;
     cumulativePercentage += slice.percentage;
     const endAngle = (cumulativePercentage / 100) * 2 * Math.PI;
     
-    // Calculate the SVG path
-    const radius = size / 2;
+    // Calculate the SVG path coordinates
     const startX = radius + radius * Math.sin(startAngle);
     const startY = radius - radius * Math.cos(startAngle);
     const endX = radius + radius * Math.sin(endAngle);
