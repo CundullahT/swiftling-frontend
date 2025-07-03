@@ -50,6 +50,33 @@ interface ProgressStats {
   };
 }
 
+// Interface for daily streak API response
+interface DailyStreakResponse {
+  success: boolean;
+  statusCode: string;
+  message: string;
+  data: {
+    dailyStreak: number;
+    updatedToday: boolean;
+  };
+}
+
+// Interface for quiz stats API response
+interface QuizStatsResponse {
+  success: boolean;
+  statusCode: string;
+  message: string;
+  data: {
+    overallBestTimeInSeconds: number;
+    latestBestTimeInSeconds: number;
+    latestQuizResults: {
+      correctAnswerAmount: number;
+      wrongAnswerAmount: number;
+      timedOutAnswerAmount: number;
+    };
+  };
+}
+
 interface ProgressApiResponse {
   success: boolean;
   statusCode: string;
@@ -212,6 +239,21 @@ export default function Dashboard() {
   });
   const [isLoadingProgress, setIsLoadingProgress] = useState(true);
   const [progressError, setProgressError] = useState<string>("");
+  
+  // State for dashboard statistics
+  const [dashboardStats, setDashboardStats] = useState({
+    dailyStreak: 0,
+    updatedToday: false,
+    overallBestTime: 0,
+    latestBestTime: 0,
+    latestQuizResults: {
+      correct: 0,
+      wrong: 0,
+      timedOut: 0
+    }
+  });
+  const [isLoadingStats, setIsLoadingStats] = useState(true);
+  const [statsError, setStatsError] = useState<string>("");
   
   // Dialog state
   const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false);
@@ -401,10 +443,142 @@ export default function Dashboard() {
     }
   };
 
+  // Fetch daily streak from backend
+  const fetchDailyStreak = async () => {
+    if (!tokens?.access_token) return;
+    
+    try {
+      setIsLoadingStats(true);
+      setStatsError("");
+
+      const config = await getConfig();
+      const baseUrl = config.quizServiceUrl.replace('/swiftling-user-service/api/v1', '');
+      const streakUrl = `${baseUrl}/swiftling-quiz-service/api/v1/quiz/daily-streak`;
+      
+      console.log('Fetching daily streak from:', streakUrl);
+      
+      const response = await fetch(streakUrl, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${tokens.access_token}`
+        }
+      });
+
+      console.log('Daily streak response status:', response.status);
+
+      if (response.status === 200) {
+        const data: DailyStreakResponse = await response.json();
+        console.log('Daily streak data received:', data);
+        
+        if (data.success && data.data) {
+          setDashboardStats(prev => ({
+            ...prev,
+            dailyStreak: data.data.dailyStreak,
+            updatedToday: data.data.updatedToday
+          }));
+        } else {
+          console.error('Invalid daily streak data structure:', data);
+          setStatsError('Invalid daily streak data received from server');
+        }
+      } else {
+        const errorData = await response.json().catch(() => ({}));
+        const errorMessage = errorData.message || `Failed to load daily streak (${response.status})`;
+        console.error('Daily streak fetch error:', errorData);
+        setStatsError(errorMessage);
+        
+        toast({
+          title: "Error Loading Daily Streak",
+          description: errorMessage,
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error('Error fetching daily streak:', error);
+      const message = error instanceof Error ? error.message : 'Network error occurred';
+      setStatsError(message);
+      
+      toast({
+        title: "Error Loading Daily Streak",
+        description: message,
+        variant: "destructive",
+      });
+    }
+  };
+
+  // Fetch quiz stats from backend
+  const fetchQuizStats = async () => {
+    if (!tokens?.access_token) return;
+    
+    try {
+      const config = await getConfig();
+      const baseUrl = config.quizServiceUrl.replace('/swiftling-user-service/api/v1', '');
+      const statsUrl = `${baseUrl}/swiftling-quiz-service/api/v1/quiz/stats`;
+      
+      console.log('Fetching quiz stats from:', statsUrl);
+      
+      const response = await fetch(statsUrl, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${tokens.access_token}`
+        }
+      });
+
+      console.log('Quiz stats response status:', response.status);
+
+      if (response.status === 200) {
+        const data: QuizStatsResponse = await response.json();
+        console.log('Quiz stats data received:', data);
+        
+        if (data.success && data.data) {
+          setDashboardStats(prev => ({
+            ...prev,
+            overallBestTime: data.data.overallBestTimeInSeconds,
+            latestBestTime: data.data.latestBestTimeInSeconds,
+            latestQuizResults: {
+              correct: data.data.latestQuizResults.correctAnswerAmount,
+              wrong: data.data.latestQuizResults.wrongAnswerAmount,
+              timedOut: data.data.latestQuizResults.timedOutAnswerAmount
+            }
+          }));
+        } else {
+          console.error('Invalid quiz stats data structure:', data);
+          setStatsError('Invalid quiz stats data received from server');
+        }
+      } else {
+        const errorData = await response.json().catch(() => ({}));
+        const errorMessage = errorData.message || `Failed to load quiz stats (${response.status})`;
+        console.error('Quiz stats fetch error:', errorData);
+        setStatsError(errorMessage);
+        
+        toast({
+          title: "Error Loading Quiz Stats",
+          description: errorMessage,
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error('Error fetching quiz stats:', error);
+      const message = error instanceof Error ? error.message : 'Network error occurred';
+      setStatsError(message);
+      
+      toast({
+        title: "Error Loading Quiz Stats",
+        description: message,
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoadingStats(false);
+    }
+  };
+
   // Load data on component mount
   useEffect(() => {
     fetchRecentPhrases();
     fetchProgressStats();
+    fetchDailyStreak();
+    fetchQuizStats();
   }, [tokens]);
 
 
@@ -435,7 +609,9 @@ export default function Dashboard() {
               </div>
               <div className="ml-4">
                 <h2 className="text-xl font-semibold text-secondary">Daily Streak</h2>
-                <p className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent leading-tight py-1">{user.streakDays} days</p>
+                <p className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent leading-tight py-1">
+                  {isLoadingStats ? "..." : `${dashboardStats.dailyStreak} days`}
+                </p>
               </div>
             </div>
             
@@ -446,7 +622,9 @@ export default function Dashboard() {
               </div>
               <div className="ml-4">
                 <h2 className="text-xl font-semibold text-secondary">Overall Best Time</h2>
-                <p className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-primary bg-clip-text text-transparent leading-tight py-1">{Math.round(user.overallBestTime)}s</p>
+                <p className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-primary bg-clip-text text-transparent leading-tight py-1">
+                  {isLoadingStats ? "..." : `${dashboardStats.overallBestTime}s`}
+                </p>
               </div>
             </div>
             
@@ -457,7 +635,9 @@ export default function Dashboard() {
               </div>
               <div className="ml-4">
                 <h2 className="text-xl font-semibold text-secondary">Latest Best Time</h2>
-                <p className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent leading-tight py-1">{Math.round(user.bestTime)}s</p>
+                <p className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent leading-tight py-1">
+                  {isLoadingStats ? "..." : `${dashboardStats.latestBestTime}s`}
+                </p>
               </div>
             </div>
             
@@ -472,19 +652,25 @@ export default function Dashboard() {
                   {/* Correct */}
                   <div className="flex items-center">
                     <Check className="h-4 w-4 text-green-600 mr-1" />
-                    <span className="text-lg font-bold text-green-600">{user.latestQuiz.correct}</span>
+                    <span className="text-lg font-bold text-green-600">
+                      {isLoadingStats ? "..." : dashboardStats.latestQuizResults.correct}
+                    </span>
                   </div>
                   
                   {/* Wrong */}
                   <div className="flex items-center">
                     <X className="h-4 w-4 text-rose-600 mr-1" />
-                    <span className="text-lg font-bold text-rose-600">{user.latestQuiz.wrong}</span>
+                    <span className="text-lg font-bold text-rose-600">
+                      {isLoadingStats ? "..." : dashboardStats.latestQuizResults.wrong}
+                    </span>
                   </div>
                   
                   {/* Timed Out */}
                   <div className="flex items-center">
                     <AlertCircle className="h-4 w-4 text-amber-600 mr-1" />
-                    <span className="text-lg font-bold text-amber-600">{user.latestQuiz.timedOut}</span>
+                    <span className="text-lg font-bold text-amber-600">
+                      {isLoadingStats ? "..." : dashboardStats.latestQuizResults.timedOut}
+                    </span>
                   </div>
                 </div>
               </div>
