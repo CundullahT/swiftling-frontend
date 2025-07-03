@@ -29,13 +29,25 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/context/auth-context";
 import { getQuizServiceURL } from "@shared/config";
 
+// Function to decode JWT token and extract user information
+function decodeJWT(token: string) {
+  try {
+    const payload = token.split('.')[1];
+    const decoded = JSON.parse(atob(payload));
+    return decoded;
+  } catch (error) {
+    console.error('Error decoding JWT:', error);
+    return null;
+  }
+}
+
 // Validation schema for account form
 const accountFormSchema = z.object({
   firstName: z.string()
-    .min(2, { message: "First name must be at least 2 characters" })
+    .min(0, { message: "First name is optional" })
     .max(24, { message: "First name must be less than 24 characters" }),
   lastName: z.string()
-    .min(2, { message: "Last name must be at least 2 characters" })
+    .min(0, { message: "Last name is optional" })
     .max(24, { message: "Last name must be less than 24 characters" }),
   email: z.string().email({
     message: "Please enter a valid email address",
@@ -79,11 +91,11 @@ export default function Settings() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [accountFormChanged, setAccountFormChanged] = useState(false);
   
-  // Default account values - these will be updated after successful account updates
+  // Default account values - extracted from JWT token
   const [defaultAccountValues, setDefaultAccountValues] = useState({
-    firstName: "Alex",
-    lastName: "Johnson",
-    email: "alex@example.com",
+    firstName: "",
+    lastName: "",
+    email: "",
   });
 
   // Account form setup
@@ -92,6 +104,33 @@ export default function Settings() {
     defaultValues: defaultAccountValues,
     mode: "onChange", // Enable real-time validation
   });
+
+  // Extract user information from JWT token
+  useEffect(() => {
+    if (tokens?.access_token) {
+      const decoded = decodeJWT(tokens.access_token);
+      if (decoded) {
+        console.log('Decoded JWT:', decoded); // Debug logging
+        
+        // Extract email from username field (which contains the email)
+        const email = decoded.username || decoded.email || "";
+        
+        // Try to extract first and last name from email or other fields
+        // For now, we'll use the email as the primary identifier
+        const userInfo = {
+          firstName: decoded.given_name || decoded.first_name || "",
+          lastName: decoded.family_name || decoded.last_name || "",
+          email: email,
+        };
+        
+        console.log('Extracted user info:', userInfo); // Debug logging
+        
+        setDefaultAccountValues(userInfo);
+        // Reset the form with the new values
+        accountForm.reset(userInfo);
+      }
+    }
+  }, [tokens]);
   
   // Watch form values for changes to enable/disable the Save button
   useEffect(() => {
