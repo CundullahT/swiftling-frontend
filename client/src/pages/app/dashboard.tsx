@@ -699,13 +699,20 @@ export default function Dashboard() {
             <div className="bg-primary/5 rounded-lg p-4 shadow-sm border border-primary/10">
               <h3 className="text-sm font-medium text-secondary mb-2">Daily Progress</h3>
               <div className="flex flex-col items-center">
-                <PieChart 
-                  data={[
-                    { value: progressStats.daily.learned, color: 'hsl(var(--primary))' }, // Primary teal for learned
-                    { value: progressStats.daily.total - progressStats.daily.learned, color: 'hsl(var(--muted))' } // Muted for not learned
-                  ]}
-                  size={100}
-                />
+                <div className="relative">
+                  <PieChart 
+                    data={[
+                      { value: progressStats.daily.learned, color: 'hsl(var(--primary))' }, // Primary teal for learned
+                      { value: progressStats.daily.total - progressStats.daily.learned, color: 'hsl(var(--muted))' } // Muted for not learned
+                    ]}
+                    size={100}
+                  />
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <span className="text-xl font-bold text-primary">
+                      {progressStats.daily.total > 0 ? Math.round((progressStats.daily.learned / progressStats.daily.total) * 100) : 0}%
+                    </span>
+                  </div>
+                </div>
                 <div className="mt-3 flex gap-4 text-center">
                   <div>
                     <p className="text-xs text-secondary/70">Added</p>
@@ -723,13 +730,20 @@ export default function Dashboard() {
             <div className="bg-orange-50 dark:bg-orange-950/20 rounded-lg p-4 shadow-sm border border-primary/10">
               <h3 className="text-sm font-medium text-secondary mb-2">Weekly Progress</h3>
               <div className="flex flex-col items-center">
-                <PieChart 
-                  data={[
-                    { value: progressStats.weekly.learned, color: '#FFA726' }, // Orange color as requested
-                    { value: progressStats.weekly.total - progressStats.weekly.learned, color: 'hsl(var(--muted))' } // Gray like other charts for non-learned
-                  ]}
-                  size={100}
-                />
+                <div className="relative">
+                  <PieChart 
+                    data={[
+                      { value: progressStats.weekly.learned, color: '#FFA726' }, // Orange color as requested
+                      { value: progressStats.weekly.total - progressStats.weekly.learned, color: 'hsl(var(--muted))' } // Gray like other charts for non-learned
+                    ]}
+                    size={100}
+                  />
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <span className="text-xl font-bold" style={{ color: '#FFA726' }}>
+                      {progressStats.weekly.total > 0 ? Math.round((progressStats.weekly.learned / progressStats.weekly.total) * 100) : 0}%
+                    </span>
+                  </div>
+                </div>
                 <div className="mt-3 flex gap-4 text-center">
                   <div>
                     <p className="text-xs text-secondary/70">Added</p>
@@ -747,13 +761,20 @@ export default function Dashboard() {
             <div className="bg-accent/5 rounded-lg p-4 shadow-sm border border-primary/10">
               <h3 className="text-sm font-medium text-secondary mb-2">Monthly Progress</h3>
               <div className="flex flex-col items-center">
-                <PieChart 
-                  data={[
-                    { value: progressStats.monthly.learned, color: 'hsl(var(--accent))' }, // Accent/gold for learned
-                    { value: progressStats.monthly.total - progressStats.monthly.learned, color: 'hsl(var(--muted))' } // Muted for not learned
-                  ]}
-                  size={100}
-                />
+                <div className="relative">
+                  <PieChart 
+                    data={[
+                      { value: progressStats.monthly.learned, color: 'hsl(var(--accent))' }, // Accent/gold for learned
+                      { value: progressStats.monthly.total - progressStats.monthly.learned, color: 'hsl(var(--muted))' } // Muted for not learned
+                    ]}
+                    size={100}
+                  />
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <span className="text-xl font-bold text-accent">
+                      {progressStats.monthly.total > 0 ? Math.round((progressStats.monthly.learned / progressStats.monthly.total) * 100) : 0}%
+                    </span>
+                  </div>
+                </div>
                 <div className="mt-3 flex gap-4 text-center">
                   <div>
                     <p className="text-xs text-secondary/70">Added</p>
@@ -771,13 +792,20 @@ export default function Dashboard() {
             <div className="bg-gradient-to-br from-primary/10 to-accent/10 rounded-lg p-4 shadow-sm border border-primary/10">
               <h3 className="text-sm font-medium text-secondary mb-2">Total Progress</h3>
               <div className="flex flex-col items-center">
-                <PieChart 
-                  data={[
-                    { value: progressStats.total.learned, color: 'hsl(var(--chart-5))' }, // Mint green for learned
-                    { value: progressStats.total.total - progressStats.total.learned, color: 'hsl(var(--muted))' } // Muted for not learned
-                  ]}
-                  size={100}
-                />
+                <div className="relative">
+                  <PieChart 
+                    data={[
+                      { value: progressStats.total.learned, color: 'hsl(var(--chart-5))' }, // Mint green for learned
+                      { value: progressStats.total.total - progressStats.total.learned, color: 'hsl(var(--muted))' } // Muted for not learned
+                    ]}
+                    size={100}
+                  />
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <span className="text-xl font-bold text-chart-5">
+                      {progressStats.total.total > 0 ? Math.round((progressStats.total.learned / progressStats.total.total) * 100) : 0}%
+                    </span>
+                  </div>
+                </div>
                 <div className="mt-3 flex gap-4 text-center">
                   <div>
                     <p className="text-xs text-secondary/70">Added</p>
