@@ -52,6 +52,7 @@ export function TokenValidator({ children }: TokenValidatorProps) {
       
       // Check if token is active
       if (result.active === true) {
+        console.log('Token is valid, setting isValid to true');
         setIsValid(true);
       } else {
         console.log('Token is not active, redirecting to login');
@@ -128,20 +129,9 @@ export function TokenValidator({ children }: TokenValidatorProps) {
     return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
 
-  // Show loading state while validating
-  if (isValidating) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="flex items-center gap-3">
-          <div className="h-6 w-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-          <span className="text-secondary">Validating session...</span>
-        </div>
-      </div>
-    );
-  }
-
-  // Only render children if token is valid
-  if (isValid) {
+  // Don't show loading state - make validation seamless
+  // Only render children if token is valid or if we're still validating
+  if (isValid || isValidating) {
     return <>{children}</>;
   }
 
