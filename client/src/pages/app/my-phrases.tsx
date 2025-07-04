@@ -114,10 +114,10 @@ const playAudioFromBase64 = (base64String: string) => {
 const getPronunciationAudio = async (phraseId: string, type: 'original' | 'meaning', authToken: string) => {
   const config = await getConfig();
   const endpoint = type === 'original' 
-    ? `/swiftling-phrase-service/api/v1/phrase/pronunciation/original?phrase-id=${phraseId}`
-    : `/swiftling-phrase-service/api/v1/phrase/pronunciation/meaning?phrase-id=${phraseId}`;
+    ? `/pronunciation/original?phrase-id=${phraseId}`
+    : `/pronunciation/meaning?phrase-id=${phraseId}`;
   
-  const url = `http://${config.hostname}:8762${endpoint}`;
+  const url = `${config.phraseServiceUrl}${endpoint}`;
   
   console.log(`Fetching ${type} pronunciation from:`, url);
   

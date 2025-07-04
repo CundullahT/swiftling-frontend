@@ -40,7 +40,7 @@ import { getConfig } from "@shared/config";
 // API function to fetch quiz languages
 const getQuizLanguages = async (accessToken: string) => {
   const config = await getConfig();
-  const response = await fetch(`${config.quizServiceUrl}/api/v1/phrase/quiz-languages`, {
+  const response = await fetch(`${config.phraseServiceUrl}/quiz-languages`, {
     method: 'GET',
     headers: {
       'Authorization': `Bearer ${accessToken}`,
