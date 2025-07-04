@@ -30,6 +30,78 @@ import { useToast } from "@/hooks/use-toast";
 import { authService } from "@/lib/auth";
 import { getConfig } from "@shared/config";
 
+// Utility function to convert base64 to audio blob and play it
+const playAudioFromBase64 = (base64String: string) => {
+  try {
+    // Remove data URL prefix if present
+    const base64Data = base64String.replace(/^data:audio\/\w+;base64,/, '');
+    
+    // Convert base64 to binary
+    const binaryString = atob(base64Data);
+    const bytes = new Uint8Array(binaryString.length);
+    for (let i = 0; i < binaryString.length; i++) {
+      bytes[i] = binaryString.charCodeAt(i);
+    }
+    
+    // Create blob and play audio
+    const blob = new Blob([bytes], { type: 'audio/mp3' });
+    const audioUrl = URL.createObjectURL(blob);
+    const audio = new Audio(audioUrl);
+    
+    audio.play().catch(error => {
+      console.error('Audio playback failed:', error);
+    });
+    
+    // Clean up the object URL after playing
+    audio.addEventListener('ended', () => {
+      URL.revokeObjectURL(audioUrl);
+    });
+    
+    return audio;
+  } catch (error) {
+    console.error('Error converting base64 to audio:', error);
+    throw error;
+  }
+};
+
+// API functions for pronunciation
+const getPronunciationAudio = async (phraseId: string, type: 'original' | 'meaning', authToken: string) => {
+  const config = await getConfig();
+  const endpoint = type === 'original' 
+    ? `/swiftling-phrase-service/api/v1/phrase/pronunciation/original?phrase-id=${phraseId}`
+    : `/swiftling-phrase-service/api/v1/phrase/pronunciation/meaning?phrase-id=${phraseId}`;
+  
+  const url = `http://${config.hostname}:8762${endpoint}`;
+  
+  console.log(`Fetching ${type} pronunciation from:`, url);
+  
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${authToken}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log(`${type} pronunciation response:`, data);
+    
+    if (data.success && data.data) {
+      return data.data; // Return the base64 string
+    } else {
+      throw new Error(data.message || 'Failed to get pronunciation');
+    }
+  } catch (error) {
+    console.error(`Error fetching ${type} pronunciation:`, error);
+    throw error;
+  }
+};
+
 // Define phrase type based on API response
 interface Phrase {
   externalPhraseId: string;
@@ -61,6 +133,69 @@ export default function MyPhrases() {
   // Audio states
   const [isPlayingOriginal, setIsPlayingOriginal] = useState(false);
   const [isPlayingTranslation, setIsPlayingTranslation] = useState(false);
+  
+  // Pronunciation handlers
+  const handlePlayOriginal = async () => {
+    if (!selectedPhrase?.externalPhraseId || !tokens?.access_token) {
+      toast({
+        title: "Error",
+        description: "Unable to play pronunciation. Please try again.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsPlayingOriginal(true);
+    try {
+      const base64Audio = await getPronunciationAudio(
+        selectedPhrase.externalPhraseId, 
+        'original', 
+        tokens.access_token
+      );
+      playAudioFromBase64(base64Audio);
+    } catch (error) {
+      console.error('Failed to play original pronunciation:', error);
+      toast({
+        title: "Pronunciation Error",
+        description: "Failed to load pronunciation. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      // Reset playing state after a delay to allow for audio loading
+      setTimeout(() => setIsPlayingOriginal(false), 3000);
+    }
+  };
+
+  const handlePlayMeaning = async () => {
+    if (!selectedPhrase?.externalPhraseId || !tokens?.access_token) {
+      toast({
+        title: "Error",
+        description: "Unable to play pronunciation. Please try again.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsPlayingTranslation(true);
+    try {
+      const base64Audio = await getPronunciationAudio(
+        selectedPhrase.externalPhraseId, 
+        'meaning', 
+        tokens.access_token
+      );
+      playAudioFromBase64(base64Audio);
+    } catch (error) {
+      console.error('Failed to play meaning pronunciation:', error);
+      toast({
+        title: "Pronunciation Error",
+        description: "Failed to load pronunciation. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      // Reset playing state after a delay to allow for audio loading
+      setTimeout(() => setIsPlayingTranslation(false), 3000);
+    }
+  };
   
   // Edit dialog states
   const [editedPhrase, setEditedPhrase] = useState("");
@@ -1223,10 +1358,10 @@ export default function MyPhrases() {
         <DialogContent className="sm:max-w-md rounded-xl overflow-hidden">
           <DialogHeader>
             <DialogTitle className="text-xl font-semibold">
-              Pronunciation <span className="text-xs bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full ml-2">Coming Soon</span>
+              Pronunciation
             </DialogTitle>
             <DialogDescription>
-              This feature will allow you to listen to phrase pronunciations in a future update
+              Click the play button to listen to the pronunciation
             </DialogDescription>
           </DialogHeader>
           <div className="border-t border-gray-200 pt-4">
@@ -1250,12 +1385,8 @@ export default function MyPhrases() {
                     size="icon"
                     className="h-10 w-10"
                     disabled={isPlayingOriginal}
-                    onClick={() => {
-                      setIsPlayingOriginal(true);
-                      // TODO: Add actual TTS functionality
-                      setTimeout(() => setIsPlayingOriginal(false), 2000);
-                    }}
-                    title="Pronunciation feature coming soon"
+                    onClick={handlePlayOriginal}
+                    title="Play original phrase pronunciation"
                   >
                     {isPlayingOriginal ? (
                       <div className="h-5 w-5 rounded-full border-2 border-primary border-t-transparent animate-spin" />
@@ -1264,7 +1395,6 @@ export default function MyPhrases() {
                     )}
                   </Button>
                 </div>
-                <p className="text-xs text-gray-500 italic">Pronunciation will be available in a future update</p>
               </div>
 
               {/* Translation pronunciation */}
@@ -1286,12 +1416,8 @@ export default function MyPhrases() {
                     size="icon"
                     className="h-10 w-10"
                     disabled={isPlayingTranslation}
-                    onClick={() => {
-                      setIsPlayingTranslation(true);
-                      // TODO: Add actual TTS functionality
-                      setTimeout(() => setIsPlayingTranslation(false), 2000);
-                    }}
-                    title="Pronunciation feature coming soon"
+                    onClick={handlePlayMeaning}
+                    title="Play meaning pronunciation"
                   >
                     {isPlayingTranslation ? (
                       <div className="h-5 w-5 rounded-full border-2 border-primary border-t-transparent animate-spin" />
@@ -1300,7 +1426,6 @@ export default function MyPhrases() {
                     )}
                   </Button>
                 </div>
-                <p className="text-xs text-gray-500 italic">Pronunciation will be available in a future update</p>
               </div>
             </div>
           </div>
