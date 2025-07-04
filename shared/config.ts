@@ -162,17 +162,17 @@ export async function initializeConfig(): Promise<AppConfig> {
     keycloakUrl = `http://${hostname}:8080`;
   }
   
-  // Build Quiz Service URL based on environment
+  // Build User Service URL based on environment
   let quizServiceUrl: string;
   if (environment === 'dev') {
-    quizServiceUrl = 'http://cundi.onthewifi.com:8762/swiftling-phrase-service';
+    quizServiceUrl = 'http://cundi.onthewifi.com:8762/swiftling-user-service/api/v1';
   } else if (environment === 'local') {
-    quizServiceUrl = 'http://localhost:8762/swiftling-phrase-service';
+    quizServiceUrl = 'http://localhost:8762/swiftling-user-service/api/v1';
   } else if (environment === 'prod') {
-    quizServiceUrl = 'https://swiftlingapp.com/swiftling-phrase-service';
+    quizServiceUrl = 'https://swiftlingapp.com/swiftling-user-service/api/v1';
   } else {
     // For 'other' environment, use the same hostname as the app with port 8762
-    quizServiceUrl = `http://${hostname}:8762/swiftling-phrase-service`;
+    quizServiceUrl = `http://${hostname}:8762/swiftling-user-service/api/v1`;
   }
   
   const config: AppConfig = {
