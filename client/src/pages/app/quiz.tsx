@@ -96,7 +96,7 @@ export default function Quiz() {
   // 0 = No phrases (show "add phrases" message)
   // 1-9 = Some phrases but not enough (show "need 10 phrases" message)  
   // 10+ = Enough phrases (show quiz setup)
-  const mockPhraseCount = 0; // Change this to test different states
+  const mockPhraseCount = 15; // Change this to test different states
   
   // Function to check phrase count and determine what to show
   const getPhraseStatus = () => {
