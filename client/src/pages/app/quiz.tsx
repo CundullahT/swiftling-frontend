@@ -17,7 +17,7 @@ import {
   SelectTrigger, 
   SelectValue 
 } from "@/components/ui/select";
-import { Sparkles, BookOpen, Brain, PlusCircle, Search, X, Loader2 } from "lucide-react";
+import { Sparkles, BookOpen, Brain, PlusCircle, Search, X } from "lucide-react";
 import { 
   QUIZ_TYPES, 
   ADAPTIVE_TIME_PRESETS,
@@ -33,43 +33,6 @@ import {
   AlertDialogDescription,
   AlertDialogFooter,
 } from "@/components/ui/alert-dialog";
-import { useToast } from "@/hooks/use-toast";
-import { useAuth } from "@/context/auth-context";
-import { getConfig } from "@shared/config";
-
-// API function to fetch user's quiz languages
-const getQuizLanguages = async (authToken: string) => {
-  const config = await getConfig();
-  const url = `http://${config.hostname}:8762/swiftling-phrase-service/api/v1/phrase/quiz-languages`;
-  
-  console.log('Fetching quiz languages from:', url);
-  
-  try {
-    const response = await fetch(url, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${authToken}`,
-        'Content-Type': 'application/json',
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const data = await response.json();
-    console.log('Quiz languages response:', data);
-    
-    if (data.success && data.data && Array.isArray(data.data)) {
-      return data.data as string[];
-    } else {
-      throw new Error(data.message || 'Failed to fetch quiz languages');
-    }
-  } catch (error) {
-    console.error('Error fetching quiz languages:', error);
-    throw error;
-  }
-};
 
 export default function Quiz() {
   // Scroll to top when navigating to this page
@@ -80,10 +43,6 @@ export default function Quiz() {
   
   // Use the quiz context to set the global quiz active state
   const { setQuizActive, pauseQuiz, unpauseQuiz } = useQuiz();
-  
-  // Auth context
-  const { tokens } = useAuth();
-  const { toast } = useToast();
   
   // State to track which quiz type is selected
   const [selectedQuizType, setSelectedQuizType] = useState<string | null>(null);
@@ -157,43 +116,6 @@ export default function Quiz() {
   const [showLanguageDropdown, setShowLanguageDropdown] = useState(false);
   const languageInputRef = useRef<HTMLInputElement>(null);
   
-  // State for user's available languages
-  const [userLanguages, setUserLanguages] = useState<string[]>([]);
-  const [isLoadingLanguages, setIsLoadingLanguages] = useState(false);
-  const [availableLanguages, setAvailableLanguages] = useState<typeof LANGUAGES>([]);
-  
-  // Fetch user's quiz languages on component mount
-  useEffect(() => {
-    const fetchUserLanguages = async () => {
-      if (!tokens?.access_token) return;
-      
-      setIsLoadingLanguages(true);
-      try {
-        const languages = await getQuizLanguages(tokens.access_token);
-        setUserLanguages(languages);
-        
-        // Filter LANGUAGES array to only include languages the user has added
-        const filtered = LANGUAGES.filter(lang => 
-          languages.includes(lang.name)
-        );
-        setAvailableLanguages(filtered);
-      } catch (error) {
-        console.error('Failed to fetch user languages:', error);
-        toast({
-          title: "Error Loading Languages",
-          description: "Unable to load your languages. Please try refreshing the page.",
-          variant: "destructive",
-        });
-        // Fallback to showing all languages if API fails
-        setAvailableLanguages(LANGUAGES);
-      } finally {
-        setIsLoadingLanguages(false);
-      }
-    };
-
-    fetchUserLanguages();
-  }, [tokens?.access_token, toast]);
-  
   // Handle language selection
   const handleLanguageSelect = (languageId: string) => {
     if (languageId === 'all') {
@@ -227,7 +149,7 @@ export default function Quiz() {
   };
   
   // Filter languages based on search query
-  const filteredLanguages = availableLanguages.filter(language => 
+  const filteredLanguages = LANGUAGES.filter(language => 
     language.name.toLowerCase().includes(searchQuery.toLowerCase()) && 
     !selectedLanguages.includes(language.id)
   );
@@ -490,17 +412,8 @@ export default function Quiz() {
               while adding phrases will be available for practice.
             </p>
             
-            {/* Loading state */}
-            {isLoadingLanguages && (
-              <div className="flex items-center justify-center py-4">
-                <Loader2 className="h-5 w-5 animate-spin text-primary mr-2" />
-                <span className="text-sm text-gray-500">Loading your languages...</span>
-              </div>
-            )}
-            
             {/* Language Tags Input */}
-            {!isLoadingLanguages && (
-              <div>
+            <div>
               {/* Selected languages display */}
               <div className="flex flex-wrap gap-2 mb-2 mt-2">
                 {selectedLanguages.length === 0 ? (
