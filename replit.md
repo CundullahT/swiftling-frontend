@@ -143,6 +143,12 @@ Changelog:
   - Created environment-specific signup endpoints with proper request format
   - Implemented loading states, error handling, and success notifications
   - Added toast notifications for API errors and connection issues
+- January 4, 2025. Enhanced quiz setup page with dynamic language filtering
+  - Implemented API integration to fetch user's available languages from backend
+  - Added language filtering to show only languages used in user's phrases
+  - Fixed quiz service URL configuration to point to swiftling-phrase-service instead of swiftling-user-service
+  - Added proper authorization with Bearer token format for all quiz API requests
+  - Implemented loading states and error handling for language fetching
 ```
 
 ## User Preferences
