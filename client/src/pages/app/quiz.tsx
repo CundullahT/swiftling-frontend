@@ -33,6 +33,29 @@ import {
   AlertDialogDescription,
   AlertDialogFooter,
 } from "@/components/ui/alert-dialog";
+import { useToast } from "@/hooks/use-toast";
+import { authService } from "@/lib/auth";
+import { getConfig } from "@shared/config";
+
+// API function to fetch quiz languages
+const getQuizLanguages = async (accessToken: string) => {
+  const config = await getConfig();
+  const response = await fetch(`${config.quizServiceUrl}/api/v1/phrase/quiz-languages`, {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${accessToken}`,
+      'Content-Type': 'application/json',
+    },
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.message || 'Failed to fetch quiz languages');
+  }
+
+  const data = await response.json();
+  return data.data || [];
+};
 
 export default function Quiz() {
   // Scroll to top when navigating to this page
@@ -51,9 +74,52 @@ export default function Quiz() {
   const [maxTime, setMaxTime] = useState<number>(30);
   const [isQuizStarted, setIsQuizStarted] = useState(false);
   
+  // State for available languages from backend
+  const [availableLanguages, setAvailableLanguages] = useState<typeof LANGUAGES>([]);
+  const [isLoadingLanguages, setIsLoadingLanguages] = useState(true);
+  
+  // Toast for error messages
+  const { toast } = useToast();
+  
   // State for navigation dialog
   const [showNavDialog, setShowNavDialog] = useState(false);
   const [pendingNavigation, setPendingNavigation] = useState<string | null>(null);
+  
+  // Fetch available languages on component mount
+  useEffect(() => {
+    const fetchLanguages = async () => {
+      try {
+        setIsLoadingLanguages(true);
+        const tokens = authService.getTokens();
+        
+        if (!tokens?.access_token) {
+          throw new Error('No access token available');
+        }
+        
+        const userLanguageNames = await getQuizLanguages(tokens.access_token);
+        
+        // Filter LANGUAGES array to only include languages the user has added
+        const filteredLanguages = LANGUAGES.filter(language => 
+          userLanguageNames.includes(language.name)
+        );
+        
+        setAvailableLanguages(filteredLanguages);
+      } catch (error) {
+        console.error('Failed to fetch quiz languages:', error);
+        toast({
+          title: "Error",
+          description: "Failed to load available languages. Please try again.",
+          variant: "destructive",
+        });
+        // Set empty array if fetch fails
+        setAvailableLanguages([]);
+      } finally {
+        setIsLoadingLanguages(false);
+      }
+    };
+    
+    fetchLanguages();
+  }, [toast]);
   
   // Set up guarded navigation
   const navigationBlockConfig = useMemo(() => ({
@@ -96,7 +162,7 @@ export default function Quiz() {
   // 0 = No phrases (show "add phrases" message)
   // 1-9 = Some phrases but not enough (show "need 10 phrases" message)  
   // 10+ = Enough phrases (show quiz setup)
-  const mockPhraseCount = 15; // Change this to test different states
+  const mockPhraseCount: number = 15; // Change this to test different states
   
   // Function to check phrase count and determine what to show
   const getPhraseStatus = () => {
@@ -148,8 +214,8 @@ export default function Quiz() {
     setSelectedLanguages(selectedLanguages.filter(id => id !== languageId));
   };
   
-  // Filter languages based on search query
-  const filteredLanguages = LANGUAGES.filter(language => 
+  // Filter languages based on search query from available languages
+  const filteredLanguages = availableLanguages.filter(language => 
     language.name.toLowerCase().includes(searchQuery.toLowerCase()) && 
     !selectedLanguages.includes(language.id)
   );
@@ -489,22 +555,35 @@ export default function Quiz() {
                         </div>
                       )}
                       
-                      {/* Filtered languages */}
-                      {filteredLanguages.length > 0 ? (
-                        filteredLanguages.map((language) => (
-                          <div
-                            key={language.id}
-                            className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                            onMouseDown={() => handleLanguageSelect(language.id)}
-                          >
-                            <span>{language.name}</span>
-                          </div>
-                        ))
-                      ) : searchQuery && !searchQuery.toLowerCase().includes('all') ? (
+                      {/* Loading state */}
+                      {isLoadingLanguages ? (
                         <div className="px-4 py-2 text-gray-500">
-                          No matching languages found
+                          Loading languages...
                         </div>
-                      ) : null}
+                      ) : (
+                        <>
+                          {/* Filtered languages */}
+                          {filteredLanguages.length > 0 ? (
+                            filteredLanguages.map((language) => (
+                              <div
+                                key={language.id}
+                                className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                                onMouseDown={() => handleLanguageSelect(language.id)}
+                              >
+                                <span>{language.name}</span>
+                              </div>
+                            ))
+                          ) : searchQuery && !searchQuery.toLowerCase().includes('all') ? (
+                            <div className="px-4 py-2 text-gray-500">
+                              No matching languages found
+                            </div>
+                          ) : availableLanguages.length === 0 ? (
+                            <div className="px-4 py-2 text-gray-500">
+                              No languages available. Add phrases to see language options.
+                            </div>
+                          ) : null}
+                        </>
+                      )}
                     </div>
                   </div>
                 )}
