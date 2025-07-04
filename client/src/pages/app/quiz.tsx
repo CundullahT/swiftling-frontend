@@ -40,7 +40,9 @@ import { getConfig } from "@shared/config";
 // API function to fetch quiz languages
 const getQuizLanguages = async (accessToken: string) => {
   const config = await getConfig();
-  const response = await fetch(`${config.quizServiceUrl}/api/v1/phrase/quiz-languages`, {
+  const baseUrl = config.quizServiceUrl.replace('/swiftling-user-service/api/v1', '');
+  const phrasesUrl = `${baseUrl}/swiftling-phrase-service/api/v1/phrase/quiz-languages`;
+  const response = await fetch(phrasesUrl, {
     method: 'GET',
     headers: {
       'Authorization': `Bearer ${accessToken}`,
