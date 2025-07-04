@@ -32,36 +32,82 @@ import { getConfig } from "@shared/config";
 
 // Utility function to convert base64 to audio blob and play it
 const playAudioFromBase64 = (base64String: string) => {
-  try {
-    // Remove data URL prefix if present
-    const base64Data = base64String.replace(/^data:audio\/\w+;base64,/, '');
-    
-    // Convert base64 to binary
-    const binaryString = atob(base64Data);
-    const bytes = new Uint8Array(binaryString.length);
-    for (let i = 0; i < binaryString.length; i++) {
-      bytes[i] = binaryString.charCodeAt(i);
+  return new Promise((resolve, reject) => {
+    try {
+      // Remove data URL prefix if present
+      const base64Data = base64String.replace(/^data:audio\/\w+;base64,/, '');
+      
+      // Convert base64 to binary
+      const binaryString = atob(base64Data);
+      const bytes = new Uint8Array(binaryString.length);
+      for (let i = 0; i < binaryString.length; i++) {
+        bytes[i] = binaryString.charCodeAt(i);
+      }
+      
+      // Create blob with multiple MIME types for better mobile compatibility
+      const blob = new Blob([bytes], { type: 'audio/mpeg' });
+      const audioUrl = URL.createObjectURL(blob);
+      const audio = new Audio();
+      
+      // Set audio properties for mobile compatibility
+      audio.preload = 'auto';
+      audio.setAttribute('playsinline', 'true'); // For iOS Safari inline playback
+      audio.crossOrigin = 'anonymous';
+      
+      // Set up event handlers
+      audio.addEventListener('canplaythrough', () => {
+        // Audio is ready to play
+        audio.play()
+          .then(() => {
+            console.log('Audio started playing successfully');
+            resolve(audio);
+          })
+          .catch(error => {
+            console.error('Audio play failed:', error);
+            // Try alternative approach for mobile browsers
+            if (error.name === 'NotAllowedError') {
+              // This usually means user interaction is required
+              reject(new Error('Audio playback requires user interaction. Please try again.'));
+            } else {
+              reject(error);
+            }
+          });
+      });
+      
+      // Fallback: if canplaythrough doesn't fire, try playing when loadeddata fires
+      audio.addEventListener('loadeddata', () => {
+        if (audio.readyState >= 2) { // HAVE_CURRENT_DATA
+          audio.play()
+            .then(() => {
+              console.log('Audio started playing successfully (loadeddata fallback)');
+              resolve(audio);
+            })
+            .catch(error => {
+              console.error('Audio play failed (loadeddata fallback):', error);
+              reject(error);
+            });
+        }
+      });
+      
+      audio.addEventListener('error', (e) => {
+        console.error('Audio loading error:', e);
+        URL.revokeObjectURL(audioUrl);
+        reject(new Error('Audio loading failed'));
+      });
+      
+      audio.addEventListener('ended', () => {
+        URL.revokeObjectURL(audioUrl);
+      });
+      
+      // Load the audio
+      audio.src = audioUrl;
+      audio.load();
+      
+    } catch (error) {
+      console.error('Error converting base64 to audio:', error);
+      reject(error);
     }
-    
-    // Create blob and play audio
-    const blob = new Blob([bytes], { type: 'audio/mp3' });
-    const audioUrl = URL.createObjectURL(blob);
-    const audio = new Audio(audioUrl);
-    
-    audio.play().catch(error => {
-      console.error('Audio playback failed:', error);
-    });
-    
-    // Clean up the object URL after playing
-    audio.addEventListener('ended', () => {
-      URL.revokeObjectURL(audioUrl);
-    });
-    
-    return audio;
-  } catch (error) {
-    console.error('Error converting base64 to audio:', error);
-    throw error;
-  }
+  });
 };
 
 // API functions for pronunciation
@@ -152,17 +198,20 @@ export default function MyPhrases() {
         'original', 
         tokens.access_token
       );
-      playAudioFromBase64(base64Audio);
+      
+      // Use the Promise-based audio function
+      await playAudioFromBase64(base64Audio);
+      
+      // Reset state after successful play
+      setIsPlayingOriginal(false);
     } catch (error) {
       console.error('Failed to play original pronunciation:', error);
+      setIsPlayingOriginal(false);
       toast({
         title: "Pronunciation Error",
         description: "Failed to load pronunciation. Please try again.",
         variant: "destructive",
       });
-    } finally {
-      // Reset playing state after a delay to allow for audio loading
-      setTimeout(() => setIsPlayingOriginal(false), 3000);
     }
   };
 
@@ -183,17 +232,20 @@ export default function MyPhrases() {
         'meaning', 
         tokens.access_token
       );
-      playAudioFromBase64(base64Audio);
+      
+      // Use the Promise-based audio function
+      await playAudioFromBase64(base64Audio);
+      
+      // Reset state after successful play
+      setIsPlayingTranslation(false);
     } catch (error) {
       console.error('Failed to play meaning pronunciation:', error);
+      setIsPlayingTranslation(false);
       toast({
         title: "Pronunciation Error",
         description: "Failed to load pronunciation. Please try again.",
         variant: "destructive",
       });
-    } finally {
-      // Reset playing state after a delay to allow for audio loading
-      setTimeout(() => setIsPlayingTranslation(false), 3000);
     }
   };
   
