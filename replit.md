@@ -143,13 +143,6 @@ Changelog:
   - Created environment-specific signup endpoints with proper request format
   - Implemented loading states, error handling, and success notifications
   - Added toast notifications for API errors and connection issues
-- January 4, 2025. Updated microservice architecture configuration
-  - Configured complete gateway-based microservice architecture with 4 services
-  - Added proper environment-specific URLs for dev/local/prod environments
-  - Services: user-service, phrase-service, quiz-service, notification-service
-  - Gateway URLs: localhost:8762 (local), cundi.onthewifi.com:8762 (dev), gateway.swiftlingapp.com (prod)
-  - Updated Keycloak URLs: localhost:8080 (local), cundi.onthewifi.com:8080 (dev), auth.swiftlingapp.com (prod)
-  - Fixed quiz language API to use correct phrase service endpoint
 ```
 
 ## User Preferences

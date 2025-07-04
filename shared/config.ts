@@ -7,11 +7,7 @@ export interface AppConfig {
   port?: number;
   protocol: 'http' | 'https';
   keycloakUrl: string;
-  gatewayUrl: string;
-  userServiceUrl: string;
-  phraseServiceUrl: string;
   quizServiceUrl: string;
-  notificationServiceUrl: string;
 }
 
 // Get public IP address from AWS checkip service
@@ -153,43 +149,30 @@ export async function initializeConfig(): Promise<AppConfig> {
     }
   }
   
-  // Build URLs based on environment
+  // Build Keycloak URL based on environment
   let keycloakUrl: string;
-  let gatewayUrl: string;
-  let userServiceUrl: string;
-  let phraseServiceUrl: string;
-  let quizServiceUrl: string;
-  let notificationServiceUrl: string;
-  
   if (environment === 'dev') {
     keycloakUrl = 'http://cundi.onthewifi.com:8080';
-    gatewayUrl = 'http://cundi.onthewifi.com:8762';
-    userServiceUrl = 'http://cundi.onthewifi.com:8762/swiftling-user-service/api/v1/account';
-    phraseServiceUrl = 'http://cundi.onthewifi.com:8762/swiftling-phrase-service/api/v1/phrase';
-    quizServiceUrl = 'http://cundi.onthewifi.com:8762/swiftling-quiz-service/api/v1/quiz';
-    notificationServiceUrl = 'http://cundi.onthewifi.com:8762/swiftling-notification-service/api/v1/notification';
   } else if (environment === 'local') {
     keycloakUrl = 'http://localhost:8080';
-    gatewayUrl = 'http://localhost:8762';
-    userServiceUrl = 'http://localhost:8762/swiftling-user-service/api/v1/account';
-    phraseServiceUrl = 'http://localhost:8762/swiftling-phrase-service/api/v1/phrase';
-    quizServiceUrl = 'http://localhost:8762/swiftling-quiz-service/api/v1/quiz';
-    notificationServiceUrl = 'http://localhost:8762/swiftling-notification-service/api/v1/notification';
   } else if (environment === 'prod') {
-    keycloakUrl = 'https://auth.swiftlingapp.com';
-    gatewayUrl = 'https://gateway.swiftlingapp.com';
-    userServiceUrl = 'https://gateway.swiftlingapp.com/swiftling-user-service/api/v1/account';
-    phraseServiceUrl = 'https://gateway.swiftlingapp.com/swiftling-phrase-service/api/v1/phrase';
-    quizServiceUrl = 'https://gateway.swiftlingapp.com/swiftling-quiz-service/api/v1/quiz';
-    notificationServiceUrl = 'https://gateway.swiftlingapp.com/swiftling-notification-service/api/v1/notification';
+    keycloakUrl = 'https://swiftlingapp.com';
   } else {
-    // For 'other' environment, use the same hostname as the app
+    // For 'other' environment, use the same hostname as the app with port 8080
     keycloakUrl = `http://${hostname}:8080`;
-    gatewayUrl = `http://${hostname}:8762`;
-    userServiceUrl = `http://${hostname}:8762/swiftling-user-service/api/v1/account`;
-    phraseServiceUrl = `http://${hostname}:8762/swiftling-phrase-service/api/v1/phrase`;
-    quizServiceUrl = `http://${hostname}:8762/swiftling-quiz-service/api/v1/quiz`;
-    notificationServiceUrl = `http://${hostname}:8762/swiftling-notification-service/api/v1/notification`;
+  }
+  
+  // Build User Service URL based on environment
+  let quizServiceUrl: string;
+  if (environment === 'dev') {
+    quizServiceUrl = 'http://cundi.onthewifi.com:8762/swiftling-user-service/api/v1';
+  } else if (environment === 'local') {
+    quizServiceUrl = 'http://localhost:8762/swiftling-user-service/api/v1';
+  } else if (environment === 'prod') {
+    quizServiceUrl = 'https://swiftlingapp.com/swiftling-user-service/api/v1';
+  } else {
+    // For 'other' environment, use the same hostname as the app with port 8762
+    quizServiceUrl = `http://${hostname}:8762/swiftling-user-service/api/v1`;
   }
   
   const config: AppConfig = {
@@ -198,11 +181,7 @@ export async function initializeConfig(): Promise<AppConfig> {
     port,
     protocol,
     keycloakUrl,
-    gatewayUrl,
-    userServiceUrl,
-    phraseServiceUrl,
     quizServiceUrl,
-    notificationServiceUrl,
   };
   
   console.log(`Environment: ${environment}, Backend URL: ${protocol}://${hostname}${port ? `:${port}` : ''}`);
@@ -233,30 +212,10 @@ export async function getAPIURL(path: string = ''): Promise<string> {
   return `${baseURL}/api${path}`;
 }
 
-// Get service URLs with paths
-export async function getUserServiceURL(path: string = ''): Promise<string> {
-  const config = await getConfig();
-  return `${config.userServiceUrl}${path}`;
-}
-
-export async function getPhraseServiceURL(path: string = ''): Promise<string> {
-  const config = await getConfig();
-  return `${config.phraseServiceUrl}${path}`;
-}
-
+// Get Quiz Service URL with path
 export async function getQuizServiceURL(path: string = ''): Promise<string> {
   const config = await getConfig();
   return `${config.quizServiceUrl}${path}`;
-}
-
-export async function getNotificationServiceURL(path: string = ''): Promise<string> {
-  const config = await getConfig();
-  return `${config.notificationServiceUrl}${path}`;
-}
-
-export async function getGatewayURL(path: string = ''): Promise<string> {
-  const config = await getConfig();
-  return `${config.gatewayUrl}${path}`;
 }
 
 // Reset configuration (useful for testing or environment changes)
