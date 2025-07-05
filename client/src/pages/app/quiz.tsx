@@ -73,9 +73,22 @@ const getQuizLanguages = async (accessToken: string) => {
 };
 
 // API function to fetch phrases for quiz
-const getQuizPhrases = async (accessToken: string, status: string, langCode: string) => {
+const getQuizPhrases = async (accessToken: string, status?: string, langCode?: string) => {
   const config = await getConfig();
-  const response = await fetch(`${config.quizServiceUrl}/api/v1/phrase/phrases?status=${status}&langCode=${langCode}`, {
+  
+  // Build query parameters only when needed
+  const queryParams = new URLSearchParams();
+  if (status) {
+    queryParams.append('status', status);
+  }
+  if (langCode) {
+    queryParams.append('langCode', langCode);
+  }
+  
+  const queryString = queryParams.toString();
+  const url = `${config.quizServiceUrl}/api/v1/phrase/phrases${queryString ? `?${queryString}` : ''}`;
+  
+  const response = await fetch(url, {
     method: 'GET',
     headers: {
       'Authorization': `Bearer ${accessToken}`,
@@ -300,26 +313,29 @@ export default function Quiz() {
 
     const phrasesMap = new Map<string, Phrase>();
     
+    // Check if "All Languages" is selected
+    const isAllLanguages = selectedLanguages.includes('all') || selectedLanguages.length === 0;
+    
     // Determine which languages to fetch from
-    const languagesToFetch = selectedLanguages.includes('all') || selectedLanguages.length === 0
+    const languagesToFetch = isAllLanguages
       ? availableLanguages
       : availableLanguages.filter(lang => selectedLanguages.includes(lang.id));
 
     // Determine which statuses to fetch based on quiz type
-    let statusesToFetch: string[] = [];
+    let statusesToFetch: (string | undefined)[] = [];
     if (selectedQuizType === 'learned') {
       statusesToFetch = ['LEARNED'];
     } else if (selectedQuizType === 'not-learned') {
       statusesToFetch = ['IN_PROGRESS'];
-    } else { // mixed
-      statusesToFetch = ['LEARNED', 'IN_PROGRESS'];
+    } else { // mixed - fetch all statuses
+      statusesToFetch = [undefined]; // No status parameter means all statuses
     }
 
-    // Fetch phrases for each combination of language and status
-    for (const language of languagesToFetch) {
+    // Handle "All Languages" case - make single request without langCode
+    if (isAllLanguages) {
       for (const status of statusesToFetch) {
         try {
-          const phrasesData = await getQuizPhrases(tokens.access_token, status, language.id);
+          const phrasesData = await getQuizPhrases(tokens.access_token, status, undefined);
           
           // Convert each phrase and add to map
           phrasesData.forEach((phraseData: any) => {
@@ -327,8 +343,25 @@ export default function Quiz() {
             phrasesMap.set(phraseData.externalPhraseId, phrase);
           });
         } catch (error) {
-          console.error(`Failed to fetch phrases for ${language.name} (${status}):`, error);
-          // Continue with other combinations even if one fails
+          console.error(`Failed to fetch phrases for all languages (${status || 'all statuses'}):`, error);
+        }
+      }
+    } else {
+      // Fetch phrases for each combination of language and status
+      for (const language of languagesToFetch) {
+        for (const status of statusesToFetch) {
+          try {
+            const phrasesData = await getQuizPhrases(tokens.access_token, status, language.id);
+            
+            // Convert each phrase and add to map
+            phrasesData.forEach((phraseData: any) => {
+              const phrase = createPhraseFromResponse(phraseData);
+              phrasesMap.set(phraseData.externalPhraseId, phrase);
+            });
+          } catch (error) {
+            console.error(`Failed to fetch phrases for ${language.name} (${status || 'all statuses'}):`, error);
+            // Continue with other combinations even if one fails
+          }
         }
       }
     }
