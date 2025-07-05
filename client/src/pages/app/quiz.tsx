@@ -405,6 +405,7 @@ export default function Quiz() {
                 maxTime={maxTime}
                 onComplete={handleEndQuiz}
                 selectedLanguages={selectedLanguages}
+                quizPhrases={quizPhrases}
               />
             </div>
           </div>
@@ -821,10 +822,10 @@ export default function Quiz() {
           <div className="mt-6 flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4">
             <Button 
               className="bg-primary hover:bg-primary/90 w-full sm:w-auto"
-              disabled={!selectedQuizType || selectedLanguages.length === 0}
+              disabled={!selectedQuizType || selectedLanguages.length === 0 || isLoadingPhrases}
               onClick={handleStartQuiz}
             >
-              Start Quiz
+              {isLoadingPhrases ? "Loading Phrases..." : "Start Quiz"}
             </Button>
             <p className="text-xs sm:text-sm text-gray-500 italic">
               {!selectedQuizType && selectedLanguages.length === 0 ? (

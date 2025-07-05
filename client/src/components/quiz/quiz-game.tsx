@@ -6,6 +6,19 @@ import { PieTimer } from "./pie-timer";
 import { LANGUAGES } from "@/lib/constants";
 import { useQuiz } from "@/context/quiz-context";
 
+// Phrase interface matching the one from quiz.tsx
+interface Phrase {
+  originalPhrase: string;
+  originalLanguage: string;
+  meaning: string;
+  meaningLanguage: string;
+  phraseTags: string[];
+  status: string;
+  notes: string;
+  consecutiveCorrectAmount: number;
+  answeredWrongOrTimedOutAtLeastOnce: boolean;
+}
+
 // Multi-language phrases
 const MOCK_PHRASES = [
   // Turkish-English phrases
@@ -54,9 +67,10 @@ interface QuizGameProps {
   maxTime: number;
   onComplete: () => void;
   selectedLanguages?: string[];
+  quizPhrases?: Map<string, Phrase>;
 }
 
-export function QuizGame({ quizType, minTime, startTime, maxTime, onComplete, selectedLanguages = [] }: QuizGameProps) {
+export function QuizGame({ quizType, minTime, startTime, maxTime, onComplete, selectedLanguages = [], quizPhrases }: QuizGameProps) {
   // Get quiz pause state from context
   const { isPaused } = useQuiz();
   
