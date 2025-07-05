@@ -109,7 +109,8 @@ const getQuizPhrases = async (accessToken: string, status?: string, langCode?: s
 // API function to fetch all user phrases for count validation
 const getAllUserPhrases = async (accessToken: string): Promise<any[]> => {
   const config = await getConfig();
-  const response = await fetch(`${config.quizServiceUrl}/api/v1/phrase/phrases`, {
+  const baseUrl = config.quizServiceUrl.replace('/swiftling-user-service/api/v1', '');
+  const response = await fetch(`${baseUrl}/swiftling-phrase-service/api/v1/phrase/phrases`, {
     method: 'GET',
     headers: {
       'Authorization': `Bearer ${accessToken}`,
