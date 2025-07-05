@@ -86,7 +86,8 @@ const getQuizPhrases = async (accessToken: string, status?: string, langCode?: s
   }
   
   const queryString = queryParams.toString();
-  const url = `${config.quizServiceUrl}/api/v1/phrase/phrases${queryString ? `?${queryString}` : ''}`;
+  const baseUrl = config.quizServiceUrl.replace('/swiftling-user-service/api/v1', '');
+  const url = `${baseUrl}/swiftling-phrase-service/api/v1/phrase/phrases${queryString ? `?${queryString}` : ''}`;
   
   const response = await fetch(url, {
     method: 'GET',
