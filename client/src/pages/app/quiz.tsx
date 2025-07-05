@@ -106,6 +106,26 @@ const getQuizPhrases = async (accessToken: string, status?: string, langCode?: s
   return data.data || [];
 };
 
+// API function to fetch all user phrases for count validation
+const getAllUserPhrases = async (accessToken: string): Promise<any[]> => {
+  const config = await getConfig();
+  const response = await fetch(`${config.quizServiceUrl}/api/v1/phrase/phrases`, {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${accessToken}`,
+      'Content-Type': 'application/json',
+    },
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.message || 'Failed to fetch user phrases');
+  }
+
+  const data = await response.json();
+  return data.data || [];
+};
+
 // Function to convert backend response to Phrase object
 const createPhraseFromResponse = (responsePhrase: any): Phrase => {
   return {
@@ -141,6 +161,11 @@ export default function Quiz() {
   // State for available languages from backend
   const [availableLanguages, setAvailableLanguages] = useState<typeof LANGUAGES>([]);
   const [isLoadingLanguages, setIsLoadingLanguages] = useState(true);
+  
+  // State for phrase count validation
+  const [userPhraseCount, setUserPhraseCount] = useState<number>(0);
+  const [isLoadingPhraseCount, setIsLoadingPhraseCount] = useState(true);
+  const [hasMinimumPhrases, setHasMinimumPhrases] = useState(false);
   
   // State for quiz phrases Map
   const [quizPhrases, setQuizPhrases] = useState<Map<string, Phrase>>(new Map());
@@ -189,6 +214,40 @@ export default function Quiz() {
     fetchLanguages();
   }, [toast]);
   
+  // Fetch user phrase count on component mount
+  useEffect(() => {
+    const fetchPhraseCount = async () => {
+      try {
+        setIsLoadingPhraseCount(true);
+        const tokens = authService.getTokens();
+        
+        if (!tokens?.access_token) {
+          throw new Error('No access token available');
+        }
+        
+        const userPhrases = await getAllUserPhrases(tokens.access_token);
+        const count = userPhrases.length;
+        
+        setUserPhraseCount(count);
+        setHasMinimumPhrases(count >= 10);
+      } catch (error) {
+        console.error('Failed to fetch user phrases:', error);
+        toast({
+          title: "Error",
+          description: "Failed to load your phrases. Please try again.",
+          variant: "destructive",
+        });
+        // Set to 0 if fetch fails
+        setUserPhraseCount(0);
+        setHasMinimumPhrases(false);
+      } finally {
+        setIsLoadingPhraseCount(false);
+      }
+    };
+    
+    fetchPhraseCount();
+  }, [toast]);
+  
   // Set up guarded navigation
   const navigationBlockConfig = useMemo(() => ({
     isBlocked: isQuizStarted,
@@ -226,15 +285,9 @@ export default function Quiz() {
   // Mock phrase data - replace with actual API call later
   const [phrases, setPhrases] = useState<any[]>([]);
   
-  // For testing different states, you can change this number:
-  // 0 = No phrases (show "add phrases" message)
-  // 1-9 = Some phrases but not enough (show "need 10 phrases" message)  
-  // 10+ = Enough phrases (show quiz setup)
-  const mockPhraseCount: number = 15; // Change this to test different states
-  
   // Function to check phrase count and determine what to show
   const getPhraseStatus = () => {
-    const count = mockPhraseCount; // Later replace with phrases.length from API
+    const count = userPhraseCount;
     if (count === 0) {
       return { type: 'no-phrases', count };
     } else if (count < 10) {
@@ -424,6 +477,32 @@ export default function Quiz() {
     setIsQuizStarted(false);
     setQuizActive(false);
   };
+
+  // Show loading state while fetching phrase count or languages
+  if (isLoadingPhraseCount || isLoadingLanguages) {
+    return (
+      <div className="py-6 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto pb-20 md:pb-6">
+        <div className="flex items-center justify-between mb-6">
+          <h1 className="text-3xl font-semibold text-secondary bg-gradient-to-r from-primary/90 to-secondary bg-clip-text text-transparent leading-tight py-1">Quiz</h1>
+          <GuardedLink href="/quiz-history">
+            <Button className="bg-primary hover:bg-primary/90 text-white flex items-center gap-2">
+              <BookOpen className="h-4 w-4" />
+              <span>View Quiz History</span>
+            </Button>
+          </GuardedLink>
+        </div>
+        
+        <Card className="mb-6">
+          <CardContent className="pt-8 pb-8">
+            <div className="flex flex-col items-center justify-center text-center py-12">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mb-4"></div>
+              <p className="text-secondary/70">Loading quiz setup...</p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   // If quiz is started, show the actual quiz game
   if (isQuizStarted) {
