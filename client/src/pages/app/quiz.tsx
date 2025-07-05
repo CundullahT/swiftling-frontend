@@ -291,15 +291,96 @@ export default function Quiz() {
     setMaxTime(parseInt(value));
   };
 
+  // Function to fetch phrases for quiz
+  const fetchQuizPhrases = async () => {
+    const tokens = authService.getTokens();
+    if (!tokens?.access_token) {
+      throw new Error('No access token available');
+    }
+
+    const phrasesMap = new Map<string, Phrase>();
+    
+    // Determine which languages to fetch from
+    const languagesToFetch = selectedLanguages.includes('all') || selectedLanguages.length === 0
+      ? availableLanguages
+      : availableLanguages.filter(lang => selectedLanguages.includes(lang.id));
+
+    // Determine which statuses to fetch based on quiz type
+    let statusesToFetch: string[] = [];
+    if (selectedQuizType === 'learned') {
+      statusesToFetch = ['LEARNED'];
+    } else if (selectedQuizType === 'not-learned') {
+      statusesToFetch = ['IN_PROGRESS'];
+    } else { // mixed
+      statusesToFetch = ['LEARNED', 'IN_PROGRESS'];
+    }
+
+    // Fetch phrases for each combination of language and status
+    for (const language of languagesToFetch) {
+      for (const status of statusesToFetch) {
+        try {
+          const phrasesData = await getQuizPhrases(tokens.access_token, status, language.id);
+          
+          // Convert each phrase and add to map
+          phrasesData.forEach((phraseData: any) => {
+            const phrase = createPhraseFromResponse(phraseData);
+            phrasesMap.set(phraseData.externalPhraseId, phrase);
+          });
+        } catch (error) {
+          console.error(`Failed to fetch phrases for ${language.name} (${status}):`, error);
+          // Continue with other combinations even if one fails
+        }
+      }
+    }
+
+    return phrasesMap;
+  };
+
   // Start quiz
-  const handleStartQuiz = () => {
-    if (selectedQuizType) {
+  const handleStartQuiz = async () => {
+    if (!selectedQuizType) {
+      toast({
+        title: "Selection Required",
+        description: "Please select a quiz type before starting.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      setIsLoadingPhrases(true);
+      
+      // Fetch phrases from backend
+      const phrasesMap = await fetchQuizPhrases();
+      
+      if (phrasesMap.size === 0) {
+        toast({
+          title: "No Phrases Found",
+          description: "No phrases found for the selected criteria. Please try different options or add more phrases.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Store phrases in state
+      setQuizPhrases(phrasesMap);
+      
       // Scroll to top before starting the quiz
       window.scrollTo({ top: 0, behavior: 'smooth' });
       
       // Set both local and global quiz state to active
       setIsQuizStarted(true);
       setQuizActive(true);
+      
+    } catch (error) {
+      console.error('Failed to start quiz:', error);
+      toast({
+        title: "Quiz Start Failed",
+        description: "Failed to load quiz phrases. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoadingPhrases(false);
     }
   };
 
