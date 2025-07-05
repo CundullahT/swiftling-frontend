@@ -37,6 +37,19 @@ import { useToast } from "@/hooks/use-toast";
 import { authService } from "@/lib/auth";
 import { getConfig } from "@shared/config";
 
+// Phrase interface matching backend response
+interface Phrase {
+  originalPhrase: string;
+  originalLanguage: string;
+  meaning: string;
+  meaningLanguage: string;
+  phraseTags: string[];
+  status: string;
+  notes: string;
+  consecutiveCorrectAmount: number;
+  answeredWrongOrTimedOutAtLeastOnce: boolean;
+}
+
 // API function to fetch quiz languages
 const getQuizLanguages = async (accessToken: string) => {
   const config = await getConfig();
@@ -59,6 +72,41 @@ const getQuizLanguages = async (accessToken: string) => {
   return data.data || [];
 };
 
+// API function to fetch phrases for quiz
+const getQuizPhrases = async (accessToken: string, status: string, langCode: string) => {
+  const config = await getConfig();
+  const response = await fetch(`${config.quizServiceUrl}/api/v1/phrase/phrases?status=${status}&langCode=${langCode}`, {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${accessToken}`,
+      'Content-Type': 'application/json',
+    },
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.message || 'Failed to fetch quiz phrases');
+  }
+
+  const data = await response.json();
+  return data.data || [];
+};
+
+// Function to convert backend response to Phrase object
+const createPhraseFromResponse = (responsePhrase: any): Phrase => {
+  return {
+    originalPhrase: responsePhrase.originalPhrase,
+    originalLanguage: responsePhrase.originalLanguage,
+    meaning: responsePhrase.meaning,
+    meaningLanguage: responsePhrase.meaningLanguage,
+    phraseTags: responsePhrase.phraseTags || [],
+    status: responsePhrase.status,
+    notes: responsePhrase.notes || '',
+    consecutiveCorrectAmount: 0,
+    answeredWrongOrTimedOutAtLeastOnce: false
+  };
+};
+
 export default function Quiz() {
   // Scroll to top when navigating to this page
   useScrollTop();
@@ -79,6 +127,10 @@ export default function Quiz() {
   // State for available languages from backend
   const [availableLanguages, setAvailableLanguages] = useState<typeof LANGUAGES>([]);
   const [isLoadingLanguages, setIsLoadingLanguages] = useState(true);
+  
+  // State for quiz phrases Map
+  const [quizPhrases, setQuizPhrases] = useState<Map<string, Phrase>>(new Map());
+  const [isLoadingPhrases, setIsLoadingPhrases] = useState(false);
   
   // Toast for error messages
   const { toast } = useToast();
